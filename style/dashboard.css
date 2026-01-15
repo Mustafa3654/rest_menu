@@ -1,0 +1,105 @@
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #f4f4f4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.dashboard-container {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 300px;
+}
+
+h1 {
+  margin-bottom: 30px;
+  color: #4a90e2;
+}
+
+.button-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.dashboard-button {
+  text-decoration: none;
+  padding: 12px;
+  border-radius: 8px;
+  background: #4a90e2;
+  color: white;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.dashboard-button:hover {
+  background: #357ab8;
+}
+
+.logout {
+  background: #e74c3c;
+}
+
+.logout:hover {
+  background: #c0392b;
+}
+.form-container {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 700px; /* wider layout */
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+label {
+  width: 150px;
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+textarea {
+  resize: vertical;
+}
+
+button {
+  align-self: flex-end;
+  padding: 10px 20px;
+  background: #4a90e2;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #357ab8;
+}

@@ -1,0 +1,263 @@
+.menu-header {
+  position: relative;
+  padding: 100px 0;
+  text-align: center;
+  color: white;
+  overflow: hidden;
+}
+
+.menu-header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  filter: blur(5px);
+  transform: scale(1.1);
+  z-index: 1;
+}
+
+.menu-header-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.6);
+  z-index: 2;
+}
+
+.menu-header .container {
+  position: relative;
+  z-index: 3;
+}
+
+.menu-header h1 {
+  font-family: "Poppins", sans-serif;
+  font-size: 48px;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+
+.menu-header p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 18px;
+}
+
+/* Category Tabs */
+.category-tabs-wrapper {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border-color);
+  position: relative;
+  z-index: 900;
+  padding: 10px 0;
+}
+
+.category-tabs {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding: 10px 0;
+  scrollbar-width: none; /* Firefox */
+}
+
+.category-tabs::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+.category-tab {
+  white-space: nowrap;
+  padding: 10px 24px;
+  border-radius: 30px;
+  background: var(--bg-color);
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.category-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.category-tab:hover {
+  background: var(--border-color);
+  color: rgb(16, 168, 16);
+}
+
+.category-tab.active {
+  background: rgb(57, 255, 20);
+  color: black;
+  border-color: rgb(16, 168, 16);
+  box-shadow: 0 4px 12px rgba(26, 42, 108, 0.2);
+}
+
+body.dark-mode .category-tab.active {
+  background: rgb(16, 168, 16);
+  color: white;
+  border-color: rgb(57, 255, 20);
+}
+
+/* Menu Grid */
+.menu-content {
+  padding: 60px 0;
+  background: var(--bg-color);
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.menu-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  animation: itemFadeIn 0.5s ease forwards;
+}
+
+/* Animation for menu items */
+@keyframes itemFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Staggered delay for a professional look */
+.menu-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
+.menu-card:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.menu-card:nth-child(3) {
+  animation-delay: 0.3s;
+}
+.menu-card:nth-child(4) {
+  animation-delay: 0.4s;
+}
+.menu-card:nth-child(n + 5) {
+  animation-delay: 0.5s;
+}
+
+.menu-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.menu-card-img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.menu-card-body {
+  padding: 24px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-card-title {
+  font-family: "Poppins", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 8px;
+}
+
+.menu-card-price {
+  font-weight: 800;
+  color: var(--accent-blue);
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.menu-card-desc {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+/* Container for the image to handle the shine overflow */
+.menu-card-img-container {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  height: 200px;
+  border-radius: 12px 12px 0 0;
+}
+
+/* The Shine Effect */
+.menu-card-img-container::after {
+  content: "";
+  position: absolute;
+  top: -100%;
+  left: -150%;
+  width: 80%;
+  height: 300%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: rotate(35deg);
+  animation: shine-sweep 7s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 5;
+}
+
+@keyframes shine-sweep {
+  0% {
+    left: -150%;
+    top: -100%;
+  }
+  60% {
+    left: 150%;
+    top: 100%;
+  }
+  100% {
+    left: 150%;
+    top: 100%;
+  }
+}
+
+.no-items {
+  text-align: center;
+  padding: 100px 0;
+  color: var(--text-muted);
+}
+
+@media (max-width: 768px) {
+  .menu-header {
+    padding: 60px 0;
+  }
+  .menu-header h1 {
+    font-size: 32px;
+  }
+  .category-tabs-wrapper {
+    top: 70px;
+  }
+}
