@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $subject = trim($_POST['subject'] ?? '');
     $body    = trim($_POST['message'] ?? '');
 
-    if ($name && $email && $subject && $body) {
+    if ($name && $subject && $body) {
 
         $sql = "INSERT INTO contact_submissions (name, subject, message)
                 VALUES (?, ?, ?)";
@@ -86,9 +86,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if ($telegram_chat_id && $telegram_bot_token) {
 
                     $telegram_text =
-                          htmlspecialchars($name) . ":<br>"
-                        . "<b>Subject:</b> " . htmlspecialchars($subject) . "<br>"
-                        . "<b>Message:</b><br>" . nl2br(htmlspecialchars($body));
+                          htmlspecialchars($name) . ":\n"
+                        . "<b>Subject:</b> " . htmlspecialchars($subject) . "\n"
+                        . "<b>Message:</b>\n" . htmlspecialchars($body);
 
                     sendTelegramMessage(
                         $telegram_chat_id,

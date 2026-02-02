@@ -28,6 +28,8 @@ if (empty($current_cat)) {
 <!-- Custom Viewport for Menu Page (Zoomed Out) -->
 <script>
     document.querySelector('meta[name="viewport"]').setAttribute("content", "width=device-width, initial-scale=0.8");
+    // Pass restaurant settings to JS
+    window.restaurantPhone = "<?php echo htmlspecialchars($settings['whatsapp_number'] ?? ''); ?>";
 </script>
 
 <!-- External CSS for Menu -->
@@ -75,7 +77,11 @@ if (empty($current_cat)) {
                     while($item = $result->fetch_assoc()) {
                         ?>
                         <a href="ingredients.php?item=<?php echo urlencode($item['item_id']); ?>" style="text-decoration: none; color: inherit;">
-                        <div class="menu-card">
+                        <div class="menu-card" 
+                             data-id="<?php echo $item['item_id']; ?>"
+                             data-name="<?php echo htmlspecialchars($item['item_name']); ?>"
+                             data-price-lbp="<?php echo $item['item_pricelbp']; ?>"
+                             data-price-usd="<?php echo $item['item_priceusd']; ?>">
                             <?php if (!empty($item['item_pic'])): ?>
                                 <div class="menu-card-img-container">
                                     <img src="<?php echo htmlspecialchars($item['item_pic']); ?>" alt="<?php echo htmlspecialchars($item['item_name']); ?>" class="menu-card-img">
@@ -99,6 +105,9 @@ if (empty($current_cat)) {
                                 <?php if (!empty($item['Ingredients']) && $item['Ingredients'] !== '0'): ?>
                                     <p class="menu-card-desc"><?php echo htmlspecialchars($item['Ingredients']); ?></p>
                                 <?php endif; ?>
+                                <div class="cart-controls" onclick="event.preventDefault();">
+                                    <!-- Buttons injected by JS -->
+                                </div>
                             </div>
                         </div>
                         </a>
@@ -116,7 +125,25 @@ if (empty($current_cat)) {
     </div>
 </section>
 
+<!-- Cart Modal -->
+<div id="cart-modal">
+    <div class="cart-modal-content">
+        <div class="cart-header">
+            <h2>Your Order</h2>
+            <button class="close-cart" onclick="cart.closeCart()"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="cart-items-container">
+            <!-- Items injected by JS -->
+        </div>
+        <div id="cart-totals"></div>
+        <button class="checkout-btn" onclick="cart.checkout()">
+            <i class="fab fa-whatsapp"></i> Order on WhatsApp
+        </button>
+    </div>
+</div>
+
 <!-- External JS for Menu -->
 <script src="JS/menu.js"></script>
+<script src="JS/cart.js"></script>
 
 <?php include 'footer.php' ?>
