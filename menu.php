@@ -95,12 +95,11 @@ if (empty($current_cat)) {
                                 <h3 class="menu-card-title"><?php echo htmlspecialchars($item['item_name']); ?></h3>
                                 <div class="menu-card-price">
                                     <?php 
-                                    if ($item['item_pricelbp'] > 0) {
-                                        echo number_format($item['item_pricelbp'], 0, '.', ',') . ' LBP';
-                                    } elseif ($item['item_priceusd'] > 0) {
-                                        echo '$' . number_format($item['item_priceusd'], 2);
-                                    }
+                                    $lbp_price = $item['item_pricelbp'] > 0 ? number_format($item['item_pricelbp'], 0, '.', ',') . ' LBP' : '';
+                                    $usd_price = $item['item_priceusd'] > 0 ? '$' . number_format($item['item_priceusd'], 2) : '';
                                     ?>
+                                    <span class="price-lbp" style="display: none;"><?php echo $lbp_price; ?></span>
+                                    <span class="price-usd" style="display: none;"><?php echo $usd_price; ?></span>
                                 </div>
                                 <?php if (!empty($item['Ingredients']) && $item['Ingredients'] !== '0'): ?>
                                     <p class="menu-card-desc"><?php echo htmlspecialchars($item['Ingredients']); ?></p>
@@ -145,5 +144,28 @@ if (empty($current_cat)) {
 <!-- External JS for Menu -->
 <script src="JS/menu.js"></script>
 <script src="JS/cart.js"></script>
+<?php
+$display_currency = $settings['display_currency'] ?? 'LBP';
+?>
+<script>
+    // Currency display based on admin settings
+    const displayCurrency = "<?php echo $display_currency; ?>";
+    
+    function updateMenuCurrency() {
+        const priceLbpElements = document.querySelectorAll('.price-lbp');
+        const priceUsdElements = document.querySelectorAll('.price-usd');
+        
+        priceLbpElements.forEach(el => {
+            el.style.display = (displayCurrency === 'LBP' || displayCurrency === 'BOTH') ? 'block' : 'none';
+        });
+        
+        priceUsdElements.forEach(el => {
+            el.style.display = (displayCurrency === 'USD' || displayCurrency === 'BOTH') ? 'block' : 'none';
+        });
+    }
+    
+    // Run on page load
+    document.addEventListener('DOMContentLoaded', updateMenuCurrency);
+</script>
 
 <?php include 'footer.php' ?>

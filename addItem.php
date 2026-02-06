@@ -7,6 +7,12 @@ if (!isset($_SESSION["isAdmin"]) || $_SESSION["isAdmin"] !== true) {
     exit;
 }
 
+// Fetch exchange rate
+$settingsQuery = "SELECT exchange_rate FROM settings LIMIT 1";
+$settingsResult = $conn->query($settingsQuery);
+$settings = $settingsResult ? $settingsResult->fetch_assoc() : null;
+$exchange_rate = $settings['exchange_rate'] ?? 90000;
+
 $message = "";
 
 if (isset($_POST["submit"])) {
@@ -90,9 +96,11 @@ if (isset($_POST["submit"])) {
 
             <label for="price-lbp">Item Price (LBP)</label>
             <input type="number" id="price-lbp" name="price-lbp" placeholder="Enter Price in LBP">
+            <small style="color: #666; display: block; margin: -10px 0 15px 0;">Auto-converts to USD (Rate: <?php echo number_format($exchange_rate); ?> LBP/USD)</small>
             
             <label for="price-usd">Item Price (USD)</label>
             <input type="number" id="price-usd" name="price-usd" placeholder="Enter Price in USD" step="0.01">
+            <small style="color: #666; display: block; margin: -10px 0 15px 0;">Auto-converts to LBP (Rate: <?php echo number_format($exchange_rate); ?> LBP/USD)</small>
 
             <label for="category">Item Category</label>
             <select name="category" id="category" required>
@@ -114,5 +122,34 @@ if (isset($_POST["submit"])) {
         <br>
         <a href="dashboard.php" class="back-link"><button type="button">BACK</button></a>
     </div>
+    
+    <script>
+        const exchangeRate = <?php echo $exchange_rate; ?>;
+        const priceLbpInput = document.getElementById('price-lbp');
+        const priceUsdInput = document.getElementById('price-usd');
+        let lastEdited = null;
+        
+        priceLbpInput.addEventListener('input', function() {
+            if (this.value && !isNaN(this.value)) {
+                lastEdited = 'LBP';
+                const lbpValue = parseFloat(this.value);
+                const usdValue = (lbpValue / exchangeRate).toFixed(2);
+                priceUsdInput.value = usdValue;
+            } else if (this.value === '') {
+                priceUsdInput.value = '';
+            }
+        });
+        
+        priceUsdInput.addEventListener('input', function() {
+            if (this.value && !isNaN(this.value)) {
+                lastEdited = 'USD';
+                const usdValue = parseFloat(this.value);
+                const lbpValue = Math.round(usdValue * exchangeRate);
+                priceLbpInput.value = lbpValue;
+            } else if (this.value === '') {
+                priceLbpInput.value = '';
+            }
+        });
+    </script>
 </body>
 </html>

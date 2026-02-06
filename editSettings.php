@@ -28,6 +28,10 @@ if (isset($_POST['update_settings'])) {
     $opening_title = $_POST['opening_title'];
     $chat_id = $_POST['chat_id'];
     $bot_token = $_POST['bot_token'];
+    $exchange_rate = $_POST['exchange_rate'];
+    if (!is_numeric($exchange_rate) || $exchange_rate <= 0) {
+        $exchange_rate = 90000; // Default rate if invalid
+    }
 
     // Handle Logo Upload
     $logo_path = $settings['restaurant_logo'] ?? '';
@@ -92,13 +96,14 @@ if (isset($_POST['update_settings'])) {
             facebook_url = ?,
             opening_title = ?,
             chat_id = ?,
-            bot_token = ?
+            bot_token = ?,
+            exchange_rate = ?
             WHERE id = ?");
-        $stmt->bind_param("sssssssssssssssssi", $name, $logo_path, $home_bg_path, $menu_bg_path,$contact_bg_path, $email, $phone, $address, $maps, $desc, $hours, $whatsapp, $insta, $fb, $opening_title, $chat_id, $bot_token, $settings['id']);
+        $stmt->bind_param("sssssssssssssssssdi", $name, $logo_path, $home_bg_path, $menu_bg_path,$contact_bg_path, $email, $phone, $address, $maps, $desc, $hours, $whatsapp, $insta, $fb, $opening_title, $chat_id, $bot_token, $exchange_rate, $settings['id']);
     } else {
-        $stmt = $conn->prepare("INSERT INTO settings (restaurant_name, restaurant_logo, home_bg, menu_bg, contact_bg, restaurant_email, restaurant_phone, restaurant_address, restaurant_maps, restaurant_description, opening_hours, whatsapp_number, instagram_url, facebook_url, opening_title, chat_id, bot_token) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssssssssssssss", $name, $logo_path, $home_bg_path, $menu_bg_path,$contact_bg_path,$email,$phone,$address,$maps,$desc,$hours,$whatsapp,$insta,$fb,$opening_title,$chat_id,$bot_token);
+        $stmt = $conn->prepare("INSERT INTO settings (restaurant_name, restaurant_logo, home_bg, menu_bg, contact_bg, restaurant_email, restaurant_phone, restaurant_address, restaurant_maps, restaurant_description, opening_hours, whatsapp_number, instagram_url, facebook_url, opening_title, chat_id, bot_token, exchange_rate) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssssssssssssssd", $name, $logo_path, $home_bg_path, $menu_bg_path,$contact_bg_path,$email,$phone,$address,$maps,$desc,$hours,$whatsapp,$insta,$fb,$opening_title,$chat_id,$bot_token,$exchange_rate);
     }
 
     if ($stmt->execute()) {
@@ -242,6 +247,13 @@ if (isset($_POST['update_settings'])) {
                 <label for="bot_token">Telegram Bot Token</label>
                 <br>
                 <input type="text" name="bot_token" value="<?php echo htmlspecialchars($settings['bot_token'] ?? ''); ?>"> 
+            </div>
+
+            <div class="form-group">
+                <label for="exchange_rate">Exchange Rate (LBP per 1 USD)</label>
+                <br>
+                <input type="number" name="exchange_rate" value="<?php echo htmlspecialchars($settings['exchange_rate'] ?? '90000'); ?>" step="1" min="1">
+                <small style="color: #666; display: block; margin-top: 5px;">e.g., 90000 means 1 USD = 90,000 LBP</small>
             </div>
 
             <button type="submit" name="update_settings" class="submit-btn">Save Settings</button>
