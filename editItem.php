@@ -16,9 +16,26 @@ if (isset($_POST["submit"])) {
     $priceusd = $_POST['price-usd'];
     $ingredients = $_POST["ingredients"];
     $cat = $_POST["category"];
+    $pic_path = $_POST['current_pic'];
 
-    $stmt = $conn->prepare("UPDATE items SET item_name=?, item_pricelbp=?, Ingredients=?, item_priceusd=?, item_category=? WHERE item_id=?");
-    $stmt->bind_param("sisdsi", $name, $pricelbp, $ingredients, $priceusd, $cat, $id);
+    // Handle image upload
+    if (isset($_FILES['item-img']) && $_FILES['item-img']['error'] === 0) {
+        $img_name = $_FILES['item-img']['name'];
+        $tmp_name = $_FILES['item-img']['tmp_name'];
+        $img_ex = strtolower(pathinfo($img_name, PATHINFO_EXTENSION));
+        $allowed_exs = array("jpg", "jpeg", "png", "gif", "webp");
+
+        if (in_array($img_ex, $allowed_exs)) {
+            $upload_folder = 'items/';
+            if (!is_dir($upload_folder)) mkdir($upload_folder, 0777, true);
+            $new_img_name = uniqid("IMG-", true).'.'.$img_ex;
+            $pic_path = $upload_folder . $new_img_name;
+            move_uploaded_file($tmp_name, $pic_path);
+        }
+    }
+
+    $stmt = $conn->prepare("UPDATE items SET item_name=?, item_pricelbp=?, Ingredients=?, item_priceusd=?, item_category=?, item_pic=? WHERE item_id=?");
+    $stmt->bind_param("sisdssi", $name, $pricelbp, $ingredients, $priceusd, $cat, $pic_path, $id);
     
     if ($stmt->execute()) {
         header("Location: viewItems.php");
@@ -59,8 +76,9 @@ if (!$row) {
     <div class="form-container">
         <h1>Edit Item</h1>
         <?php echo $message; ?>
-        <form action="editItem.php" method="POST">
+        <form action="editItem.php" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="id" value="<?php echo $row["item_id"]; ?>">
+            <input type="hidden" name="current_pic" value="<?php echo $row["item_pic"]; ?>">
 
             <label for="item-name">Item Name</label>
             <input type="text" id="item-name" name="item-name" value="<?php echo htmlspecialchars($row['item_name']); ?>" required>
@@ -86,6 +104,13 @@ if (!$row) {
                     }
                 ?>
             </select>
+
+            <label for="item-img">Item Image (Optional)</label>
+            <input type="file" name="item-img" id="item-img">
+            <?php if (!empty($row['item_pic'])): ?>
+                <img src="<?php echo htmlspecialchars($row['item_pic']); ?>" style="width: 80px; margin-top: 10px; border-radius: 8px;" alt="Current Image">
+            <?php endif; ?>
+
             <button type="submit" name="submit" value="update">Update Item</button> 
         </form>
         <br>
