@@ -86,10 +86,6 @@ if (empty($current_cat)) {
                                 <div class="menu-card-img-container">
                                     <img src="<?php echo htmlspecialchars($item['item_pic']); ?>" alt="<?php echo htmlspecialchars($item['item_name']); ?>" class="menu-card-img">
                                 </div>
-                            <?php else: ?>
-                                <div class="menu-card-img" style="background: #f1f5f9; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fas fa-utensils" style="font-size: 48px; color: #cbd5e1;"></i>
-                                </div>
                             <?php endif; ?>
                             <div class="menu-card-body">
                                 <h3 class="menu-card-title"><?php echo htmlspecialchars($item['item_name']); ?></h3>
