@@ -1,13 +1,12 @@
 <?php
 include "connection.php";
-session_start();
+include "auth.php";
+start_secure_session();
+require_admin();
 
-if (!isset($_SESSION["isAdmin"]) || $_SESSION["isAdmin"] !== true) {
-    header("Location: index.php");
-    exit;
-}
-
-// Fetch exchange rate
+// -------------------------
+// Load settings needed for the form
+// -------------------------
 $settingsQuery = "SELECT exchange_rate FROM settings LIMIT 1";
 $settingsResult = $conn->query($settingsQuery);
 $settings = $settingsResult ? $settingsResult->fetch_assoc() : null;
@@ -15,65 +14,74 @@ $exchange_rate = $settings['exchange_rate'] ?? 90000;
 
 $message = "";
 
+// -------------------------
+// Handle item creation
+// -------------------------
 if (isset($_POST["submit"])) {
-    $name = trim($_POST["item-name"]);
-    $price_lbp = trim($_POST["price-lbp"]);
-    $price_usd = trim($_POST["price-usd"]);
-    $category = trim($_POST["category"]);
-    $ingredients = trim($_POST["ingredients"] ?? '');
-
-    if ($name === '') {
-        $message = "<div class='alert alert-danger'>Item Name is required.</div>";
+    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+        $message = "<div class='alert alert-danger'>Invalid request token. Please refresh and try again.</div>";
     } else {
-        // Validate LBP price
-        if ($price_lbp !== '' && (!is_numeric($price_lbp) || $price_lbp < 0)) {
-            $message = "<div class='alert alert-danger'>LBP Price must be a positive number.</div>";
-        } elseif ($price_usd !== '' && (!is_numeric($price_usd) || $price_usd < 0)) {
-            $message = "<div class='alert alert-danger'>USD Price must be a positive number.</div>";
+        $name = trim($_POST["item-name"]);
+        $price_lbp = trim($_POST["price-lbp"]);
+        $price_usd = trim($_POST["price-usd"]);
+        $category = trim($_POST["category"]);
+        $ingredients = trim($_POST["ingredients"] ?? '');
+
+        if ($name === '') {
+            $message = "<div class='alert alert-danger'>Item Name is required.</div>";
         } else {
-            // Validate category exists
-            $stmt_cat = $conn->prepare("SELECT COUNT(*) FROM categories WHERE cat_name = ?");
-            $stmt_cat->bind_param("s", $category);
-            $stmt_cat->execute();
-            $stmt_cat->bind_result($cat_exists);
-            $stmt_cat->fetch();
-            $stmt_cat->close();
-
-            if (!$cat_exists) {
-                $message = "<div class='alert alert-danger'>Selected category does not exist.</div>";
+            // Validate LBP price
+            if ($price_lbp !== '' && (!is_numeric($price_lbp) || $price_lbp < 0)) {
+                $message = "<div class='alert alert-danger'>LBP Price must be a positive number.</div>";
+            } elseif ($price_usd !== '' && (!is_numeric($price_usd) || $price_usd < 0)) {
+                $message = "<div class='alert alert-danger'>USD Price must be a positive number.</div>";
             } else {
-                $target_file = '';
-                if (isset($_FILES["item-img"]) && $_FILES["item-img"]["error"] === 0) {
-                    $img_name = $_FILES['item-img']['name'];
-                    $tmp_name = $_FILES['item-img']['tmp_name'];
-                    $img_ex = strtolower(pathinfo($img_name, PATHINFO_EXTENSION));
-                    $allowed_exs = array("jpg", "jpeg", "png", "gif", "webp");
-                    
-                    if (in_array($img_ex, $allowed_exs)) {
-                        $target_dir = "items/";
-                        if (!is_dir($target_dir)) mkdir($target_dir, 0777, true);
-                        $unique_filename = uniqid("IMG-", true) . '.' . $img_ex;
-                        $target_file = $target_dir . $unique_filename;
-                        move_uploaded_file($tmp_name, $target_file);
-                    }
-                }
+                // Validate category exists
+                $stmt_cat = $conn->prepare("SELECT COUNT(*) FROM categories WHERE cat_name = ?");
+                $stmt_cat->bind_param("s", $category);
+                $stmt_cat->execute();
+                $stmt_cat->bind_result($cat_exists);
+                $stmt_cat->fetch();
+                $stmt_cat->close();
 
-                $price_lbp = $price_lbp === '' ? 0 : (int)$price_lbp;
-                $price_usd = $price_usd === '' ? 0 : (float)$price_usd;
-
-                $stmt = $conn->prepare("INSERT INTO items (item_name, item_category, item_pricelbp, Ingredients, item_priceusd, item_pic) VALUES (?, ?, ?, ?, ?, ?)");
-                $stmt->bind_param("ssisds", $name, $category, $price_lbp, $ingredients, $price_usd, $target_file);
-                
-                if ($stmt->execute()) {
-                    $message = "<div class='alert alert-success'>Item Added Successfully!</div>";
+                if (!$cat_exists) {
+                    $message = "<div class='alert alert-danger'>Selected category does not exist.</div>";
                 } else {
-                    $message = "<div class='alert alert-danger'>Database Error: " . htmlspecialchars($stmt->error) . "</div>";
+                    $target_file = '';
+                    if (isset($_FILES["item-img"]) && $_FILES["item-img"]["error"] === 0) {
+                        $img_name = $_FILES['item-img']['name'];
+                        $tmp_name = $_FILES['item-img']['tmp_name'];
+                        $img_ex = strtolower(pathinfo($img_name, PATHINFO_EXTENSION));
+                        $allowed_exs = array("jpg", "jpeg", "png", "gif", "webp");
+                        
+                        if (in_array($img_ex, $allowed_exs)) {
+                            $target_dir = "items/";
+                            if (!is_dir($target_dir)) mkdir($target_dir, 0777, true);
+                            $unique_filename = uniqid("IMG-", true) . '.' . $img_ex;
+                            $target_file = $target_dir . $unique_filename;
+                            move_uploaded_file($tmp_name, $target_file);
+                        }
+                    }
+
+                    $price_lbp = $price_lbp === '' ? 0 : (int)$price_lbp;
+                    $price_usd = $price_usd === '' ? 0 : (float)$price_usd;
+
+                    $stmt = $conn->prepare("INSERT INTO items (item_name, item_category, item_pricelbp, Ingredients, item_priceusd, item_pic) VALUES (?, ?, ?, ?, ?, ?)");
+                    $stmt->bind_param("ssisds", $name, $category, $price_lbp, $ingredients, $price_usd, $target_file);
+                    
+                    if ($stmt->execute()) {
+                        $message = "<div class='alert alert-success'>Item Added Successfully!</div>";
+                    } else {
+                        $message = "<div class='alert alert-danger'>Database Error: " . htmlspecialchars($stmt->error) . "</div>";
+                    }
+                    $stmt->close();
                 }
-                $stmt->close();
             }
         }
     }
 }
+
+$csrfToken = ensure_csrf_token();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -88,6 +96,7 @@ if (isset($_POST["submit"])) {
         <h1>Add Item</h1>
         <?php echo $message; ?>
         <form action="addItem.php" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
             <label for="item-name">Item Name</label>
             <input type="text" id="item-name" name="item-name" placeholder="Enter item name" required>
             

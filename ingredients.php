@@ -1,16 +1,20 @@
 <?php
 include "connection.php";
+
+// Validate and normalize item id from query string.
+if (!isset($_GET["item"]) || !ctype_digit((string)$_GET["item"])) {
+    header("Location: index.php");
+    exit;
+}
+
+$itemId = (int)$_GET["item"];
+// Use prepared statement to avoid SQL injection on item lookup.
+$stmt = $conn->prepare("SELECT item_name, Ingredients, item_pic FROM items WHERE item_id = ?");
+$stmt->bind_param("i", $itemId);
+$stmt->execute();
+$result = $stmt->get_result();
+
 include "header.php";
-
-if(isset($_GET["item"])){
-    $item = $_GET["item"];
-}
-else{
-    echo '<script>window.location.assign("index")</script>';
-}
-
-$sql = "SELECT * FROM items WHERE item_id = '$item'";
-$result = $conn->query($sql);
 ?>
 
 <div class="container">
@@ -18,7 +22,7 @@ $result = $conn->query($sql);
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
                 
-                echo "<h4>Ingredients of: <br> &emsp;". $row["item_name"] ." </h4>";
+                echo "<h4>Ingredients of: <br> &emsp;" . htmlspecialchars($row["item_name"]) . " </h4>";
                 $ingredients = $row["Ingredients"];
                 $ing = explode(", ", $ingredients);
                 $listItems = "";
@@ -37,6 +41,7 @@ $result = $conn->query($sql);
         else{
             echo "No Ingredients Found!";
         }
+        $stmt->close();
     ?>
 </div>
 

@@ -1,34 +1,130 @@
 <?php
 include "connection.php";
-session_start();
+include "auth.php";
+start_secure_session();
+require_admin();
+
+// -------------------------
+// Local helpers
+// -------------------------
+function isAllowedImageExtension(string $ext): bool
+{
+    $allowed = ["jpg", "jpeg", "png", "gif", "webp"];
+    return in_array($ext, $allowed, true);
+}
+
+function isPathInsideDir(string $path, string $baseDir): bool
+{
+    $realBase = realpath($baseDir);
+    $realPath = realpath($path);
+    return $realBase !== false
+        && $realPath !== false
+        && strpos($realPath, $realBase . DIRECTORY_SEPARATOR) === 0;
+}
+
+// -------------------------
+// Request bootstrap
+// -------------------------
+$itemId = filter_input(INPUT_GET, "id", FILTER_VALIDATE_INT);
+if (!$itemId) {
+    header("Location: viewItems.php");
+    exit;
+}
+
+$message = "";
+$targetDir = "items/";
+
+// -------------------------
+// Update image action
+// -------------------------
+if (isset($_POST["updateImage"])) {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+        $message = "<div class='container'>Invalid request token. Please try again.</div>";
+    } elseif (!isset($_FILES["newpic"]) || $_FILES["newpic"]["error"] !== 0) {
+        $message = "<div class='container'>Please choose an image to upload.</div>";
+    } else {
+        $tmpFile = $_FILES["newpic"]["tmp_name"];
+        $imageName = basename($_FILES["newpic"]["name"]);
+        $imageFileType = strtolower(pathinfo($imageName, PATHINFO_EXTENSION));
+        $uploadOk = true;
+
+        $check = @getimagesize($tmpFile);
+        if ($check === false) {
+            $message = "<div class='container'>File is not an image.</div>";
+            $uploadOk = false;
+        }
+
+        if ($_FILES["newpic"]["size"] > 5000000) {
+            $message = "<div class='container'>Sorry, your file is too large.</div>";
+            $uploadOk = false;
+        }
+
+        if (!isAllowedImageExtension($imageFileType)) {
+            $message = "<div class='container'>Only JPG, JPEG, PNG, GIF, and WEBP files are allowed.</div>";
+            $uploadOk = false;
+        }
+
+        if ($uploadOk) {
+            if (!is_dir($targetDir)) {
+                mkdir($targetDir, 0777, true);
+            }
+            $newFileName = uniqid("IMG-", true) . "." . $imageFileType;
+            $targetFile = $targetDir . $newFileName;
+
+            if (move_uploaded_file($tmpFile, $targetFile)) {
+                $oldStmt = $conn->prepare("SELECT item_pic FROM items WHERE item_id = ?");
+                $oldStmt->bind_param("i", $itemId);
+                $oldStmt->execute();
+                $oldResult = $oldStmt->get_result();
+                $oldRow = $oldResult->fetch_assoc();
+                $oldStmt->close();
+
+                $updateStmt = $conn->prepare("UPDATE items SET item_pic = ? WHERE item_id = ?");
+                $updateStmt->bind_param("si", $targetFile, $itemId);
+
+                if ($updateStmt->execute()) {
+                    $updateStmt->close();
+
+                    $oldPath = $oldRow["item_pic"] ?? '';
+                    // Delete old image only when it is inside items/ to avoid unsafe deletes.
+                    if ($oldPath !== '' && file_exists($oldPath) && isPathInsideDir($oldPath, $targetDir)) {
+                        @unlink($oldPath);
+                    }
+
+                    header("Location: editItemImage.php?id=" . $itemId);
+                    exit;
+                }
+
+                $updateStmt->close();
+                $message = "<div class='container'>Failed to update image in database.</div>";
+            } else {
+                $message = "<div class='container'>Error uploading image.</div>";
+            }
+        }
+    }
+}
+
+// -------------------------
+// Load current item
+// -------------------------
+$stmt = $conn->prepare("SELECT item_id, item_pic, item_name FROM items WHERE item_id = ?");
+$stmt->bind_param("i", $itemId);
+$stmt->execute();
+$result = $stmt->get_result();
+$item = $result->fetch_assoc();
+$stmt->close();
+
+if (!$item) {
+    header("Location: viewItems.php");
+    exit;
+}
+
 include "header.php";
-
-if ($_SESSION["isAdmin"] != true) {
-    echo '<script>window.location.assign("index")</script>';
-}
-
-// Get the item ID from URL
-if (!isset($_GET["id"])) {
-    echo "<div class='container'>No item selected.</div>";
-    exit;
-}
-
-$item_id = intval($_GET["id"]); // Always sanitize ID
-
-// Fetch the current item data
-$sql = "SELECT * FROM items WHERE item_id = $item_id";
-$result = mysqli_query($conn, $sql);
-
-if (mysqli_num_rows($result) == 0) {
-    echo "<div class='container'>Item not found.</div>";
-    exit;
-}
-
-$item = mysqli_fetch_assoc($result);
 ?>
 
 <div class="container mt-3 mb-3">
     <h2>Edit Item Image</h2>
+    <?php echo $message; ?>
 
     <div class="mb-3">
         <label class="form-label">Current Image:</label><br>
@@ -39,7 +135,8 @@ $item = mysqli_fetch_assoc($result);
         <?php } ?>
     </div>
 
-    <form action="editItemImage.php?id=<?php echo $item_id; ?>" method="POST" enctype="multipart/form-data">
+    <form action="editItemImage.php?id=<?php echo (int)$itemId; ?>" method="POST" enctype="multipart/form-data">
+        <?php echo csrf_input(); ?>
         <label class="form-label">Upload New Image:</label>
         <input type="file" class="form-control" name="newpic" accept="image/*" required><br>
 
@@ -47,55 +144,4 @@ $item = mysqli_fetch_assoc($result);
     </form>
 </div>
 
-<?php
-if (isset($_POST["updateImage"])) {
-    $target_dir = "items/";
-    $image_name = basename($_FILES["newpic"]["name"]);
-    $target_file = $target_dir . uniqid() . "_" . $image_name;
-    $uploadOk = 1;
-    $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
-
-    // Check if file is an actual image
-    $check = getimagesize($_FILES["newpic"]["tmp_name"]);
-    if ($check === false) {
-        echo "<div class='container'>File is not an image.</div>";
-        $uploadOk = 0;
-    }
-
-    if ($_FILES["newpic"]["size"] > 5000000) {
-        echo "<div class='container'>Sorry, your file is too large.</div>";
-        $uploadOk = 0;
-    }
-
-    if (!in_array($imageFileType, ["jpg", "jpeg", "png", "gif", "webp"])) {
-        echo "<div class='container'>Sorry, only JPG, JPEG, PNG, GIF & WEBP files are allowed.</div>";
-        $uploadOk = 0;
-    }
-
-    if ($uploadOk == 0) {
-        echo "<div class='container'>Sorry, your file was not uploaded.</div>";
-    } else {
-        if (move_uploaded_file($_FILES["newpic"]["tmp_name"], $target_file)) {
-            $new_image_path = mysqli_real_escape_string($conn, $target_file);
-
-            // Optionally delete old image (if needed)
-            if (!empty($item["item_pic"]) && file_exists($item["item_pic"])) {
-                unlink($item["item_pic"]); // Delete old file
-            }
-
-            // Update database
-            $update_sql = "UPDATE items SET item_pic = '$new_image_path' WHERE item_id = $item_id";
-            if (mysqli_query($conn, $update_sql)) {
-                echo '<div class="container">Image updated successfully!</div>';
-                echo '<script>window.location.assign("editItemImage.php?id=' . $item_id . '")</script>';
-            } else {
-                echo "<div class='container'>Failed to update image: " . mysqli_error($conn) . "</div>";
-            }
-        } else {
-            echo "<div class='container'>Sorry, there was an error uploading your file.</div>";
-        }
-    }
-}
-
-include "footer.php";
-?>
+<?php include "footer.php"; ?>

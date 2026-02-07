@@ -1,69 +1,96 @@
-<?php 
-include "connection.php";
-session_start();
-include "header.php";
-if($_SESSION["isAdmin"] != true){
-    echo '<script>window.location.assign("index")</script>';
-}
-?>
-
 <?php
-    $item = $_GET["item"] ?? null;
+include "connection.php";
+include "auth.php";
+start_secure_session();
+require_admin();
 
-    if (isset($_POST["submit"])) {
+// -------------------------
+// Request bootstrap
+// -------------------------
+$message = "";
+$itemName = trim($_GET["item"] ?? '');
 
-        $id = $_POST["id"];
-        $name = $_POST['categories'];
+if ($itemName === '') {
+    header("Location: viewItems.php");
+    exit;
+}
 
-      
-        $sql = "UPDATE `items` SET `item_category`='$name' WHERE item_id = '$id'";
-      
-        $result = mysqli_query($conn, $sql);
-      
-        if ($result) {
-          
+$stmt = $conn->prepare("SELECT item_id, item_name, item_category FROM items WHERE item_name = ? LIMIT 1");
+$stmt->bind_param("s", $itemName);
+$stmt->execute();
+$result = $stmt->get_result();
+$itemRow = $result->fetch_assoc();
+$stmt->close();
+
+if (!$itemRow) {
+    header("Location: viewItems.php");
+    exit;
+}
+
+// -------------------------
+// Update category action
+// -------------------------
+if (isset($_POST["submit"])) {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+        $message = "<div class='alert alert-danger'>Invalid request token. Please try again.</div>";
+    } else {
+        $id = filter_input(INPUT_POST, "id", FILTER_VALIDATE_INT);
+        $category = trim($_POST['categories'] ?? '');
+
+        if (!$id || $category === '') {
+            $message = "<div class='alert alert-danger'>Invalid item/category.</div>";
         } else {
-          echo "Failed: " . mysqli_error($conn);
-        }
-      }
+            $checkStmt = $conn->prepare("SELECT COUNT(*) FROM categories WHERE cat_name = ?");
+            $checkStmt->bind_param("s", $category);
+            $checkStmt->execute();
+            $checkStmt->bind_result($catExists);
+            $checkStmt->fetch();
+            $checkStmt->close();
 
-    if($item != null){
-        $sql = "SELECT * FROM items WHERE (item_name='$item')";
-        $result = mysqli_query($conn, $sql);
-        $row = mysqli_fetch_assoc($result);
+            if ((int)$catExists !== 1) {
+                $message = "<div class='alert alert-danger'>Selected category does not exist.</div>";
+            } else {
+                $updateStmt = $conn->prepare("UPDATE items SET item_category = ? WHERE item_id = ?");
+                $updateStmt->bind_param("si", $category, $id);
+
+                if ($updateStmt->execute()) {
+                    $updateStmt->close();
+                    header("Location: viewItems.php");
+                    exit;
+                }
+
+                $message = "<div class='alert alert-danger'>Failed to update item category.</div>";
+                $updateStmt->close();
+            }
+        }
     }
-    
+}
+
+// -------------------------
+// Load category list for dropdown
+// -------------------------
+$catResult = $conn->query("SELECT cat_name FROM categories ORDER BY `Order` ASC");
+include "header.php";
 ?>
 
 <div class="container">
-    <h2>Edit Item</h2>
-    <form method="POST" action="editItemCategory.php">
+    <h2>Edit Item Category</h2>
+    <?php echo $message; ?>
+    <form method="POST" action="editItemCategory.php?item=<?php echo urlencode($itemName); ?>">
+        <?php echo csrf_input(); ?>
+        <input type="hidden" name="id" value="<?php echo (int)$itemRow["item_id"]; ?>">
 
-        <input type="hidden" name="id" value="<?php echo $row["item_id"] ?>">
-
-        <select class="form-control" name="categories" id="categories">
-                <?php 
-                    $sql = "SELECT * FROM categories";
-                    $result = mysqli_query($conn, $sql);
-
-                    if ($result->num_rows > 0) {
-                        while($row = $result->fetch_assoc()) {
-                        ?>
-                        <option value="<?php echo $row["cat_name"] ?>"><?php echo $row["cat_name"] ?></option>
-                <?php
-                        }
-                    }
-                        
-                ?>
+        <select class="form-control" name="categories" id="categories" required>
+            <?php
+            while ($catRow = $catResult->fetch_assoc()) {
+                $selected = ($catRow["cat_name"] === $itemRow["item_category"]) ? "selected" : "";
+                echo "<option value='" . htmlspecialchars($catRow["cat_name"]) . "' $selected>" . htmlspecialchars($catRow["cat_name"]) . "</option>";
+            }
+            ?>
         </select><br>
 
         <input class="btn btn-primary" type="submit" value="Update" name="submit">
     </form>
 </div>
 
-    <?php
-    // Close database connection
-    mysqli_close($conn);
-    ?>
-
-<?php include "footer.php" ?>
+<?php include "footer.php"; ?>

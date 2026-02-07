@@ -1,33 +1,89 @@
 <?php
 include "connection.php";
-session_start();
+include "auth.php";
+start_secure_session();
+require_admin();
 
-if (!isset($_SESSION["isAdmin"]) || $_SESSION["isAdmin"] !== true) {
-    header("Location: index.php");
-    exit;
-}
-
-// Handle display currency update
+// -------------------------
+// Handle currency-display update
+// -------------------------
 if (isset($_POST['display_currency'])) {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+        http_response_code(403);
+        exit("Invalid request token.");
+    }
+
     $display_currency = $_POST['display_currency'];
-    $stmt = $conn->prepare("UPDATE settings SET display_currency = ? WHERE id = 1");
-    $stmt->bind_param("s", $display_currency);
-    $stmt->execute();
-    $stmt->close();
+    $allowedCurrencies = ['LBP', 'USD', 'BOTH'];
+    if (in_array($display_currency, $allowedCurrencies, true)) {
+        $stmt = $conn->prepare("UPDATE settings SET display_currency = ? WHERE id = 1");
+        $stmt->bind_param("s", $display_currency);
+        $stmt->execute();
+        $stmt->close();
+    }
+
     header("Location: viewItems.php?" . http_build_query($_GET));
     exit;
 }
 
-// Handle search and category filter
+// -------------------------
+// Read filters
+// -------------------------
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $category_filter = isset($_GET['category']) ? trim($_GET['category']) : '';
 
-// Fetch settings including exchange rate and display_currency
+// -------------------------
+// Load settings
+// -------------------------
 $settingsQuery = "SELECT exchange_rate, display_currency FROM settings LIMIT 1";
 $settingsResult = $conn->query($settingsQuery);
 $settings = $settingsResult ? $settingsResult->fetch_assoc() : null;
 $exchange_rate = $settings['exchange_rate'] ?? 90000;
 $display_currency = $settings['display_currency'] ?? 'LBP';
+$csrfToken = ensure_csrf_token();
+
+// -------------------------
+// Load category filter options
+// -------------------------
+$categories = [];
+$catResult = $conn->query("SELECT DISTINCT cat_name FROM categories ORDER BY cat_name");
+if ($catResult) {
+    while ($catRow = $catResult->fetch_assoc()) {
+        $categories[] = $catRow;
+    }
+}
+
+// -------------------------
+// Load filtered items
+// -------------------------
+$sql = "SELECT * FROM items WHERE 1=1";
+$params = [];
+$types = "";
+
+if ($search !== '') {
+    $sql .= " AND item_name LIKE ?";
+    $params[] = "%$search%";
+    $types .= "s";
+}
+
+if ($category_filter !== '') {
+    $sql .= " AND item_category = ?";
+    $params[] = $category_filter;
+    $types .= "s";
+}
+
+$sql .= " ORDER BY item_category, item_name";
+$stmt = $conn->prepare($sql);
+if (!empty($params)) {
+    $stmt->bind_param($types, ...$params);
+}
+$stmt->execute();
+$result = $stmt->get_result();
+$itemRows = [];
+while ($row = $result->fetch_assoc()) {
+    $itemRows[] = $row;
+}
+$stmt->close();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -68,14 +124,12 @@ $display_currency = $settings['display_currency'] ?? 'LBP';
             <div class="category-filter">
                 <select name="category" onchange="filterByCategory(this.value)">
                     <option value="">All Categories</option>
-                    <?php
-                    $cat_sql = "SELECT DISTINCT cat_name FROM categories ORDER BY cat_name";
-                    $cat_result = $conn->query($cat_sql);
-                    while($cat_row = $cat_result->fetch_assoc()) {
-                        $selected = ($category_filter === $cat_row['cat_name']) ? 'selected' : '';
-                        echo "<option value='" . htmlspecialchars($cat_row['cat_name']) . "' $selected>" . htmlspecialchars($cat_row['cat_name']) . "</option>";
-                    }
-                    ?>
+                    <?php foreach ($categories as $cat_row): ?>
+                        <?php $selected = ($category_filter === $cat_row['cat_name']) ? 'selected' : ''; ?>
+                        <option value="<?php echo htmlspecialchars($cat_row['cat_name']); ?>" <?php echo $selected; ?>>
+                            <?php echo htmlspecialchars($cat_row['cat_name']); ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
             </div>
             
@@ -89,75 +143,58 @@ $display_currency = $settings['display_currency'] ?? 'LBP';
             <h3><i class="fas fa-eye"></i> Menu Price Display (controls what customers see on menu.php)</h3>
             <div class="btn-group">
                 <form method="POST" style="display: inline;">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
                     <input type="hidden" name="display_currency" value="LBP">
                     <button type="submit" class="<?php echo $display_currency === 'LBP' ? 'active' : ''; ?>">LBP Only</button>
                 </form>
                 <form method="POST" style="display: inline;">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
                     <input type="hidden" name="display_currency" value="USD">
                     <button type="submit" class="<?php echo $display_currency === 'USD' ? 'active' : ''; ?>">USD Only</button>
                 </form>
                 <form method="POST" style="display: inline;">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
                     <input type="hidden" name="display_currency" value="BOTH">
                     <button type="submit" class="<?php echo $display_currency === 'BOTH' ? 'active' : ''; ?>">Both Prices</button>
                 </form>
             </div>
         </div>
 
-        <?php
-        $sql = "SELECT * FROM items WHERE 1=1";
-        $params = [];
-        $types = "";
+        <?php if (count($itemRows) > 0): ?>
+            <div class="item-list">
+                <div class="item-row item-header">
+                    <span>Item Name</span>
+                    <span>Category</span>
+                    <span class="price-lbp-header">Price (LBP)</span>
+                    <span class="price-usd-header">Price (USD)</span>
+                    <span>Edit</span>
+                    <span>Delete</span>
+                </div>
 
-        if (!empty($search)) {
-            $sql .= " AND item_name LIKE ?";
-            $params[] = "%$search%";
-            $types .= "s";
-        }
-
-        if (!empty($category_filter)) {
-            $sql .= " AND item_category = ?";
-            $params[] = $category_filter;
-            $types .= "s";
-        }
-
-        $sql .= " ORDER BY item_category, item_name";
-
-        $stmt = $conn->prepare($sql);
-        if (!empty($params)) {
-            $stmt->bind_param($types, ...$params);
-        }
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result->num_rows > 0) {
-            echo '<div class="item-list">';
-            echo '<div class="item-row item-header">';
-            echo '<span>Item Name</span>';
-            echo '<span>Category</span>';
-            echo '<span class="price-lbp-header">Price (LBP)</span>';
-            echo '<span class="price-usd-header">Price (USD)</span>';
-            echo '<span>Edit</span>';
-            echo '<span>Delete</span>';
-            echo '</div>';
-
-            while($row = $result->fetch_assoc()) {
-                $lbp_price = $row["item_pricelbp"] > 0 ? number_format($row["item_pricelbp"]) . " LBP" : "-";
-                $usd_price = $row["item_priceusd"] > 0 ? "$" . number_format($row["item_priceusd"], 2) : "-";
-                echo "<div class='item-row' data-lbp-price=\"" . htmlspecialchars($lbp_price) . "\" data-usd-price=\"" . htmlspecialchars($usd_price) . "\">
-                        <span>".htmlspecialchars($row["item_name"])."</span>
-                        <span>".htmlspecialchars($row["item_category"])."</span>
-                        <span class='price-lbp'>".$lbp_price."</span>
-                        <span class='price-usd'>".$usd_price."</span>
-                        <span><a href='editItem.php?item=".urlencode($row["item_name"])."&category=".urlencode($row["item_category"])."'><i class='fas fa-pen'></i></a></span>
-                        <span><a href='deleteItem.php?id=" . $row["item_id"] . "' onclick='return confirm(\"Are you sure?\");'><i class='fas fa-trash'></i></a></span>
-                      </div>";
-            }
-            echo '</div>';
-        } else {
-            echo "<div class='alert alert-info' style='text-align:center; padding: 20px;'>No items found.</div>";
-        }
-        $stmt->close();
-        ?>
+                <?php foreach ($itemRows as $row): ?>
+                    <?php
+                    $lbp_price = $row["item_pricelbp"] > 0 ? number_format($row["item_pricelbp"]) . " LBP" : "-";
+                    $usd_price = $row["item_priceusd"] > 0 ? "$" . number_format($row["item_priceusd"], 2) : "-";
+                    ?>
+                    <div class='item-row' data-lbp-price="<?php echo htmlspecialchars($lbp_price); ?>" data-usd-price="<?php echo htmlspecialchars($usd_price); ?>">
+                        <span><?php echo htmlspecialchars($row["item_name"]); ?></span>
+                        <span><?php echo htmlspecialchars($row["item_category"]); ?></span>
+                        <span class='price-lbp'><?php echo $lbp_price; ?></span>
+                        <span class='price-usd'><?php echo $usd_price; ?></span>
+                        <span><a href='editItem.php?item=<?php echo urlencode($row["item_name"]); ?>&category=<?php echo urlencode($row["item_category"]); ?>'><i class='fas fa-pen'></i></a></span>
+                        <span>
+                            <form method='POST' action='deleteItem.php' style='display:inline;' onsubmit='return confirm("Are you sure?");'>
+                                <input type='hidden' name='csrf_token' value='<?php echo htmlspecialchars($csrfToken); ?>'>
+                                <input type='hidden' name='id' value='<?php echo (int)$row["item_id"]; ?>'>
+                                <button type='submit' style='background:none;border:none;padding:0;cursor:pointer;'><i class='fas fa-trash'></i></button>
+                            </form>
+                        </span>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php else: ?>
+            <div class='alert alert-info' style='text-align:center; padding: 20px;'>No items found.</div>
+        <?php endif; ?>
     </div>
 
     <script>

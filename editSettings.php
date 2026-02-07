@@ -1,121 +1,122 @@
 <?php
 include "connection.php";
-session_start();
+include "auth.php";
+start_secure_session();
+require_admin();
 
-if (!isset($_SESSION["isAdmin"]) || $_SESSION["isAdmin"] !== true) {
-    header("Location: index.php");
-    exit();
-}
-
-// Fetch current settings
+// -------------------------
+// Load current settings
+// -------------------------
 $settingsQuery = "SELECT * FROM settings LIMIT 1";
 $settingsResult = $conn->query($settingsQuery);
 $settings = $settingsResult ? $settingsResult->fetch_assoc() : null;
 
+/**
+ * Reuse the existing path unless a new file is uploaded successfully.
+ */
+function uploadSettingsImage(string $fieldName, string $prefix, string $currentPath): string
+{
+    if (empty($_FILES[$fieldName]['name']) || $_FILES[$fieldName]['error'] !== 0) {
+        return $currentPath;
+    }
+
+    $targetDir = "bgs/";
+    if (!is_dir($targetDir)) {
+        mkdir($targetDir, 0777, true);
+    }
+
+    $fileName = $prefix . "_" . time() . "_" . basename($_FILES[$fieldName]["name"]);
+    $targetFile = $targetDir . $fileName;
+
+    if (move_uploaded_file($_FILES[$fieldName]["tmp_name"], $targetFile)) {
+        return $targetFile;
+    }
+
+    return $currentPath;
+}
+
 $message = "";
 
+// -------------------------
+// Handle form submission
+// -------------------------
 if (isset($_POST['update_settings'])) {
-    $name = $_POST['restaurant_name'];
-    $email = $_POST['restaurant_email'];
-    $phone = $_POST['restaurant_phone'];
-    $address = $_POST['restaurant_address'];
-    $maps = $_POST['restaurant_maps'];
-    $desc = $_POST['restaurant_description'];
-    $hours = $_POST['opening_hours'];
-    $whatsapp = $_POST['whatsapp_number'];
-    $insta = $_POST['instagram_url'];
-    $fb = $_POST['facebook_url'];
-    $opening_title = $_POST['opening_title'];
-    $chat_id = $_POST['chat_id'];
-    $bot_token = $_POST['bot_token'];
-    $exchange_rate = $_POST['exchange_rate'];
-    if (!is_numeric($exchange_rate) || $exchange_rate <= 0) {
-        $exchange_rate = 90000; // Default rate if invalid
-    }
-
-    // Handle Logo Upload
-    $logo_path = $settings['restaurant_logo'] ?? '';
-    if (!empty($_FILES['restaurant_logo']['name'])) {
-        $target_dir = "bgs/";
-        if (!is_dir($target_dir)) mkdir($target_dir, 0777, true);
-        $file_name = "logo_" . time() . "_" . basename($_FILES["restaurant_logo"]["name"]);
-        $target_file = $target_dir . $file_name;
-        if (move_uploaded_file($_FILES["restaurant_logo"]["tmp_name"], $target_file)) {
-            $logo_path = $target_file;
-        }
-    }
-
-    // Handle Home Background Upload
-    $home_bg_path = $settings['home_bg'] ?? '';
-    if (!empty($_FILES['home_bg']['name'])) {
-        $target_dir = "bgs/";
-        $file_name = "home_" . time() . "_" . basename($_FILES["home_bg"]["name"]);
-        $target_file = $target_dir . $file_name;
-        if (move_uploaded_file($_FILES["home_bg"]["tmp_name"], $target_file)) {
-            $home_bg_path = $target_file;
-        }
-    }
-
-    // Handle Menu Background Upload
-    $menu_bg_path = $settings['menu_bg'] ?? '';
-    if (!empty($_FILES['menu_bg']['name'])) {
-        $target_dir = "bgs/";
-        $file_name = "menu_" . time() . "_" . basename($_FILES["menu_bg"]["name"]);
-        $target_file = $target_dir . $file_name;
-        if (move_uploaded_file($_FILES["menu_bg"]["tmp_name"], $target_file)) {
-            $menu_bg_path = $target_file;
-        }
-    }
-
-    // Handle Contact Background Upload
-    $contact_bg_path = $settings['contact_bg'] ?? '';
-    if (!empty($_FILES['contact_bg']['name'])) {
-        $target_dir = "bgs/";
-        $file_name = "contact_" . time() . "_" . basename($_FILES["contact_bg"]["name"]);
-        $target_file = $target_dir . $file_name;
-        if (move_uploaded_file($_FILES["contact_bg"]["tmp_name"], $target_file)) {
-            $contact_bg_path = $target_file;
-        }
-    }
-
-    if ($settings) {
-        $stmt = $conn->prepare("UPDATE settings SET 
-            restaurant_name = ?, 
-            restaurant_logo = ?, 
-            home_bg = ?,
-            menu_bg = ?,
-            contact_bg = ?,
-            restaurant_email = ?, 
-            restaurant_phone = ?, 
-            restaurant_address = ?,
-            restaurant_maps = ?,
-            restaurant_description = ?, 
-            opening_hours = ?, 
-            whatsapp_number = ?, 
-            instagram_url = ?, 
-            facebook_url = ?,
-            opening_title = ?,
-            chat_id = ?,
-            bot_token = ?,
-            exchange_rate = ?
-            WHERE id = ?");
-        $stmt->bind_param("sssssssssssssssssdi", $name, $logo_path, $home_bg_path, $menu_bg_path,$contact_bg_path, $email, $phone, $address, $maps, $desc, $hours, $whatsapp, $insta, $fb, $opening_title, $chat_id, $bot_token, $exchange_rate, $settings['id']);
+    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+        $message = "<div class='alert alert-danger'>Invalid request token. Please refresh and try again.</div>";
     } else {
-        $stmt = $conn->prepare("INSERT INTO settings (restaurant_name, restaurant_logo, home_bg, menu_bg, contact_bg, restaurant_email, restaurant_phone, restaurant_address, restaurant_maps, restaurant_description, opening_hours, whatsapp_number, instagram_url, facebook_url, opening_title, chat_id, bot_token, exchange_rate) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssssssssssssssssd", $name, $logo_path, $home_bg_path, $menu_bg_path,$contact_bg_path,$email,$phone,$address,$maps,$desc,$hours,$whatsapp,$insta,$fb,$opening_title,$chat_id,$bot_token,$exchange_rate);
-    }
+        // Basic fields
+        $name = trim($_POST['restaurant_name'] ?? '');
+        $email = trim($_POST['restaurant_email'] ?? '');
+        $phone = trim($_POST['restaurant_phone'] ?? '');
+        $address = trim($_POST['restaurant_address'] ?? '');
+        $maps = trim($_POST['restaurant_maps'] ?? '');
+        $desc = trim($_POST['restaurant_description'] ?? '');
+        $hours = trim($_POST['opening_hours'] ?? '');
+        $whatsapp = trim($_POST['whatsapp_number'] ?? '');
+        $insta = trim($_POST['instagram_url'] ?? '');
+        $fb = trim($_POST['facebook_url'] ?? '');
+        $opening_title = trim($_POST['opening_title'] ?? '');
+        $chat_id = trim($_POST['chat_id'] ?? '');
+        $bot_token = trim($_POST['bot_token'] ?? '');
+        $exchange_rate = $_POST['exchange_rate'] ?? 90000;
+        if (!is_numeric($exchange_rate) || $exchange_rate <= 0) {
+            $exchange_rate = 90000; // Default rate if invalid
+        }
 
-    if ($stmt->execute()) {
-        $message = "<div class='alert alert-success'>Settings updated successfully!</div>";
-        // Refresh settings
-        $settingsResult = $conn->query($settingsQuery);
-        $settings = $settingsResult->fetch_assoc();
-    } else {
-        $message = "<div class='alert alert-danger'>Error updating settings: " . htmlspecialchars($stmt->error) . "</div>";
+        // Image fields
+        $logo_path = $settings['restaurant_logo'] ?? '';
+        $home_bg_path = $settings['home_bg'] ?? '';
+        $menu_bg_path = $settings['menu_bg'] ?? '';
+        $contact_bg_path = $settings['contact_bg'] ?? '';
+
+        $logo_path = uploadSettingsImage('restaurant_logo', 'logo', $logo_path);
+        $home_bg_path = uploadSettingsImage('home_bg', 'home', $home_bg_path);
+        $menu_bg_path = uploadSettingsImage('menu_bg', 'menu', $menu_bg_path);
+        $contact_bg_path = uploadSettingsImage('contact_bg', 'contact', $contact_bg_path);
+
+        // Persist settings
+        if ($settings) {
+            $stmt = $conn->prepare("UPDATE settings SET 
+                restaurant_name = ?, 
+                restaurant_logo = ?, 
+                home_bg = ?,
+                menu_bg = ?,
+                contact_bg = ?,
+                restaurant_email = ?, 
+                restaurant_phone = ?, 
+                restaurant_address = ?,
+                restaurant_maps = ?,
+                restaurant_description = ?, 
+                opening_hours = ?, 
+                whatsapp_number = ?, 
+                instagram_url = ?, 
+                facebook_url = ?,
+                opening_title = ?,
+                chat_id = ?,
+                bot_token = ?,
+                exchange_rate = ?
+                WHERE id = ?");
+            $stmt->bind_param("sssssssssssssssssdi", $name, $logo_path, $home_bg_path, $menu_bg_path,$contact_bg_path, $email, $phone, $address, $maps, $desc, $hours, $whatsapp, $insta, $fb, $opening_title, $chat_id, $bot_token, $exchange_rate, $settings['id']);
+        } else {
+            $stmt = $conn->prepare("INSERT INTO settings (restaurant_name, restaurant_logo, home_bg, menu_bg, contact_bg, restaurant_email, restaurant_phone, restaurant_address, restaurant_maps, restaurant_description, opening_hours, whatsapp_number, instagram_url, facebook_url, opening_title, chat_id, bot_token, exchange_rate) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("sssssssssssssssssd", $name, $logo_path, $home_bg_path, $menu_bg_path,$contact_bg_path,$email,$phone,$address,$maps,$desc,$hours,$whatsapp,$insta,$fb,$opening_title,$chat_id,$bot_token,$exchange_rate);
+        }
+
+        if ($stmt->execute()) {
+            $message = "<div class='alert alert-success'>Settings updated successfully!</div>";
+            // Refresh settings
+            $settingsResult = $conn->query($settingsQuery);
+            $settings = $settingsResult->fetch_assoc();
+        } else {
+            $message = "<div class='alert alert-danger'>Error updating settings: " . htmlspecialchars($stmt->error) . "</div>";
+        }
+        $stmt->close();
     }
-    $stmt->close();
 }
+
+// Keep token generation close to render stage.
+$csrfToken = ensure_csrf_token();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -142,6 +143,7 @@ if (isset($_POST['update_settings'])) {
         <h1>Restaurant Settings</h1>
         <?php echo $message; ?>
         <form action="editSettings.php" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
             <div class="form-group">
                 <label for="restaurant_name">Restaurant Name</label>
                 <input type="text" name="restaurant_name" value="<?php echo htmlspecialchars($settings['restaurant_name'] ?? ''); ?>" required>
@@ -176,6 +178,7 @@ if (isset($_POST['update_settings'])) {
                 <?php if (!empty($settings['contact_bg'])): ?>
                     <img src="<?php echo htmlspecialchars($settings['contact_bg']); ?>" class="current-logo" alt="Contact BG">
                 <?php endif; ?>
+            </div>
 
             <div class="form-group">
                 <label for="opening_title">Opening Title (e.g., Open Daily)</label>

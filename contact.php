@@ -1,9 +1,8 @@
 <?php
 include "connection.php";
+include "auth.php";
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+start_secure_session();
 
 /* -------------------------
    Fetch restaurant settings
@@ -57,75 +56,86 @@ function sendTelegramMessage($chat_id, $bot_token, $text)
 $message = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+        $message = '
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            Invalid request token. Please refresh and try again.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>';
+    } else {
 
-    $name    = trim($_POST['name'] ?? '');
-    $subject = trim($_POST['subject'] ?? '');
-    $body    = trim($_POST['message'] ?? '');
+        $name    = trim($_POST['name'] ?? '');
+        $subject = trim($_POST['subject'] ?? '');
+        $body    = trim($_POST['message'] ?? '');
 
-    if ($name && $subject && $body) {
+        if ($name && $subject && $body) {
 
-        $sql = "INSERT INTO contact_submissions (name, subject, message)
-                VALUES (?, ?, ?)";
+            $sql = "INSERT INTO contact_submissions (name, subject, message)
+                    VALUES (?, ?, ?)";
 
-        if ($stmt = $conn->prepare($sql)) {
+            if ($stmt = $conn->prepare($sql)) {
 
-            $stmt->bind_param("sss", $name, $subject, $body);
+                $stmt->bind_param("sss", $name, $subject, $body);
 
-            if ($stmt->execute()) {
+                if ($stmt->execute()) {
 
-                $message = '
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <i class="fas fa-check-circle me-2"></i>
-                    Thank you for your message! We will get back to you soon.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>';
+                    $message = '
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Thank you for your message! We will get back to you soon.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>';
 
-                $telegram_chat_id  = $settings['chat_id'] ?? '';
-                $telegram_bot_token = $settings['bot_token'] ?? '';
+                    $telegram_chat_id  = $settings['chat_id'] ?? '';
+                    $telegram_bot_token = $settings['bot_token'] ?? '';
 
-                if ($telegram_chat_id && $telegram_bot_token) {
+                    if ($telegram_chat_id && $telegram_bot_token) {
 
-                    $telegram_text =
-                          htmlspecialchars($name) . ":\n"
-                        . "<b>Subject:</b> " . htmlspecialchars($subject) . "\n"
-                        . "<b>Message:</b>\n" . htmlspecialchars($body);
+                        $telegram_text =
+                              htmlspecialchars($name) . ":\n"
+                            . "<b>Subject:</b> " . htmlspecialchars($subject) . "\n"
+                            . "<b>Message:</b>\n" . htmlspecialchars($body);
 
-                    sendTelegramMessage(
-                        $telegram_chat_id,
-                        $telegram_bot_token,
-                        $telegram_text
-                    );
+                        sendTelegramMessage(
+                            $telegram_chat_id,
+                            $telegram_bot_token,
+                            $telegram_text
+                        );
+                    }
+
+                } else {
+                    $message = '
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Something went wrong. Please try again later.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>';
                 }
+
+                $stmt->close();
 
             } else {
                 $message = '
                 <div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <i class="fas fa-exclamation-circle me-2"></i>
-                    Something went wrong. Please try again later.
+                    Database error. Please try again later.
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>';
             }
-
-            $stmt->close();
 
         } else {
             $message = '
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
                 <i class="fas fa-exclamation-circle me-2"></i>
-                Database error. Please try again later.
+                Please fill in all fields.
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
             </div>';
         }
-
-    } else {
-        $message = '
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle me-2"></i>
-            Please fill in all fields.
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>';
     }
 }
+
+$csrfToken = ensure_csrf_token();
 ?>
 
 <?php include 'header.php'; ?>
@@ -191,6 +201,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="col-md-7">
                             <div class="contact-form-section">
                                 <form method="POST">
+                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
                                     <div class="mb-3">
                                         <label class="form-label">Name</label>
                                         <input type="text" name="name" class="form-control" required>

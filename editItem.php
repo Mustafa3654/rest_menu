@@ -1,13 +1,12 @@
 <?php 
 include "connection.php";
-session_start();
+include "auth.php";
+start_secure_session();
+require_admin();
 
-if (!isset($_SESSION["isAdmin"]) || $_SESSION["isAdmin"] !== true) {
-    header("Location: index.php");
-    exit;
-}
-
-// Fetch exchange rate
+// -------------------------
+// Load settings needed for price hints
+// -------------------------
 $settingsQuery = "SELECT exchange_rate FROM settings LIMIT 1";
 $settingsResult = $conn->query($settingsQuery);
 $settings = $settingsResult ? $settingsResult->fetch_assoc() : null;
@@ -15,43 +14,53 @@ $exchange_rate = $settings['exchange_rate'] ?? 90000;
 
 $message = "";
 
+// -------------------------
+// Handle update action
+// -------------------------
 if (isset($_POST["submit"])) {
-    $id = $_POST['id'];
-    $name = trim($_POST['item-name']);
-    $pricelbp = $_POST['price-lbp'];
-    $priceusd = $_POST['price-usd'];
-    $ingredients = $_POST["ingredients"];
-    $cat = $_POST["category"];
-    $pic_path = $_POST['current_pic'];
-
-    // Handle image upload
-    if (isset($_FILES['item-img']) && $_FILES['item-img']['error'] === 0) {
-        $img_name = $_FILES['item-img']['name'];
-        $tmp_name = $_FILES['item-img']['tmp_name'];
-        $img_ex = strtolower(pathinfo($img_name, PATHINFO_EXTENSION));
-        $allowed_exs = array("jpg", "jpeg", "png", "gif", "webp");
-
-        if (in_array($img_ex, $allowed_exs)) {
-            $upload_folder = 'items/';
-            if (!is_dir($upload_folder)) mkdir($upload_folder, 0777, true);
-            $new_img_name = uniqid("IMG-", true).'.'.$img_ex;
-            $pic_path = $upload_folder . $new_img_name;
-            move_uploaded_file($tmp_name, $pic_path);
-        }
-    }
-
-    $stmt = $conn->prepare("UPDATE items SET item_name=?, item_pricelbp=?, Ingredients=?, item_priceusd=?, item_category=?, item_pic=? WHERE item_id=?");
-    $stmt->bind_param("sisdssi", $name, $pricelbp, $ingredients, $priceusd, $cat, $pic_path, $id);
-    
-    if ($stmt->execute()) {
-        header("Location: viewItems.php");
-        exit;
+    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+        $message = "<div class='alert alert-danger'>Invalid request token. Please refresh and try again.</div>";
     } else {
-        $message = "<div class='alert alert-danger'>Update Failed: " . htmlspecialchars($stmt->error) . "</div>";
+        $id = $_POST['id'];
+        $name = trim($_POST['item-name']);
+        $pricelbp = $_POST['price-lbp'];
+        $priceusd = $_POST['price-usd'];
+        $ingredients = $_POST["ingredients"];
+        $cat = $_POST["category"];
+        $pic_path = $_POST['current_pic'];
+
+        // Handle image upload
+        if (isset($_FILES['item-img']) && $_FILES['item-img']['error'] === 0) {
+            $img_name = $_FILES['item-img']['name'];
+            $tmp_name = $_FILES['item-img']['tmp_name'];
+            $img_ex = strtolower(pathinfo($img_name, PATHINFO_EXTENSION));
+            $allowed_exs = array("jpg", "jpeg", "png", "gif", "webp");
+
+            if (in_array($img_ex, $allowed_exs)) {
+                $upload_folder = 'items/';
+                if (!is_dir($upload_folder)) mkdir($upload_folder, 0777, true);
+                $new_img_name = uniqid("IMG-", true).'.'.$img_ex;
+                $pic_path = $upload_folder . $new_img_name;
+                move_uploaded_file($tmp_name, $pic_path);
+            }
+        }
+
+        $stmt = $conn->prepare("UPDATE items SET item_name=?, item_pricelbp=?, Ingredients=?, item_priceusd=?, item_category=?, item_pic=? WHERE item_id=?");
+        $stmt->bind_param("sisdssi", $name, $pricelbp, $ingredients, $priceusd, $cat, $pic_path, $id);
+        
+        if ($stmt->execute()) {
+            header("Location: viewItems.php");
+            exit;
+        } else {
+            $message = "<div class='alert alert-danger'>Update Failed: " . htmlspecialchars($stmt->error) . "</div>";
+        }
+        $stmt->close();
     }
-    $stmt->close();
 }
 
+// -------------------------
+// Load target item by name/category pair
+// -------------------------
 $row = null;
 if (isset($_GET["item"]) && isset($_GET["category"])) {
     $item_name = $_GET["item"];
@@ -69,6 +78,9 @@ if (!$row) {
     header("Location: viewItems.php");
     exit;
 }
+
+// Generate token near render stage.
+$csrfToken = ensure_csrf_token();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -83,6 +95,7 @@ if (!$row) {
         <h1>Edit Item</h1>
         <?php echo $message; ?>
         <form action="editItem.php" method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
             <input type="hidden" name="id" value="<?php echo $row["item_id"]; ?>">
             <input type="hidden" name="current_pic" value="<?php echo $row["item_pic"]; ?>">
 

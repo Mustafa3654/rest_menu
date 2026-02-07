@@ -1,13 +1,14 @@
 <?php
 include "connection.php";
-session_start();
+include "auth.php";
+start_secure_session();
+require_admin();
 
-if (!isset($_SESSION["isAdmin"]) || $_SESSION["isAdmin"] !== true) {
-    header("Location: index.php");
-    exit;
-}
-
+// -------------------------
+// Read filters
+// -------------------------
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$csrfToken = ensure_csrf_token();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -69,7 +70,13 @@ $search = isset($_GET['search']) ? trim($_GET['search']) : '';
                 echo "<div class='cat-row'>
                         <span>".htmlspecialchars($row["cat_name"])."</span>
                         <span><a href='editCategory.php?category=".urlencode($row["cat_name"])."'><i class='fas fa-pen'></i></a></span>
-                        <span><a href='deleteCategory.php?id=" . $row["cat_id"] . "' onclick='return confirm(\"Are you sure?\");'><i class='fas fa-trash'></i></a></span>
+                        <span>
+                            <form method='POST' action='deleteCategory.php' style='display:inline;' onsubmit='return confirm(\"Are you sure?\");'>
+                                <input type='hidden' name='csrf_token' value='" . htmlspecialchars($csrfToken) . "'>
+                                <input type='hidden' name='id' value='" . (int)$row["cat_id"] . "'>
+                                <button type='submit' style='background:none;border:none;padding:0;cursor:pointer;'><i class='fas fa-trash'></i></button>
+                            </form>
+                        </span>
                       </div>";
             }
             echo '</div>';
