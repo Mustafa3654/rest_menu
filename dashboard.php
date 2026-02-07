@@ -53,8 +53,7 @@ if($isAdmin == 0){
             <a href="viewItems.php" class="dashboard-button">View Items</a>
             <a href="viewCategories.php" class="dashboard-button">View Categories</a>
             <a href="editSettings.php" class="dashboard-button">Settings</a>
-            <a href="index.php" class="dashboard-button">Back</a>
-            <a href="logout.php" class="dashboard-button logout">Logout</a>
+            <a href="index.php" class="dashboard-button logout">Back</a>
         </div>
     </div>
 </body>

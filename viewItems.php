@@ -43,6 +43,14 @@ $display_currency = $settings['display_currency'] ?? 'LBP';
 $csrfToken = ensure_csrf_token();
 
 // -------------------------
+// Import status messages
+// -------------------------
+$import_status = $_GET['import_status'] ?? '';
+$import_message = isset($_GET['import_message']) ? htmlspecialchars(urldecode($_GET['import_message'])) : '';
+$import_errors = $_SESSION['import_errors'] ?? [];
+unset($_SESSION['import_errors']); // Clear errors after display
+
+// -------------------------
 // Load category filter options
 // -------------------------
 $categories = [];
@@ -106,6 +114,23 @@ $stmt->close();
         .currency-control button { padding: 8px 18px; border: 2px solid #1a2a6c; background: white; color: #1a2a6c; border-radius: 5px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
         .currency-control button.active { background: #1a2a6c; color: white; }
         .currency-control button:hover { background: #1a2a6c; color: white; }
+        
+        /* Import/Export Section */
+        .import-export-section { background: #e7f3ff; padding: 15px 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #4a90e2; }
+        .import-export-section h3 { margin: 0 0 12px 0; font-size: 14px; color: #1a5490; }
+        .import-export-buttons { display: flex; gap: 15px; flex-wrap: wrap; align-items: center; }
+        .export-btn { background: #28a745; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; text-decoration: none; font-weight: 600; display: inline-block; }
+        .export-btn:hover { background: #218838; }
+        .import-form { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .import-form input[type="file"] { padding: 8px; border: 1px solid #ddd; border-radius: 5px; background: white; }
+        .import-btn { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; }
+        .import-btn:hover { background: #0056b3; }
+        
+        /* Alert Messages */
+        .alert { padding: 15px 20px; margin-bottom: 20px; border-radius: 5px; font-weight: 500; }
+        .alert-success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .alert-error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .alert-info { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
     </style>
 </head>
 <body>
@@ -138,9 +163,22 @@ $stmt->close();
             </div>
         </div>
 
+        <!-- Import/Export Section -->
+        <div class="import-export-section">
+            <h3><i class="fas fa-file-csv"></i> Import/Export Items</h3>
+            <div class="import-export-buttons">
+                <a href="exportItems.php" class="export-btn"><i class="fas fa-download"></i> Export to CSV</a>
+                <form action="importItems.php" method="POST" enctype="multipart/form-data" class="import-form">
+                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
+                    <input type="file" name="csv_file" id="csv_file" accept=".csv,text/csv" required>
+                    <button type="submit" name="import" class="import-btn"><i class="fas fa-upload"></i> Import from CSV</button>
+                </form>
+            </div>
+        </div>
+
         <!-- Menu Price Display Control -->
         <div class="currency-control">
-            <h3><i class="fas fa-eye"></i> Menu Price Display (controls what customers see on menu.php)</h3>
+            <h3><i class="fas fa-eye"></i> Menu Price Display (controls what customers see on Menu)</h3>
             <div class="btn-group">
                 <form method="POST" style="display: inline;">
                     <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
@@ -159,6 +197,24 @@ $stmt->close();
                 </form>
             </div>
         </div>
+
+        <!-- Import Status Messages -->
+        <?php if ($import_status === 'success'): ?>
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i> Import successful! <?php echo $import_message; ?>
+            </div>
+        <?php elseif ($import_status === 'error'): ?>
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-circle"></i> <?php echo $import_message; ?>
+                <?php if (!empty($import_errors)): ?>
+                    <ul style="margin-top: 10px; margin-bottom: 0;">
+                        <?php foreach ($import_errors as $error): ?>
+                            <li><?php echo htmlspecialchars($error); ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
 
         <?php if (count($itemRows) > 0): ?>
             <div class="item-list">
