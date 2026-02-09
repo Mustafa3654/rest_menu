@@ -74,10 +74,20 @@ if (empty($current_cat)) {
                 $result = $stmt->get_result();
 
                 if ($result && $result->num_rows > 0) {
+                    // First, check if any item has a photo
+                    $anyHasPhoto = false;
+                    $items = [];
                     while($item = $result->fetch_assoc()) {
+                        $items[] = $item;
+                        if (!empty($item['item_pic'])) {
+                            $anyHasPhoto = true;
+                        }
+                    }
+
+                    foreach($items as $item) {
                         ?>
                         <a href="ingredients.php?item=<?php echo urlencode($item['item_id']); ?>" style="text-decoration: none; color: inherit;">
-                        <div class="menu-card" 
+                        <div class="menu-card"
                              data-id="<?php echo $item['item_id']; ?>"
                              data-name="<?php echo htmlspecialchars($item['item_name']); ?>"
                              data-price-lbp="<?php echo $item['item_pricelbp']; ?>"
@@ -85,6 +95,10 @@ if (empty($current_cat)) {
                             <?php if (!empty($item['item_pic'])): ?>
                                 <div class="menu-card-img-container">
                                     <img src="<?php echo htmlspecialchars($item['item_pic']); ?>" alt="<?php echo htmlspecialchars($item['item_name']); ?>" class="menu-card-img">
+                                </div>
+                            <?php elseif ($anyHasPhoto): ?>
+                                <div class="menu-card-img-container placeholder-img">
+                                    <img src="items/placeholder-food.png" alt="No image" class="menu-card-img">
                                 </div>
                             <?php endif; ?>
                             <div class="menu-card-body">
