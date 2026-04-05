@@ -66,6 +66,8 @@ if (isset($_POST['submit'])) {
                     session_regenerate_id(true);
                     $_SESSION["user_name"] = $user['username'];
                     $_SESSION["isAdmin"] = ((int)$user['isAdmin'] === 1);
+
+                    log_audit('login', 'auth', (int)$user['user_id'], null);
                     header("Location: dashboard.php");
                     exit;
                 }
@@ -100,7 +102,7 @@ $csrfToken = ensure_csrf_token();
             </div>
         <?php endif; ?>
         <form action="login.php" method="POST">
-            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
+            <?php echo csrf_input(); ?>
             <label for="username">Username</label>
             <input type="text" id="username" name="username" placeholder="Enter Username" required>
 

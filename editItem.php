@@ -5,11 +5,9 @@ start_secure_session();
 require_admin();
 
 // -------------------------
-// Load settings needed for price hints
+// Load settings for exchange rate (cached)
 // -------------------------
-$settingsQuery = "SELECT exchange_rate FROM settings LIMIT 1";
-$settingsResult = $conn->query($settingsQuery);
-$settings = $settingsResult ? $settingsResult->fetch_assoc() : null;
+$settings = get_settings();
 $exchange_rate = $settings['exchange_rate'] ?? 90000;
 
 $message = "";
@@ -38,7 +36,7 @@ if (isset($_POST["submit"])) {
 
             if (in_array($img_ex, $allowed_exs)) {
                 $upload_folder = 'items/';
-                if (!is_dir($upload_folder)) mkdir($upload_folder, 0777, true);
+                if (!is_dir($upload_folder)) mkdir($upload_folder, 0755, true);
                 $new_img_name = uniqid("IMG-", true).'.'.$img_ex;
                 $pic_path = $upload_folder . $new_img_name;
                 move_uploaded_file($tmp_name, $pic_path);
@@ -49,6 +47,7 @@ if (isset($_POST["submit"])) {
         $stmt->bind_param("sisdssi", $name, $pricelbp, $ingredients, $priceusd, $cat, $pic_path, $id);
         
         if ($stmt->execute()) {
+            log_audit('update', 'item', (int)$id, "Item: $name, Category: $cat");
             header("Location: viewItems.php");
             exit;
         } else {
@@ -95,7 +94,7 @@ $csrfToken = ensure_csrf_token();
         <h1>Edit Item</h1>
         <?php echo $message; ?>
         <form action="editItem.php" method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
+            <?php echo csrf_input(); ?>
             <input type="hidden" name="id" value="<?php echo $row["item_id"]; ?>">
             <input type="hidden" name="current_pic" value="<?php echo $row["item_pic"]; ?>">
 

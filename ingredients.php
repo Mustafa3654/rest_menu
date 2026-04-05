@@ -24,7 +24,7 @@ include "header.php";
                 
                 echo "<h4>Ingredients of: <br> &emsp;" . htmlspecialchars($row["item_name"]) . " </h4>";
                 $ingredients = $row["Ingredients"];
-                $ing = explode(", ", $ingredients);
+                $ing = array_map('trim', explode(",", $ingredients));
                 $listItems = "";
                 foreach ($ing as $item) {
                     $listItems .= "<li class='list-group-item'>" . htmlspecialchars($item) . "</li>\n";
@@ -33,7 +33,7 @@ include "header.php";
                 echo $unorderedList;
                 ?>
                 <div class="col-3">
-                                    <img src="<?= htmlspecialchars($row['item_pic']); ?>" alt="" style="width: 100%; height: auto; object-fit: cover; border-radius: 8px;">
+                                    <img src="<?php echo htmlspecialchars($row['item_pic']); ?>" alt="" style="width: 100%; height: auto; object-fit: cover; border-radius: 8px;">
                                 </div>
                                 <?php
             }

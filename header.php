@@ -1,14 +1,11 @@
 <?php
-include "connection.php"; 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+include "connection.php";
+include "auth.php";
+start_secure_session();
 $isAdmin = $_SESSION["isAdmin"] ?? false;
 
-// Fetch restaurant settings
-$settingsQuery = "SELECT * FROM settings LIMIT 1";
-$settingsResult = $conn->query($settingsQuery);
-$settings = $settingsResult ? $settingsResult->fetch_assoc() : null;
+// Fetch restaurant settings (cached)
+$settings = get_settings();
 
 $restaurantName = $settings['restaurant_name'] ?? 'Restaurant Menu';
 $restaurantLogo = $settings['restaurant_logo'] ?? 'bgs/logoo.jfif';

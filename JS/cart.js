@@ -44,17 +44,7 @@ class Cart {
         localStorage.setItem('restaurant_cart', JSON.stringify(this.items));
     }
 
-    getTotal() {
-        return this.items.reduce((total, item) => {
-            // Priority to LBP, then USD
-            // Note: This logic depends on how you want to handle mixed currencies.
-            // For now assuming items have one active price or we convert everything to one view.
-            // To keep it simple, we'll sum up LBP and USD separately.
-            return total; 
-        }, { lbp: 0, usd: 0 });
-    }
-    
-    // Helper to calculate totals properly
+    // Helper to calculate totals
     calculateTotals() {
         let lbp = 0;
         let usd = 0;

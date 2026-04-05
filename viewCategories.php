@@ -72,7 +72,7 @@ $csrfToken = ensure_csrf_token();
                         <span><a href='editCategory.php?category=".urlencode($row["cat_name"])."'><i class='fas fa-pen'></i></a></span>
                         <span>
                             <form method='POST' action='deleteCategory.php' style='display:inline;' onsubmit='return confirm(\"Are you sure?\");'>
-                                <input type='hidden' name='csrf_token' value='" . htmlspecialchars($csrfToken) . "'>
+                                <?php echo csrf_input(); ?>
                                 <input type='hidden' name='id' value='" . (int)$row["cat_id"] . "'>
                                 <button type='submit' style='background:none;border:none;padding:0;cursor:pointer;'><i class='fas fa-trash'></i></button>
                             </form>

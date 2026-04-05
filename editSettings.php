@@ -5,11 +5,9 @@ start_secure_session();
 require_admin();
 
 // -------------------------
-// Load current settings
+// Load current settings (cached)
 // -------------------------
-$settingsQuery = "SELECT * FROM settings LIMIT 1";
-$settingsResult = $conn->query($settingsQuery);
-$settings = $settingsResult ? $settingsResult->fetch_assoc() : null;
+$settings = get_settings();
 
 /**
  * Reuse the existing path unless a new file is uploaded successfully.
@@ -22,7 +20,7 @@ function uploadSettingsImage(string $fieldName, string $prefix, string $currentP
 
     $targetDir = "bgs/";
     if (!is_dir($targetDir)) {
-        mkdir($targetDir, 0777, true);
+        mkdir($targetDir, 0755, true);
     }
 
     $fileName = $prefix . "_" . time() . "_" . basename($_FILES[$fieldName]["name"]);
@@ -104,10 +102,11 @@ if (isset($_POST['update_settings'])) {
         }
 
         if ($stmt->execute()) {
+            invalidate_settings_cache();
+            log_audit('update', 'settings', null, "Settings updated");
             $message = "<div class='alert alert-success'>Settings updated successfully!</div>";
-            // Refresh settings
-            $settingsResult = $conn->query($settingsQuery);
-            $settings = $settingsResult->fetch_assoc();
+            // Refresh settings cache
+            $settings = get_settings();
         } else {
             $message = "<div class='alert alert-danger'>Error updating settings: " . htmlspecialchars($stmt->error) . "</div>";
         }
@@ -143,7 +142,7 @@ $csrfToken = ensure_csrf_token();
         <h1>Restaurant Settings</h1>
         <?php echo $message; ?>
         <form action="editSettings.php" method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
+            <?php echo csrf_input(); ?>
             <div class="form-group">
                 <label for="restaurant_name">Restaurant Name</label>
                 <input type="text" name="restaurant_name" value="<?php echo htmlspecialchars($settings['restaurant_name'] ?? ''); ?>" required>

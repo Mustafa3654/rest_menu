@@ -55,6 +55,7 @@ if (isset($_POST["submit"])) {
 
                 if ($updateStmt->execute()) {
                     $updateStmt->close();
+                    log_audit('update', 'item', (int)$id, "Item category changed to: $category");
                     header("Location: viewItems.php");
                     exit;
                 }

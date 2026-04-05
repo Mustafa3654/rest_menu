@@ -20,6 +20,8 @@ if (isset($_POST['display_currency'])) {
         $stmt->bind_param("s", $display_currency);
         $stmt->execute();
         $stmt->close();
+        invalidate_settings_cache();
+        log_audit('update', 'settings', null, "Display currency changed to: $display_currency");
     }
 
     header("Location: viewItems.php?" . http_build_query($_GET));
@@ -33,11 +35,9 @@ $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $category_filter = isset($_GET['category']) ? trim($_GET['category']) : '';
 
 // -------------------------
-// Load settings
+// Load settings (cached)
 // -------------------------
-$settingsQuery = "SELECT exchange_rate, display_currency FROM settings LIMIT 1";
-$settingsResult = $conn->query($settingsQuery);
-$settings = $settingsResult ? $settingsResult->fetch_assoc() : null;
+$settings = get_settings();
 $exchange_rate = $settings['exchange_rate'] ?? 90000;
 $display_currency = $settings['display_currency'] ?? 'LBP';
 $csrfToken = ensure_csrf_token();
@@ -169,7 +169,7 @@ $stmt->close();
             <div class="import-export-buttons">
                 <a href="exportItems.php" class="export-btn"><i class="fas fa-download"></i> Export to CSV</a>
                 <form action="importItems.php" method="POST" enctype="multipart/form-data" class="import-form">
-                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
+                    <?php echo csrf_input(); ?>
                     <input type="file" name="csv_file" id="csv_file" accept=".csv,text/csv" required>
                     <button type="submit" name="import" class="import-btn"><i class="fas fa-upload"></i> Import from CSV</button>
                 </form>
@@ -181,17 +181,17 @@ $stmt->close();
             <h3><i class="fas fa-eye"></i> Menu Price Display (controls what customers see on Menu)</h3>
             <div class="btn-group">
                 <form method="POST" style="display: inline;">
-                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
+                    <?php echo csrf_input(); ?>
                     <input type="hidden" name="display_currency" value="LBP">
                     <button type="submit" class="<?php echo $display_currency === 'LBP' ? 'active' : ''; ?>">LBP Only</button>
                 </form>
                 <form method="POST" style="display: inline;">
-                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
+                    <?php echo csrf_input(); ?>
                     <input type="hidden" name="display_currency" value="USD">
                     <button type="submit" class="<?php echo $display_currency === 'USD' ? 'active' : ''; ?>">USD Only</button>
                 </form>
                 <form method="POST" style="display: inline;">
-                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
+                    <?php echo csrf_input(); ?>
                     <input type="hidden" name="display_currency" value="BOTH">
                     <button type="submit" class="<?php echo $display_currency === 'BOTH' ? 'active' : ''; ?>">Both Prices</button>
                 </form>
@@ -240,7 +240,7 @@ $stmt->close();
                         <span><a href='editItem.php?item=<?php echo urlencode($row["item_name"]); ?>&category=<?php echo urlencode($row["item_category"]); ?>'><i class='fas fa-pen'></i></a></span>
                         <span>
                             <form method='POST' action='deleteItem.php' style='display:inline;' onsubmit='return confirm("Are you sure?");'>
-                                <input type='hidden' name='csrf_token' value='<?php echo htmlspecialchars($csrfToken); ?>'>
+                                <?php echo csrf_input(); ?>
                                 <input type='hidden' name='id' value='<?php echo (int)$row["item_id"]; ?>'>
                                 <button type='submit' style='background:none;border:none;padding:0;cursor:pointer;'><i class='fas fa-trash'></i></button>
                             </form>

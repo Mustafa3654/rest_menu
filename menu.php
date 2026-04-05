@@ -4,10 +4,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Fetch restaurant settings
-$settingsQuery = "SELECT * FROM settings LIMIT 1";
-$settingsResult = $conn->query($settingsQuery);
-$settings = $settingsResult ? $settingsResult->fetch_assoc() : null;
+// Fetch restaurant settings (cached)
+$settings = get_settings();
 
 // Get current category
 $current_cat = isset($_GET['category']) ? $_GET['category'] : '';
@@ -53,7 +51,10 @@ if (empty($current_cat)) {
             if ($catResult && $catResult->num_rows > 0) {
                 while($cat = $catResult->fetch_assoc()) {
                     $isActive = ($current_cat == $cat['cat_name']) ? 'active' : '';
-                    $iconHtml = !empty($cat['cat_icon']) ? '<img src="'.htmlspecialchars($cat['cat_icon']).'" class="category-icon" alt="">' : '';
+                    $iconSrc = !empty($cat['cat_icon']) && filter_var($cat['cat_icon'], FILTER_VALIDATE_URL) === false
+                        ? htmlspecialchars($cat['cat_icon'])
+                        : '';
+                    $iconHtml = !empty($iconSrc) ? '<img src="'.$iconSrc.'" class="category-icon" alt="">' : '';
                     echo '<a href="menu.php?category='.urlencode($cat['cat_name']).'" class="category-tab '.$isActive.'">'.$iconHtml.'<span>'.htmlspecialchars($cat['cat_name']).'</span></a>';
                 }
             }

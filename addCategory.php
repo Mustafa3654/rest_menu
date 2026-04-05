@@ -26,7 +26,7 @@ if (isset($_POST['submit'])) {
 
             if (in_array($img_ex, $allowed_exs)) {
                 $upload_folder = 'items/';
-                if (!is_dir($upload_folder)) mkdir($upload_folder, 0777, true);
+                if (!is_dir($upload_folder)) mkdir($upload_folder, 0755, true);
                 $new_img_name = uniqid("CAT-", true).'.'.$img_ex;
                 $img_upload_path = $upload_folder . $new_img_name;
                 move_uploaded_file($tmp_name, $img_upload_path);
@@ -52,6 +52,8 @@ if (isset($_POST['submit'])) {
             $stmt = $conn->prepare("INSERT INTO categories (cat_name, cat_picture, cat_icon) VALUES (?, ?, ?)");
             $stmt->bind_param("sss", $name, $img_upload_path, $icon_upload_path);
             if ($stmt->execute()) {
+                $newId = $conn->insert_id;
+                log_audit('create', 'category', $newId, "Category: $name");
                 $message = "<div class='alert alert-success'>Category Added Successfully!</div>";
             } else {
                 $message = "<div class='alert alert-danger'>Error: " . htmlspecialchars($stmt->error) . "</div>";
@@ -76,7 +78,7 @@ $csrfToken = ensure_csrf_token();
         <h1>Add Category</h1>
         <?php echo $message; ?>
         <form action="addCategory.php" method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
+            <?php echo csrf_input(); ?>
             <label for="item-name">Category Name</label>
             <input type="text" id="item-name" name="item-name" placeholder="Enter Category name" required>
 

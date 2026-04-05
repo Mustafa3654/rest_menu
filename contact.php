@@ -5,11 +5,9 @@ include "auth.php";
 start_secure_session();
 
 /* -------------------------
-   Fetch restaurant settings
+   Fetch restaurant settings (cached)
 -------------------------- */
-$settingsQuery = "SELECT * FROM settings LIMIT 1";
-$settingsResult = $conn->query($settingsQuery);
-$settings = $settingsResult ? $settingsResult->fetch_assoc() : null;
+$settings = get_settings();
 
 /* -------------------------
    Telegram helper function
@@ -79,6 +77,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->bind_param("sss", $name, $subject, $body);
 
                 if ($stmt->execute()) {
+
+                    log_audit('create', 'contact', $stmt->insert_id ?? null, "From: $name, Subject: $subject");
 
                     $message = '
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -201,7 +201,7 @@ $csrfToken = ensure_csrf_token();
                         <div class="col-md-7">
                             <div class="contact-form-section">
                                 <form method="POST">
-                                    <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
+                                    <?php echo csrf_input(); ?>
                                     <div class="mb-3">
                                         <label class="form-label">Name</label>
                                         <input type="text" name="name" class="form-control" required>

@@ -1,2 +1,4 @@
 /.htaccess
 /.vscode
+/.env
+.aider*

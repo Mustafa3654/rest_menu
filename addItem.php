@@ -5,11 +5,9 @@ start_secure_session();
 require_admin();
 
 // -------------------------
-// Load settings needed for the form
+// Load settings for exchange rate (cached)
 // -------------------------
-$settingsQuery = "SELECT exchange_rate FROM settings LIMIT 1";
-$settingsResult = $conn->query($settingsQuery);
-$settings = $settingsResult ? $settingsResult->fetch_assoc() : null;
+$settings = get_settings();
 $exchange_rate = $settings['exchange_rate'] ?? 90000;
 
 $message = "";
@@ -56,7 +54,7 @@ if (isset($_POST["submit"])) {
                         
                         if (in_array($img_ex, $allowed_exs)) {
                             $target_dir = "items/";
-                            if (!is_dir($target_dir)) mkdir($target_dir, 0777, true);
+                            if (!is_dir($target_dir)) mkdir($target_dir, 0755, true);
                             $unique_filename = uniqid("IMG-", true) . '.' . $img_ex;
                             $target_file = $target_dir . $unique_filename;
                             move_uploaded_file($tmp_name, $target_file);
@@ -70,6 +68,8 @@ if (isset($_POST["submit"])) {
                     $stmt->bind_param("ssisds", $name, $category, $price_lbp, $ingredients, $price_usd, $target_file);
                     
                     if ($stmt->execute()) {
+                        $newId = $conn->insert_id;
+                        log_audit('create', 'item', $newId, "Item: $name, Category: $category, Price LBP: $price_lbp");
                         $message = "<div class='alert alert-success'>Item Added Successfully!</div>";
                     } else {
                         $message = "<div class='alert alert-danger'>Database Error: " . htmlspecialchars($stmt->error) . "</div>";
@@ -96,7 +96,7 @@ $csrfToken = ensure_csrf_token();
         <h1>Add Item</h1>
         <?php echo $message; ?>
         <form action="addItem.php" method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
+            <?php echo csrf_input(); ?>
             <label for="item-name">Item Name</label>
             <input type="text" id="item-name" name="item-name" placeholder="Enter item name" required>
             

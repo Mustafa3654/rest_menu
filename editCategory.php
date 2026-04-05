@@ -39,7 +39,7 @@ if (isset($_POST["submit"])) {
 
             if (in_array($img_ex, $allowed_exs)) {
                 $upload_folder = 'items/';
-                if (!is_dir($upload_folder)) mkdir($upload_folder, 0777, true);
+                if (!is_dir($upload_folder)) mkdir($upload_folder, 0755, true);
                 $new_img_name = uniqid("ICON-", true).'.'.$img_ex;
                 $icon_path = $upload_folder . $new_img_name;
                 move_uploaded_file($tmp_name, $icon_path);
@@ -50,6 +50,7 @@ if (isset($_POST["submit"])) {
         $stmt->bind_param("ssi", $cat, $icon_path, $id);
       
         if ($stmt->execute()) {
+            log_audit('update', 'category', (int)$id, "Category renamed to: $cat");
             header("Location: viewCategories.php");
             exit;
         } else {
@@ -80,7 +81,7 @@ $csrfToken = ensure_csrf_token();
         <h1>Edit Category</h1>
         <?php echo $message; ?>
         <form action="editCategory.php?category=<?php echo urlencode($row['cat_name']); ?>" method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrfToken); ?>">
+            <?php echo csrf_input(); ?>
             <input type="hidden" name="id" value="<?php echo $row["cat_id"]; ?>">
             <input type="hidden" name="current_icon" value="<?php echo $row["cat_icon"]; ?>">
 

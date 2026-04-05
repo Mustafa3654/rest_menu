@@ -173,7 +173,7 @@ if (isset($_POST["import"])) {
         if ($item_exists) {
             // Update existing item
             $update_stmt = $conn->prepare("UPDATE items SET item_name = ?, item_category = ?, item_pricelbp = ?, item_priceusd = ?, Ingredients = ?, item_pic = ? WHERE item_id = ?");
-            $update_stmt->bind_param("ssidsis", $name, $category, $price_lbp, $price_usd, $ingredients, $image_path, $id);
+            $update_stmt->bind_param("ssidssi", $name, $category, $price_lbp, $price_usd, $ingredients, $image_path, $id);
             
             if ($update_stmt->execute()) {
                 $updated_count++;

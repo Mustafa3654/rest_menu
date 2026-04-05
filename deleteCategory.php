@@ -26,6 +26,7 @@ $stmt = $conn->prepare("DELETE FROM categories WHERE cat_id = ?");
 $stmt->bind_param("i", $catId);
 
 if ($stmt->execute()) {
+    log_audit('delete', 'category', $catId, null);
     header("Location: viewCategories.php");
 } else {
     echo "Error deleting category: " . htmlspecialchars($stmt->error);

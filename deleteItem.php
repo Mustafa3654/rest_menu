@@ -26,6 +26,7 @@ $stmt = $conn->prepare("DELETE FROM items WHERE item_id = ?");
 $stmt->bind_param("i", $itemId);
 
 if ($stmt->execute()) {
+    log_audit('delete', 'item', $itemId, null);
     header("Location: viewItems.php");
 } else {
     echo "Error deleting item: " . htmlspecialchars($stmt->error);

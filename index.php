@@ -5,10 +5,8 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 ob_start();
 
-// Fetch restaurant settings
-$settingsQuery = "SELECT * FROM settings LIMIT 1";
-$settingsResult = $conn->query($settingsQuery);
-$settings = $settingsResult ? $settingsResult->fetch_assoc() : null;
+// Fetch restaurant settings (cached)
+$settings = get_settings();
 
 $mapLink = $settings['restaurant_maps'] ?? '#';
 ?>
