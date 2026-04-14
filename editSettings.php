@@ -44,7 +44,7 @@ if (isset($_POST['update_settings'])) {
     } else {
         // Basic fields
         $name = trim($_POST['restaurant_name'] ?? '');
-        $email = trim($_POST['restaurant_email'] ?? '');
+
         $phone = trim($_POST['restaurant_phone'] ?? '');
         $address = trim($_POST['restaurant_address'] ?? '');
         $maps = trim($_POST['restaurant_maps'] ?? '');
@@ -60,7 +60,7 @@ if (isset($_POST['update_settings'])) {
         if (!is_numeric($exchange_rate) || $exchange_rate <= 0) {
             $exchange_rate = 90000; // Default rate if invalid
         }
-        $theme_color = trim($_POST['theme_color'] ?? '#1a2a6c');
+
 
         // Image fields
         $logo_path = $settings['restaurant_logo'] ?? '';
@@ -81,7 +81,6 @@ if (isset($_POST['update_settings'])) {
                 home_bg = ?,
                 menu_bg = ?,
                 contact_bg = ?,
-                restaurant_email = ?, 
                 restaurant_phone = ?, 
                 restaurant_address = ?,
                 restaurant_maps = ?,
@@ -93,19 +92,18 @@ if (isset($_POST['update_settings'])) {
                 opening_title = ?,
                 chat_id = ?,
                 bot_token = ?,
-                exchange_rate = ?,
-                theme_color = ?
+                exchange_rate = ?
                 WHERE id = ?");
-            $stmt->bind_param("sssssssssssssssssdsi", $name, $logo_path, $home_bg_path, $menu_bg_path,$contact_bg_path, $email, $phone, $address, $maps, $desc, $hours, $whatsapp, $insta, $fb, $opening_title, $chat_id, $bot_token, $exchange_rate, $theme_color, $settings['id']);
+            $stmt->bind_param("ssssssssssssssssdi", $name, $logo_path, $home_bg_path, $menu_bg_path,$contact_bg_path, $phone, $address, $maps, $desc, $hours, $whatsapp, $insta, $fb, $opening_title, $chat_id, $bot_token, $exchange_rate, $settings['id']);
         } else {
-            $stmt = $conn->prepare("INSERT INTO settings (restaurant_name, restaurant_logo, home_bg, menu_bg, contact_bg, restaurant_email, restaurant_phone, restaurant_address, restaurant_maps, restaurant_description, opening_hours, whatsapp_number, instagram_url, facebook_url, opening_title, chat_id, bot_token, exchange_rate, theme_color) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("sssssssssssssssssds", $name, $logo_path, $home_bg_path, $menu_bg_path,$contact_bg_path,$email,$phone,$address,$maps,$desc,$hours,$whatsapp,$insta,$fb,$opening_title,$chat_id,$bot_token,$exchange_rate,$theme_color);
+            $stmt = $conn->prepare("INSERT INTO settings (restaurant_name, restaurant_logo, home_bg, menu_bg, contact_bg, restaurant_phone, restaurant_address, restaurant_maps, restaurant_description, opening_hours, whatsapp_number, instagram_url, facebook_url, opening_title, chat_id, bot_token, exchange_rate) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssssssssssssssssd", $name, $logo_path, $home_bg_path, $menu_bg_path,$contact_bg_path,$phone,$address,$maps,$desc,$hours,$whatsapp,$insta,$fb,$opening_title,$chat_id,$bot_token,$exchange_rate);
         }
 
         if ($stmt->execute()) {
             invalidate_settings_cache();
-            log_audit('update', 'settings', null, "Settings updated");
+
             $message = "<div class='alert alert-success'>Settings updated successfully!</div>";
             // Refresh settings cache
             $settings = get_settings();
@@ -145,24 +143,7 @@ $csrfToken = ensure_csrf_token();
         <?php echo $message; ?>
         <form action="editSettings.php" method="POST" enctype="multipart/form-data">
             <?php echo csrf_input(); ?>
-            <div class="form-group">
-                <label for="theme_color">Theme Main Color</label>
-                <br>
-                <select name="theme_color" style="height: 50px; padding: 5px; cursor: pointer; width: 100%;">
-                    <option value="#dc2626" <?php if(($settings['theme_color']??'')=='#dc2626') echo 'selected'; ?>>Red</option>
-                    <option value="#ea580c" <?php if(($settings['theme_color']??'')=='#ea580c') echo 'selected'; ?>>Orange</option>
-                    <option value="#d97706" <?php if(($settings['theme_color']??'')=='#d97706') echo 'selected'; ?>>Yellow</option>
-                    <option value="#16a34a" <?php if(($settings['theme_color']??'')=='#16a34a') echo 'selected'; ?>>Green</option>
-                    <option value="#0d9488" <?php if(($settings['theme_color']??'')=='#0d9488') echo 'selected'; ?>>Teal</option>
-                    <option value="#0284c7" <?php if(($settings['theme_color']??'')=='#0284c7') echo 'selected'; ?>>Blue</option>
-                    <option value="#1a2a6c" <?php if(($settings['theme_color']??'')=='#1a2a6c' || empty($settings['theme_color'])) echo 'selected'; ?>>Navy (Default)</option>
-                    <option value="#4f46e5" <?php if(($settings['theme_color']??'')=='#4f46e5') echo 'selected'; ?>>Indigo</option>
-                    <option value="#7c3aed" <?php if(($settings['theme_color']??'')=='#7c3aed') echo 'selected'; ?>>Purple</option>
-                    <option value="#c026d3" <?php if(($settings['theme_color']??'')=='#c026d3') echo 'selected'; ?>>Fuchsia</option>
-                    <option value="#db2777" <?php if(($settings['theme_color']??'')=='#db2777') echo 'selected'; ?>>Pink</option>
-                    <option value="#e11d48" <?php if(($settings['theme_color']??'')=='#e11d48') echo 'selected'; ?>>Rose</option>
-                </select>
-            </div>
+
 
             <div class="form-group">
                 <label for="restaurant_name">Restaurant Name</label>
@@ -224,11 +205,7 @@ $csrfToken = ensure_csrf_token();
                 <input type="text" name="whatsapp_number" value="<?php echo htmlspecialchars($settings['whatsapp_number'] ?? ''); ?>">
             </div>
 
-            <div class="form-group">
-                <label for="restaurant_email">Email Address</label>
-                <br>
-                <input type="email" name="restaurant_email" value="<?php echo htmlspecialchars($settings['restaurant_email'] ?? ''); ?>">
-            </div>
+
 
             <div class="form-group">
                 <label for="restaurant_address">Address</label>

@@ -7,7 +7,7 @@ if (!function_exists('start_secure_session')) {
             $isHttps = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
             if (PHP_VERSION_ID >= 70300) {
                 session_set_cookie_params([
-                    'lifetime' => 0,
+                    'lifetime' => 2592000, // 30 days
                     'path' => '/',
                     'secure' => $isHttps,
                     'httponly' => true,
@@ -15,7 +15,7 @@ if (!function_exists('start_secure_session')) {
                 ]);
             } else {
                 session_set_cookie_params(
-                    0,
+                    2592000, // 30 days
                     '/; samesite=Lax',
                     '',
                     $isHttps,
@@ -101,60 +101,3 @@ if (!function_exists('invalidate_settings_cache')) {
     }
 }
 
-// -------------------------
-// Audit logging
-// -------------------------
-if (!function_exists('log_audit')) {
-    /**
-     * Log an admin action to the audit_log table.
-     * Does nothing if the table doesn't exist (graceful degradation).
-     */
-    function log_audit(string $action, string $entity, ?int $entityId = null, ?string $details = null): void
-    {
-        global $conn;
-
-        static $tableChecked = false;
-        static $tableExists = null;
-
-        if ($tableChecked === false) {
-            $tableChecked = true;
-            $res = $conn->query("SHOW TABLES LIKE 'audit_log'");
-            $tableExists = ($res && $res->num_rows > 0);
-        }
-
-        if (!$tableExists) return;
-
-        $username = $_SESSION['user_name'] ?? 'unknown';
-        $stmt = $conn->prepare(
-            "INSERT INTO audit_log (username, action, entity, entity_id, details, ip_address) VALUES (?, ?, ?, ?, ?, ?)"
-        );
-        $ip = $_SERVER['REMOTE_ADDR'] ?? '';
-        $stmt->bind_param("ssssss", $username, $action, $entity, $entityId, $details, $ip);
-        @$stmt->execute(); // Use @ to suppress errors if table is gone
-        $stmt->close();
-    }
-}
-
-if (!function_exists('init_audit_log_table')) {
-    function init_audit_log_table(): bool
-    {
-        global $conn;
-
-        $sql = "CREATE TABLE IF NOT EXISTS audit_log (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            username VARCHAR(100) NOT NULL,
-            action VARCHAR(50) NOT NULL,
-            entity VARCHAR(50) NOT NULL,
-            entity_id INT DEFAULT NULL,
-            details TEXT DEFAULT NULL,
-            ip_address VARCHAR(45) DEFAULT NULL,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            INDEX idx_entity (entity),
-            INDEX idx_action (action),
-            INDEX idx_username (username),
-            INDEX idx_created (created_at)
-        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;";
-
-        return $conn->query($sql) === true;
-    }
-}

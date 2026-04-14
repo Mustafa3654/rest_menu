@@ -47,7 +47,7 @@ if (isset($_POST["submit"])) {
         $stmt->bind_param("sisdssi", $name, $pricelbp, $ingredients, $priceusd, $cat, $pic_path, $id);
         
         if ($stmt->execute()) {
-            log_audit('update', 'item', (int)$id, "Item: $name, Category: $cat");
+
             header("Location: viewItems.php");
             exit;
         } else {

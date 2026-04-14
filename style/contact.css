@@ -113,16 +113,28 @@ body.dark-mode .contact-info-section {
 .form-control {
   padding: 12px 15px;
   border-radius: 8px;
-  border: 1px solid var(----accent-blue);
-  background: var(--input-bg);
-  color: var(--text-color);
+  border: 1px solid #ced4da; /* Distinct border for light mode */
+  background: #ffffff; /* Bright white background */
+  color: #212529;
+  transition: all 0.3s ease;
+}
+
+body.dark-mode .form-control {
+  border: 1px solid #4b5563; /* Visible border for dark mode */
+  background: #1f2937; /* Lighter dark background to contrast with card */
+  color: #f3f4f6;
 }
 
 .form-control:focus {
   border-color: var(--accent-blue);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-  background: var(--input-bg);
-  color: var(--text-color);
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+  background: #ffffff;
+  color: #212529;
+}
+
+body.dark-mode .form-control:focus {
+  background: #1f2937;
+  color: #f3f4f6;
 }
 
 .btn-submit {

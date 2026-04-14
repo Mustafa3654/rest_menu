@@ -50,7 +50,7 @@ if (isset($_POST["submit"])) {
         $stmt->bind_param("ssi", $cat, $icon_path, $id);
       
         if ($stmt->execute()) {
-            log_audit('update', 'category', (int)$id, "Category renamed to: $cat");
+
             header("Location: viewCategories.php");
             exit;
         } else {

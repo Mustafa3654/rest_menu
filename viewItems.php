@@ -21,7 +21,7 @@ if (isset($_POST['display_currency'])) {
         $stmt->execute();
         $stmt->close();
         invalidate_settings_cache();
-        log_audit('update', 'settings', null, "Display currency changed to: $display_currency");
+
     }
 
     header("Location: viewItems.php?" . http_build_query($_GET));

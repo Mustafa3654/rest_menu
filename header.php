@@ -1,6 +1,5 @@
 <?php
 include "connection.php";
-include "auth.php";
 start_secure_session();
 $isAdmin = $_SESSION["isAdmin"] ?? false;
 
@@ -10,16 +9,12 @@ $settings = get_settings();
 $restaurantName = $settings['restaurant_name'] ?? 'Restaurant Menu';
 $restaurantLogo = $settings['restaurant_logo'] ?? 'bgs/logoo.jfif';
 $restaurantPhone = $settings['restaurant_phone'] ?? '03 495 894';
-$themeColor = $settings['theme_color'] ?? '#1a2a6c';
-list($r, $g, $b) = sscanf($themeColor, "#%02x%02x%02x");
-$themeRGB = "$r, $g, $b";
 
-// Calculate a light version for buttons/glows (mix 40% white)
-$lightR = (int)($r + (255 - $r) * 0.4);
-$lightG = (int)($g + (255 - $g) * 0.4);
-$lightB = (int)($b + (255 - $b) * 0.4);
-$themeLightHex = sprintf("#%02x%02x%02x", $lightR, $lightG, $lightB);
-$themeLightRGB = "$lightR, $lightG, $lightB";
+// Default Bright Blue Theme Colors
+$primaryColor = '#0056b3';
+$accentColor  = '#007bff';
+$rgb          = '0, 86, 179';
+$accentRgb    = '0, 123, 255';
 ?>
 
 <!DOCTYPE html>
@@ -41,60 +36,54 @@ $themeLightRGB = "$lightR, $lightG, $lightB";
     <!-- Global Header CSS -->
     <link rel="stylesheet" href="style/header.css">
 
-    <!-- Dynamic Theme Color -->
+    <!-- Theme Style -->
     <style>
         :root {
-            --primary-blue: <?php echo htmlspecialchars($themeColor); ?> !important;
-            --accent-blue: <?php echo htmlspecialchars($themeLightHex); ?> !important;
+            --primary-blue: <?php echo $primaryColor; ?> !important;
+            --accent-blue: <?php echo $accentColor; ?> !important;
         }
         
-        /* Overrides for hardcoded RGBA gradients/shadows using the theme and light variant */
         .hero-overlay {
-            background: linear-gradient(
-                135deg,
-                rgba(15, 23, 42, 0.9) 0%,
-                rgba(<?php echo $themeRGB; ?>, 0.8) 100%
-            ) !important;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(<?php echo $rgb; ?>, 0.8) 100%) !important;
         }
         .menu-header-overlay {
-            background: rgba(<?php echo $themeRGB; ?>, 0.6) !important;
+            background: rgba(<?php echo $rgb; ?>, 0.6) !important;
         }
 
-        /* Elements using the light variant */
         .btn-order, .add-btn, .category-tab.active {
-            background: <?php echo htmlspecialchars($themeLightHex); ?> !important;
+            background: <?php echo $accentColor; ?> !important;
             color: white !important;
         }
         
         .btn-hero-primary {
-            box-shadow: 0 10px 20px rgba(<?php echo $themeLightRGB; ?>, 0.3) !important;
-            background: <?php echo htmlspecialchars($themeLightHex); ?> !important;
+            box-shadow: 0 10px 20px rgba(<?php echo $accentRgb; ?>, 0.3) !important;
+            background: <?php echo $accentColor; ?> !important;
         }
         .btn-hero-primary:hover {
-            box-shadow: 0 15px 30px rgba(<?php echo $themeLightRGB; ?>, 0.4) !important;
-            background: <?php echo htmlspecialchars($themeColor); ?> !important;
+            box-shadow: 0 15px 30px rgba(<?php echo $accentRgb; ?>, 0.4) !important;
+            background: <?php echo $primaryColor; ?> !important;
         }
 
         .category-tab.active, .menu-card.in-cart {
-            border-color: <?php echo htmlspecialchars($themeLightHex); ?> !important;
+            border-color: <?php echo $accentColor; ?> !important;
         }
         .category-tab:hover {
-            color: <?php echo htmlspecialchars($themeLightHex); ?> !important;
+            color: <?php echo $accentColor; ?> !important;
         }
         
         .btn-order:hover, .add-btn:hover {
-            background: <?php echo htmlspecialchars($themeColor); ?> !important;
+            background: <?php echo $primaryColor; ?> !important;
         }
         
         .info-box.alt .info-box-icon {
-            box-shadow: 0 8px 16px rgba(<?php echo $themeLightRGB; ?>, 0.2) !important;
-            background: <?php echo htmlspecialchars($themeLightHex); ?> !important;
+            box-shadow: 0 8px 16px rgba(<?php echo $accentRgb; ?>, 0.2) !important;
+            background: <?php echo $accentColor; ?> !important;
         }
 
         @keyframes borderGlow {
-            0%   { box-shadow: 0 0 5px rgba(<?php echo $themeLightRGB; ?>, 0.5), 0 0 10px rgba(<?php echo $themeLightRGB; ?>, 0.3); border-color: rgba(<?php echo $themeLightRGB; ?>, 0.5); }
-            50%  { box-shadow: 0 0 15px rgba(<?php echo $themeLightRGB; ?>, 0.9), 0 0 25px rgba(<?php echo $themeLightRGB; ?>, 0.5); border-color: rgba(<?php echo $themeLightRGB; ?>, 1); }
-            100% { box-shadow: 0 0 5px rgba(<?php echo $themeLightRGB; ?>, 0.5), 0 0 10px rgba(<?php echo $themeLightRGB; ?>, 0.3); border-color: rgba(<?php echo $themeLightRGB; ?>, 0.5); }
+            0%   { box-shadow: 0 0 5px rgba(<?php echo $accentRgb; ?>, 0.5); border-color: rgba(<?php echo $accentRgb; ?>, 0.5); }
+            50%  { box-shadow: 0 0 15px rgba(<?php echo $accentRgb; ?>, 0.9); border-color: rgba(<?php echo $accentRgb; ?>, 1); }
+            100% { box-shadow: 0 0 5px rgba(<?php echo $accentRgb; ?>, 0.5); border-color: rgba(<?php echo $accentRgb; ?>, 0.5); }
         }
     </style>
 </head>

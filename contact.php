@@ -1,6 +1,5 @@
 <?php
 include "connection.php";
-include "auth.php";
 
 start_secure_session();
 
@@ -78,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 if ($stmt->execute()) {
 
-                    log_audit('create', 'contact', $stmt->insert_id ?? null, "From: $name, Subject: $subject");
+
 
                     $message = '
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -171,13 +170,7 @@ $csrfToken = ensure_csrf_token();
                                     </div>
                                 </div>
 
-                                <div class="info-item">
-                                    <div class="info-icon"><i class="fas fa-envelope"></i></div>
-                                    <div class="info-text">
-                                        <h5>Email</h5>
-                                        <p><?php echo htmlspecialchars($settings['restaurant_email'] ?? 'info@restaurant.com'); ?></p>
-                                    </div>
-                                </div>
+
 
                                 <div class="info-item">
                                     <div class="info-icon"><i class="fas fa-map-marker-alt"></i></div>

@@ -69,7 +69,7 @@ if (isset($_POST["submit"])) {
                     
                     if ($stmt->execute()) {
                         $newId = $conn->insert_id;
-                        log_audit('create', 'item', $newId, "Item: $name, Category: $category, Price LBP: $price_lbp");
+
                         $message = "<div class='alert alert-success'>Item Added Successfully!</div>";
                     } else {
                         $message = "<div class='alert alert-danger'>Database Error: " . htmlspecialchars($stmt->error) . "</div>";

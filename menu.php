@@ -87,23 +87,29 @@ if (empty($current_cat)) {
 
                     foreach($items as $item) {
                         ?>
-                        <a href="ingredients.php?item=<?php echo urlencode($item['item_id']); ?>" style="text-decoration: none; color: inherit;">
+
                         <div class="menu-card"
                              data-id="<?php echo $item['item_id']; ?>"
                              data-name="<?php echo htmlspecialchars($item['item_name']); ?>"
                              data-price-lbp="<?php echo $item['item_pricelbp']; ?>"
                              data-price-usd="<?php echo $item['item_priceusd']; ?>">
                             <?php if (!empty($item['item_pic'])): ?>
+                                <div onclick="openQuickView(this)" style="cursor: pointer; display: block;">
                                 <div class="menu-card-img-container">
                                     <img src="<?php echo htmlspecialchars($item['item_pic']); ?>" alt="<?php echo htmlspecialchars($item['item_name']); ?>" class="menu-card-img">
                                 </div>
+                                </div>
                             <?php elseif ($anyHasPhoto): ?>
+                                <div onclick="openQuickView(this)" style="cursor: pointer; display: block;">
                                 <div class="menu-card-img-container placeholder-img">
                                     <img src="items/placeholder-food.png" alt="No image" class="menu-card-img">
                                 </div>
+                                </div>
                             <?php endif; ?>
                             <div class="menu-card-body">
+                                <div onclick="openQuickView(this)" style="cursor: pointer; display: block;">
                                 <h3 class="menu-card-title"><?php echo htmlspecialchars($item['item_name']); ?></h3>
+                                </div>
                                 <div class="menu-card-price">
                                     <?php 
                                     $lbp_price = $item['item_pricelbp'] > 0 ? number_format($item['item_pricelbp'], 0, '.', ',') . ' LBP' : '';
@@ -115,12 +121,12 @@ if (empty($current_cat)) {
                                 <?php if (!empty($item['Ingredients']) && $item['Ingredients'] !== '0'): ?>
                                     <p class="menu-card-desc"><?php echo htmlspecialchars($item['Ingredients']); ?></p>
                                 <?php endif; ?>
-                                <div class="cart-controls" onclick="event.preventDefault();">
+                                <div class="cart-controls" onclick="event.stopPropagation();">
                                     <!-- Buttons injected by JS -->
                                 </div>
                             </div>
                         </div>
-                        </a>
+
                         <?php
                     }
                 } else {
@@ -149,6 +155,24 @@ if (empty($current_cat)) {
         <button class="checkout-btn" onclick="cart.checkout()">
             <i class="fab fa-whatsapp"></i> Order on WhatsApp
         </button>
+    </div>
+</div>
+
+<!-- Quick View Modal -->
+<div id="quickview-modal" class="modal-overlay" style="display: none;">
+    <div class="quickview-content">
+        <button class="close-quickview" onclick="closeQuickView()"><i class="fas fa-times"></i></button>
+        <div class="quickview-img-container" id="qv-img-container">
+            <img id="qv-img" src="" alt="Item Image">
+        </div>
+        <div class="quickview-body">
+            <h2 id="qv-title"></h2>
+            <div class="menu-card-price">
+                <span id="qv-price-lbp" class="price-lbp"></span>
+                <span id="qv-price-usd" class="price-usd"></span>
+            </div>
+            <p id="qv-ingredients" class="menu-card-desc"></p>
+        </div>
     </div>
 </div>
 

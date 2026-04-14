@@ -53,7 +53,7 @@ if (isset($_POST['submit'])) {
             $stmt->bind_param("sss", $name, $img_upload_path, $icon_upload_path);
             if ($stmt->execute()) {
                 $newId = $conn->insert_id;
-                log_audit('create', 'category', $newId, "Category: $name");
+
                 $message = "<div class='alert alert-success'>Category Added Successfully!</div>";
             } else {
                 $message = "<div class='alert alert-danger'>Error: " . htmlspecialchars($stmt->error) . "</div>";

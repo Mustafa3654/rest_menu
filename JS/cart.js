@@ -1,7 +1,12 @@
 class Cart {
     constructor() {
-        this.items = JSON.parse(localStorage.getItem('restaurant_cart')) || [];
-        this.init();
+        try {
+            const stored = localStorage.getItem('restaurant_cart');
+            this.items = stored ? JSON.parse(stored) : [];
+            if (!Array.isArray(this.items)) this.items = [];
+        } catch(e) {
+            this.items = [];
+        }
     }
 
     init() {
@@ -182,21 +187,27 @@ class Cart {
     checkout() {
         if (this.items.length === 0) return;
 
-        let message = "New Order:\n\n";
+        let message = "Hello, I would like to order:\n\n";
         this.items.forEach(item => {
-            message += `- ${item.quantity}x ${item.name}`;
-            if (item.priceLbp > 0) message += ` (${(item.priceLbp * item.quantity).toLocaleString()} LBP)`;
-            if (item.priceUsd > 0) message += ` ($${(item.priceUsd * item.quantity).toFixed(2)})`;
-            message += "\n";
+            if (item.priceLbp > 0) {
+                const unitPrice = item.priceLbp.toLocaleString() + ' L.L.';
+                const lineTotal = (item.priceLbp * item.quantity).toLocaleString() + ' L.L.';
+                message += `* ${item.quantity} x ${item.name}   (${unitPrice}) = ${lineTotal}\n`;
+            }
+            if (item.priceUsd > 0) {
+                const unitPrice = '$' + item.priceUsd.toFixed(2);
+                const lineTotal = '$' + (item.priceUsd * item.quantity).toFixed(2);
+                message += `* ${item.quantity} x ${item.name}   (${unitPrice}) = ${lineTotal}\n`;
+            }
         });
 
         const totals = this.calculateTotals();
-        message += "\nTotal:\n";
-        if (totals.lbp > 0) message += `${totals.lbp.toLocaleString()} LBP\n`;
-        if (totals.usd > 0) message += `$${totals.usd.toFixed(2)}\n`;
+        message += "\n";
+        if (totals.lbp > 0) message += `Total: ${totals.lbp.toLocaleString()} L.L.\n`;
+        if (totals.usd > 0) message += `Total: $${totals.usd.toFixed(2)}\n`;
 
-        // Get phone number from a global variable set in php
-        const phone = window.restaurantPhone || ''; 
+        // Get phone number from a global variable set in php, strip non-digits
+        const phone = (window.restaurantPhone || '').replace(/\D/g, ''); 
         const url = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
         window.open(url, '_blank');
     }
@@ -215,5 +226,10 @@ class Cart {
     }
 }
 
-// Initialize
-const cart = new Cart();
+// Initialize when safely possible
+let cart = new Cart();
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => cart.init());
+} else {
+    cart.init();
+}

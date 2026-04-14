@@ -3,6 +3,12 @@ include "connection.php";
 include "auth.php";
 start_secure_session();
 
+// Redirect to dashboard if already logged in
+if (is_admin_logged_in()) {
+    header("Location: dashboard.php");
+    exit;
+}
+
 // -------------------------
 // Local helpers
 // -------------------------
@@ -67,7 +73,7 @@ if (isset($_POST['submit'])) {
                     $_SESSION["user_name"] = $user['username'];
                     $_SESSION["isAdmin"] = ((int)$user['isAdmin'] === 1);
 
-                    log_audit('login', 'auth', (int)$user['user_id'], null);
+
                     header("Location: dashboard.php");
                     exit;
                 }

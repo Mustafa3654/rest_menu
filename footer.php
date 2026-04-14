@@ -45,10 +45,7 @@
                                     <i class="fas fa-phone-alt"></i>
                                     <a href="tel:<?php echo htmlspecialchars($settings['restaurant_phone'] ?? ''); ?>"><?php echo htmlspecialchars($settings['restaurant_phone'] ?? ''); ?></a>
                                 </li>
-                                <li>
-                                    <i class="fas fa-envelope"></i>
-                                    <a href="mailto:<?php echo htmlspecialchars($settings['restaurant_email'] ?? 'info@restaurant.com'); ?>"><?php echo htmlspecialchars($settings['restaurant_email'] ?? 'info@restaurant.com'); ?></a>
-                                </li>
+
                                 <li>
                                     <i class="fas fa-map-marker-alt"></i>
                                     <span><?php echo htmlspecialchars($settings['restaurant_address'] ?? 'Lebanon'); ?></span>
