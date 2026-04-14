@@ -22,7 +22,7 @@ if (file_exists($envFile)) {
 $dbHost = $_ENV['DB_HOST'] ?? 'localhost';
 $dbUsername = $_ENV['DB_USER'] ?? 'root';
 $dbPassword = $_ENV['DB_PASS'] ?? '';
-$dbName = $_ENV['DB_NAME'] ?? 'menu';
+$dbName = $_ENV['DB_NAME'] ?? 'menuu';
 
 // Set connection timeout to 5 seconds
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
