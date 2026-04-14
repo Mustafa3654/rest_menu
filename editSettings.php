@@ -54,8 +54,6 @@ if (isset($_POST['update_settings'])) {
         $insta = trim($_POST['instagram_url'] ?? '');
         $fb = trim($_POST['facebook_url'] ?? '');
         $opening_title = trim($_POST['opening_title'] ?? '');
-        $chat_id = trim($_POST['chat_id'] ?? '');
-        $bot_token = trim($_POST['bot_token'] ?? '');
         $exchange_rate = $_POST['exchange_rate'] ?? 90000;
         if (!is_numeric($exchange_rate) || $exchange_rate <= 0) {
             $exchange_rate = 90000; // Default rate if invalid
@@ -90,15 +88,13 @@ if (isset($_POST['update_settings'])) {
                 instagram_url = ?, 
                 facebook_url = ?,
                 opening_title = ?,
-                chat_id = ?,
-                bot_token = ?,
                 exchange_rate = ?
                 WHERE id = ?");
-            $stmt->bind_param("ssssssssssssssssdi", $name, $logo_path, $home_bg_path, $menu_bg_path,$contact_bg_path, $phone, $address, $maps, $desc, $hours, $whatsapp, $insta, $fb, $opening_title, $chat_id, $bot_token, $exchange_rate, $settings['id']);
+            $stmt->bind_param("ssssssssssssssdi", $name, $logo_path, $home_bg_path, $menu_bg_path,$contact_bg_path, $phone, $address, $maps, $desc, $hours, $whatsapp, $insta, $fb, $opening_title, $exchange_rate, $settings['id']);
         } else {
-            $stmt = $conn->prepare("INSERT INTO settings (restaurant_name, restaurant_logo, home_bg, menu_bg, contact_bg, restaurant_phone, restaurant_address, restaurant_maps, restaurant_description, opening_hours, whatsapp_number, instagram_url, facebook_url, opening_title, chat_id, bot_token, exchange_rate) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("ssssssssssssssssd", $name, $logo_path, $home_bg_path, $menu_bg_path,$contact_bg_path,$phone,$address,$maps,$desc,$hours,$whatsapp,$insta,$fb,$opening_title,$chat_id,$bot_token,$exchange_rate);
+            $stmt = $conn->prepare("INSERT INTO settings (restaurant_name, restaurant_logo, home_bg, menu_bg, contact_bg, restaurant_phone, restaurant_address, restaurant_maps, restaurant_description, opening_hours, whatsapp_number, instagram_url, facebook_url, opening_title, exchange_rate) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param("ssssssssssssssd", $name, $logo_path, $home_bg_path, $menu_bg_path,$contact_bg_path,$phone,$address,$maps,$desc,$hours,$whatsapp,$insta,$fb,$opening_title,$exchange_rate);
         }
 
         if ($stmt->execute()) {
@@ -237,17 +233,7 @@ $csrfToken = ensure_csrf_token();
                 <textarea name="restaurant_description"><?php echo htmlspecialchars($settings['restaurant_description'] ?? ''); ?></textarea>
             </div>
             
-            <div class="form-group">
-                <label for="chat_id">Telegram Chat ID</label>
-                <br>
-                <input type="text" name="chat_id" value="<?php echo htmlspecialchars($settings['chat_id'] ?? ''); ?>">
-            </div>
 
-            <div class="form-group">
-                <label for="bot_token">Telegram Bot Token</label>
-                <br>
-                <input type="text" name="bot_token" value="<?php echo htmlspecialchars($settings['bot_token'] ?? ''); ?>"> 
-            </div>
 
             <div class="form-group">
                 <label for="exchange_rate">Exchange Rate (LBP per 1 USD)</label>
