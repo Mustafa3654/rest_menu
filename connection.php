@@ -6,7 +6,7 @@ ini_set('display_errors', 1);
 $dbHost     = 'localhost';
 $dbUsername = 'root';
 $dbPassword = '';
-$dbName     = 'menuu';
+$dbName     = 'menu';
 
 
 // Set connection timeout to 5 seconds

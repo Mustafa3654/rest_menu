@@ -3,7 +3,7 @@
   --dark-blue: #0f172a;
   --grey: #64748b;
   --off-white: #f8fafc;
-  --accent-blue: #3b82f6;
+  --accent-blue: #4da3ff;
   --text-dark: #1e293b;
   --text-muted: #64748b;
   --border-color: #e2e8f0;
@@ -116,19 +116,19 @@ body.dark-mode .navbar-toggler-icon {
 /* The Glowing Animation for the Edges */
 @keyframes borderGlow {
   0% {
-    box-shadow: 0 0 5px rgba(59, 130, 246, 0.5),
-      0 0 10px rgba(59, 130, 246, 0.3);
-    border-color: rgba(59, 130, 246, 0.5);
+    box-shadow: 0 0 5px rgba(77, 163, 255, 0.5),
+      0 0 10px rgba(77, 163, 255, 0.3);
+    border-color: rgba(77, 163, 255, 0.5);
   }
   50% {
-    box-shadow: 0 0 15px rgba(59, 130, 246, 0.9),
-      0 0 25px rgba(59, 130, 246, 0.5);
-    border-color: rgba(59, 130, 246, 1);
+    box-shadow: 0 0 15px rgba(77, 163, 255, 0.9),
+      0 0 25px rgba(77, 163, 255, 0.5);
+    border-color: rgba(77, 163, 255, 1);
   }
   100% {
-    box-shadow: 0 0 5px rgba(59, 130, 246, 0.5),
-      0 0 10px rgba(59, 130, 246, 0.3);
-    border-color: rgba(59, 130, 246, 0.5);
+    box-shadow: 0 0 5px rgba(77, 163, 255, 0.5),
+      0 0 10px rgba(77, 163, 255, 0.3);
+    border-color: rgba(77, 163, 255, 0.5);
   }
 }
 
@@ -144,8 +144,8 @@ body.dark-mode .navbar-toggler-icon {
 
 .btn-order:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 30px rgba(59, 130, 246, 1);
-  background: #2563eb;
+  box-shadow: 0 0 30px rgba(77, 163, 255, 1);
+  background: #318ce7;
 }
 
 /* Theme Toggle Button */
