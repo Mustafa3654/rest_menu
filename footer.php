@@ -57,7 +57,7 @@
                     <!-- Links Column -->
                     <div class="col-lg-2 col-md-4">
                         <div class="footer-widget">
-                            <h4 class="widget-title">Navigation</h4>
+                            <h4 class="widget-title">Navigation Bar</h4>
                             <ul class="footer-menu">
                                 <li><a href="index.php">Home</a></li>
                                 <li><a href="menu.php">Menu</a></li>
