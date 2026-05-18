@@ -212,7 +212,7 @@ CREATE TABLE `settings` (
   `chat_id` bigint(255) NOT NULL,
   `bot_token` text NOT NULL,
   `country_code` varchar(10) NOT NULL,
-  `order_method` varchar(50) DEFAULT 'whatsapp',
+  `order_method` varchar(50) DEFAULT 'Whatsapp',
   `banner1_t1` varchar(255) DEFAULT 'THANK YOU FOR SUPPORTING LOCAL',
   `banner1_t2` varchar(255) DEFAULT 'Made with fresh ingredients & lots of love',
   `banner1_t3` varchar(255) DEFAULT 'AUTHENTIC MEDITERRANEAN FLAVOR',
