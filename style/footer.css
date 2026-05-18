@@ -5,17 +5,29 @@
   padding: 80px 0 0;
   font-family: "Inter", sans-serif;
   transition: background-color 0.3s ease;
+  border-top: 1px solid var(--border-color);
 }
 
 .footer-top {
   padding-bottom: 60px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode .footer-top {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .footer-brand {
-  font-size: 32px;
+  font-family: "Poppins", sans-serif;
+  font-size: 30px;
   font-weight: 800;
   margin-bottom: 20px;
+  color: var(--olive-green);
+  letter-spacing: -0.5px;
+  transition: color 0.3s ease;
+}
+
+body.dark-mode .footer-brand {
   color: var(--text-color);
 }
 
@@ -23,6 +35,7 @@
   color: var(--text-muted);
   line-height: 1.8;
   margin-bottom: 30px;
+  font-size: 15px;
 }
 
 .footer-social {
@@ -31,23 +44,24 @@
 }
 
 .social-link {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   background: var(--card-bg);
-  border-radius: 8px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--text-color);
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: 1px solid var(--border-color);
 }
 
 .social-link:hover {
   background: var(--accent-blue);
-  color: white;
-  transform: translateY(-3px);
+  color: white !important;
+  transform: translateY(-4px);
+  box-shadow: 0 6px 15px rgba(66, 82, 43, 0.15);
 }
 
 .widget-title {
@@ -56,6 +70,8 @@
   margin-bottom: 30px;
   position: relative;
   padding-bottom: 12px;
+  color: var(--text-color);
+  font-family: "Poppins", sans-serif;
 }
 
 .widget-title::after {
@@ -75,47 +91,116 @@
   margin: 0;
 }
 
-.footer-menu li,
-.contact-list li {
-  margin-bottom: 15px;
+.footer-menu li {
+  margin-bottom: 12px;
 }
 
 .footer-menu a {
   color: var(--text-muted);
   text-decoration: none;
   transition: all 0.3s ease;
+  display: inline-block;
+  position: relative;
+}
+
+.footer-menu a::before {
+  content: "→";
+  position: absolute;
+  left: -15px;
+  opacity: 0;
+  transition: all 0.3s ease;
+  color: var(--accent-blue);
 }
 
 .footer-menu a:hover {
-  color: var(--accent-blue);
-  padding-left: 5px;
+  color: var(--accent-blue) !important;
+  padding-left: 15px;
+}
+
+.footer-menu a:hover::before {
+  left: 0;
+  opacity: 1;
 }
 
 .contact-list li {
   display: flex;
+  align-items: flex-start;
   gap: 15px;
+  margin-bottom: 20px;
   color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.5;
 }
 
 .contact-list i {
   color: var(--accent-blue);
-  margin-top: 5px;
+  background: rgba(66, 82, 43, 0.08);
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+body.dark-mode .contact-list i {
+  background: rgba(203, 181, 139, 0.12);
+  color: var(--text-muted);
+}
+
+.contact-list li:hover i {
+  background: var(--accent-blue);
+  color: white !important;
+  transform: rotate(15deg) scale(1.1);
 }
 
 .contact-list a {
   color: var(--text-muted);
   text-decoration: none;
+  transition: color 0.3s ease;
 }
 
-.hours-list .time {
+.contact-list a:hover {
+  color: var(--accent-blue);
+}
+
+/* Beautiful Hours Block Styling */
+.hours-list {
+  background: rgba(66, 82, 43, 0.04);
+  border-left: 3px solid var(--accent-blue);
+  padding: 20px;
+  border-radius: 0 16px 16px 0;
+  transition: all 0.3s ease;
+}
+
+body.dark-mode .hours-list {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.hour-item .day {
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 14px;
+}
+
+.hour-item .time {
   display: block;
   color: var(--accent-blue);
   font-weight: 700;
+  font-size: 16px;
   margin-top: 5px;
 }
 
 .footer-bottom {
   padding: 30px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode .footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .copyright,
@@ -123,52 +208,86 @@
   color: var(--text-muted);
   font-size: 14px;
   margin: 0;
+  line-height: 1.5;
 }
 
 .developer i {
   color: #ff4d4d;
 }
 
-/* Mobile Footer Optimization - Force Side-by-Side */
+/* Mobile Footer Optimization - Highly Enhanced Layout */
 @media (max-width: 768px) {
+  .site-footer {
+    padding: 60px 0 0;
+  }
+
+  .footer-top {
+    padding-bottom: 40px;
+  }
+
   .site-footer .footer-top .row {
     display: flex !important;
-    flex-wrap: wrap !important;
-    flex-direction: row !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
   }
 
   .site-footer .footer-top .col-lg-4,
   .site-footer .footer-top .col-lg-2,
   .site-footer .footer-top .col-lg-3,
   .site-footer .footer-top .col-md-4 {
-    flex: 0 0 50% !important;
-    max-width: 50% !important;
-    width: 50% !important;
-    padding: 0 10px !important;
-    margin-bottom: 30px !important;
-  }
-
-  .site-footer .footer-top .col-lg-4:first-child {
     flex: 0 0 100% !important;
     max-width: 100% !important;
     width: 100% !important;
-    text-align: center !important;
+    padding: 0 20px !important;
     margin-bottom: 40px !important;
+    text-align: left !important;
+  }
+
+  /* Center only the Brand Section */
+  .site-footer .footer-top .col-lg-4:first-child {
+    text-align: center !important;
+    margin-bottom: 45px !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding-bottom: 40px !important;
+  }
+
+  body.dark-mode .site-footer .footer-top .col-lg-4:first-child {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   }
 
   .footer-social {
     justify-content: center !important;
   }
 
+  .widget-title {
+    margin-bottom: 25px;
+    font-size: 19px;
+  }
+
+  .widget-title::after {
+    left: 0;
+  }
+
+  /* Clean spacing for hours block on mobile */
+  .hours-list {
+    margin-top: 10px;
+    padding: 15px 18px;
+  }
+
+  .footer-bottom {
+    padding: 25px 0;
+  }
+
   .footer-bottom .text-md-end {
     text-align: center !important;
-    margin-top: 10px;
+    margin-top: 12px;
   }
 
   .footer-bottom .col-md-6 {
     text-align: center !important;
   }
 }
+
 /* Button Glow Animation */
 @keyframes borderGlow {
   0% {

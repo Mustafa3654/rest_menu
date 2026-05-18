@@ -20,19 +20,6 @@
                         </div>
                     </div>
 
-                    <!-- Hours Column -->
-                    <div class="col-lg-3 col-md-4">
-                        <div class="footer-widget">
-                            <h4 class="widget-title"><?php echo htmlspecialchars($settings['opening_title'] ?? 'Opening Hours'); ?></h4>
-                            <div class="hours-list">
-                                <div class="hour-item">
-                                    <span class="day">Monday - Sunday</span>
-                                    <span class="time"><?php echo htmlspecialchars($settings['opening_hours'] ?? '12:00 PM - 11:00 PM'); ?></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Contact Column -->
                     <div class="col-lg-3 col-md-4">
                         <div class="footer-widget">
@@ -58,6 +45,19 @@
                         </div>
                     </div>
 
+                    <!-- Hours Column -->
+                    <div class="col-lg-3 col-md-4">
+                        <div class="footer-widget">
+                            <h4 class="widget-title"><?php echo htmlspecialchars($settings['opening_title'] ?? 'Opening Hours'); ?></h4>
+                            <div class="hours-list">
+                                <div class="hour-item">
+                                    <span class="day">Monday - Sunday</span>
+                                    <span class="time"><?php echo htmlspecialchars($settings['opening_hours'] ?? '12:00 PM - 11:00 PM'); ?></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <!-- Links Column -->
                     <div class="col-lg-2 col-md-4">
                         <div class="footer-widget">
