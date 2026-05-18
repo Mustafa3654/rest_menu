@@ -6,6 +6,39 @@ document.addEventListener('DOMContentLoaded', function() {
         // Trigger animation
         card.style.animation = `itemFadeIn 0.5s ease forwards ${index * 0.1}s`;
     });
+
+    // Preserve the exact scroll position of the category tabs container
+    const container = document.querySelector('.category-tabs');
+    if (container) {
+        // Restore exact scroll position if saved (with a brief delay to ensure mobile layout has calculated)
+        const savedScroll = sessionStorage.getItem('categoryScrollPos');
+        if (savedScroll !== null) {
+            const scrollPos = parseInt(savedScroll, 10);
+            container.scrollLeft = scrollPos;
+            // Set again after a tiny timeout in case mobile rendering was delayed
+            setTimeout(() => {
+                container.scrollLeft = scrollPos;
+            }, 50);
+        } else {
+            // Fallback: center the active tab on first load
+            const activeTab = container.querySelector('.category-tab.active');
+            if (activeTab) {
+                const centerActive = () => {
+                    const containerWidth = container.clientWidth;
+                    const tabOffsetLeft = activeTab.offsetLeft;
+                    const tabWidth = activeTab.clientWidth;
+                    container.scrollLeft = tabOffsetLeft - (containerWidth / 2) + (tabWidth / 2);
+                };
+                centerActive();
+                setTimeout(centerActive, 50);
+            }
+        }
+
+        // Save the scroll position dynamically as the user scrolls (highly reliable on mobile)
+        container.addEventListener('scroll', function() {
+            sessionStorage.setItem('categoryScrollPos', container.scrollLeft);
+        }, { passive: true });
+    }
 });
 
 // Quick View Modal Logic
