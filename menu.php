@@ -70,9 +70,10 @@ $globalHasPhoto = ($globalPhotoCheck && $globalPhotoCheck->num_rows > 0);
 <section class="menu-content">
     <div class="container">
         <?php
-        // Display Category Footer Note
+        // Fetch Category Footer Notes
+        $bottomNote = '';
         if (!empty($current_cat)) {
-            $catNoteStmt = $conn->prepare("SELECT cat_footer FROM categories WHERE cat_name = ?");
+            $catNoteStmt = $conn->prepare("SELECT cat_footer, cat_footer_bottom FROM categories WHERE cat_name = ?");
             $catNoteStmt->bind_param("s", $current_cat);
             $catNoteStmt->execute();
             $catNoteResult = $catNoteStmt->get_result();
@@ -85,6 +86,9 @@ $globalHasPhoto = ($globalPhotoCheck && $globalPhotoCheck->num_rows > 0);
                     echo '    <i class="fas fa-leaf"></i>';
                     echo '  </div>';
                     echo '</div>';
+                }
+                if (!empty($catNoteRow['cat_footer_bottom'])) {
+                    $bottomNote = $catNoteRow['cat_footer_bottom'];
                 }
             }
             $catNoteStmt->close();
@@ -160,6 +164,17 @@ $globalHasPhoto = ($globalPhotoCheck && $globalPhotoCheck->num_rows > 0);
             }
             ?>
         </div>
+        <?php
+        if (!empty($bottomNote)) {
+            echo '<div class="category-footer-note" style="margin-top: 40px; margin-bottom: 0;">';
+            echo '  <div class="footer-note-content">';
+            echo '    <i class="fas fa-leaf"></i>';
+            echo '    <span style="text-align: center; line-height: 1.4;">' . str_replace('.', '.<br>', htmlspecialchars($bottomNote)) . '</span>';
+            echo '    <i class="fas fa-leaf"></i>';
+            echo '  </div>';
+            echo '</div>';
+        }
+        ?>
     </div>
 </section>
 

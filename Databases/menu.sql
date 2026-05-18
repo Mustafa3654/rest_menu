@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 17, 2026 at 05:50 PM
+-- Generation Time: May 18, 2026 at 03:17 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -50,19 +50,20 @@ CREATE TABLE `categories` (
   `cat_picture` text NOT NULL,
   `cat_icon` text DEFAULT NULL,
   `Order` int(11) NOT NULL,
-  `cat_footer` text DEFAULT NULL
+  `cat_footer` text DEFAULT NULL,
+  `cat_footer_bottom` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `categories`
 --
 
-INSERT INTO `categories` (`cat_id`, `cat_name`, `cat_picture`, `cat_icon`, `Order`, `cat_footer`) VALUES
-(1, 'OUR FAMOUS PIES', '', '', 0, ''),
-(2, 'A LA CARTE KABOBS', '', '', 0, NULL),
-(3, 'COMBOS', '', '', 0, 'ALL COMBOS COME WITH PITA BREAD & GARLIC SAUCE!.\r\nYou must order at least 1 hour earlier!'),
-(4, 'WRAPS', '', '', 0, NULL),
-(5, 'DIPS & APPETIZERS', '', '', 0, NULL);
+INSERT INTO `categories` (`cat_id`, `cat_name`, `cat_picture`, `cat_icon`, `Order`, `cat_footer`, `cat_footer_bottom`) VALUES
+(1, 'OUR FAMOUS PIES', '', '', 0, '', NULL),
+(2, 'A LA CARTE KABOBS', '', '', 0, NULL, NULL),
+(3, 'COMBOS', '', '', 0, 'ALL COMBOS COME WITH PITA BREAD & GARLIC SAUCE!', 'You must order at least 1 hour earlier!'),
+(4, 'WRAPS', '', '', 0, 'Wrapped in Pita', NULL),
+(5, 'DIPS & APPETIZERS', '', '', 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -141,15 +142,15 @@ INSERT INTO `items` (`item_id`, `item_name`, `item_category`, `Ingredients`, `it
 (10, 'Kafta Kabob Skewer', 'A LA CARTE KABOBS', '', '', 0, 4.5, ''),
 (11, 'Beef Kabob Skewer', 'A LA CARTE KABOBS', '', '', 0, 5.5, ''),
 (12, 'Lamb Kabob Skewer', 'A LA CARTE KABOBS', '', '', 0, 5.5, ''),
-(13, 'Chicken', 'WRAPS', 'Strips of marinated chicken breast with lettuce, tomatoes,\r\npickles, pickled turnips, and garlic sauce; wrapped in pita', '', 0, 10, ''),
-(14, 'Beef Shawarma', 'WRAPS', 'Strips of marinated beef with parsley, onions, tomatoes,\r\npickles, pickled turnips, and tahini sauce; wrapped in pita', '', 0, 11, ''),
-(15, 'Falafel Wrap', 'WRAPS', 'Falafel patties with lettuce, tomatoes, pickles, pickled turnips,\r\nparsley, and tahini sauce; wrapped in pita', '', 0, 7, ''),
-(16, 'Kafta Wrap', 'WRAPS', 'Grilled ground beef with onions, parsley, spices, tomatoes,\r\nonions, pickles, pickled turnips, parsley, and tahini sauce;\r\nwrapped in pita', '', 0, 11, ''),
-(17, 'Shish Tawook Wrap', 'WRAPS', 'Grilled chicken cubes with lettuce, tomatoes, pickles,\r\npickled turnips, and garlic sauce; wrapped in pita', '', 0, 11, ''),
-(18, 'Shish Kabob Wrap', 'WRAPS', 'Grilled beef tenderloin cubes with tomatoes, onions,\r\nparsley, pickles, pickled turnips, and tahini sauce;\r\nwrapped in pita', '', 0, 11, ''),
-(19, 'Lamb Kabob Wrap', 'WRAPS', 'Grilled lamb cubes with tomatoes, onions, parsley, pickles, pickled turnips, and tahini sauce; wrapped in pita', '', 0, 12, ''),
-(20, 'Hummus Wrap', 'WRAPS', 'Hummus with lettuce, tomatoes, and pickles; wrapped in pita', '', 0, 7, ''),
-(21, 'Baba Ghanouj Wrap', 'WRAPS', 'Baba ghanouj with lettuce, tomatoes, and pickles; wrapped in pita', '', 0, 7, ''),
+(13, 'Chicken', 'WRAPS', 'Strips of marinated chicken breast with lettuce, tomatoes,\r\npickles, pickled turnips, and garlic sauce', '', 0, 10, ''),
+(14, 'Beef Shawarma', 'WRAPS', 'Strips of marinated beef with parsley, onions, tomatoes,\r\npickles, pickled turnips, and tahini sauce', '', 0, 11, ''),
+(15, 'Falafel Wrap', 'WRAPS', 'Falafel patties with lettuce, tomatoes, pickles, pickled turnips, parsley, and tahini sauce', '', 0, 7, ''),
+(16, 'Kafta Wrap', 'WRAPS', 'Grilled ground beef with onions, parsley, spices, tomatoes,\r\nonions, pickles, pickled turnips, parsley, and tahini sauce', '', 0, 11, ''),
+(17, 'Shish Tawook Wrap', 'WRAPS', 'Grilled chicken cubes with lettuce, tomatoes, pickles, pickled turnips, and garlic sauce', '', 0, 11, ''),
+(18, 'Shish Kabob Wrap', 'WRAPS', 'Grilled beef tenderloin cubes with tomatoes, onions, parsley, pickles, pickled turnips, and tahini sauce', '', 0, 11, ''),
+(19, 'Lamb Kabob Wrap', 'WRAPS', 'Grilled lamb cubes with tomatoes, onions, parsley, pickles, pickled turnips, and tahini sauce', '', 0, 12, ''),
+(20, 'Hummus Wrap', 'WRAPS', 'Hummus with lettuce, tomatoes, and pickles', '', 0, 7, ''),
+(21, 'Baba Ghanouj Wrap', 'WRAPS', 'Baba ghanouj with lettuce, tomatoes, and pickles', '', 0, 7, ''),
 (22, '4 PEOPLE', 'COMBOS', '2 beef kabobs, 2 chicken kabobs, 2 kafta kabobs, 6 pcs of falafel, 4 kibbeh balls, salad, hummus, rice, and pita', '', 0, 85, ''),
 (23, '6 PEOPLE', 'COMBOS', '4 beef kabobs, 4 chicken kabobs, 4 kafta kabobs, 12 pcs of falafel, 6 kibbeh balls, salad, hummus, rice, and pita', '', 0, 120, ''),
 (24, '10 PEOPLE', 'COMBOS', '6 beef kabobs, 6 chicken kabobs, 6 kafta kabobs, 24 pcs of falafel, 10 kibbeh balls, salad, hummus, rice, and pita', '', 0, 180, ''),
@@ -212,7 +213,7 @@ CREATE TABLE `settings` (
   `chat_id` bigint(255) NOT NULL,
   `bot_token` text NOT NULL,
   `country_code` varchar(10) NOT NULL,
-  `order_method` varchar(50) DEFAULT 'Whatsapp',
+  `order_method` varchar(50) DEFAULT 'whatsapp',
   `banner1_t1` varchar(255) DEFAULT 'THANK YOU FOR SUPPORTING LOCAL',
   `banner1_t2` varchar(255) DEFAULT 'Made with fresh ingredients & lots of love',
   `banner1_t3` varchar(255) DEFAULT 'AUTHENTIC MEDITERRANEAN FLAVOR',

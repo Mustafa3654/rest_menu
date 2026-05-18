@@ -50,8 +50,7 @@
 .category-tabs-wrapper {
   background: var(--card-bg);
   border-bottom: 1px solid var(--border-color);
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 900;
   padding: 10px 0;
 }
@@ -313,7 +312,7 @@ body.dark-mode .category-tab.active {
     font-size: 32px;
   }
   .category-tabs-wrapper {
-    top: 70px;
+    top: auto;
   }
 }
 

@@ -31,6 +31,7 @@ if (isset($_POST["submit"])) {
         $cat = trim($_POST["cat-name"]);
         $icon_path = $_POST['current_icon'];
         $cat_footer = trim($_POST['cat_footer'] ?? '');
+        $cat_footer_bottom = trim($_POST['cat_footer_bottom'] ?? '');
 
         if (isset($_FILES['cat-icon']) && $_FILES['cat-icon']['error'] === 0) {
             $img_name = $_FILES['cat-icon']['name'];
@@ -49,8 +50,8 @@ if (isset($_POST["submit"])) {
             }
         }
       
-        $stmt = $conn->prepare("UPDATE categories SET cat_name = ?, cat_icon = ?, cat_footer = ? WHERE cat_id = ?");
-        $stmt->bind_param("sssi", $cat, $icon_path, $cat_footer, $id);
+        $stmt = $conn->prepare("UPDATE categories SET cat_name = ?, cat_icon = ?, cat_footer = ?, cat_footer_bottom = ? WHERE cat_id = ?");
+        $stmt->bind_param("ssssi", $cat, $icon_path, $cat_footer, $cat_footer_bottom, $id);
       
         if ($stmt->execute()) {
 
@@ -97,8 +98,11 @@ $csrfToken = ensure_csrf_token();
                 <img src="../<?php echo htmlspecialchars($row['cat_icon']); ?>" style="width: 50px; margin-top: 10px;" alt="Current Icon">
             <?php endif; ?>
 
-            <label for="cat_footer">Category Footer Note</label>
+            <label for="cat_footer">Category Footer Note (Above Items)</label>
             <textarea id="cat_footer" name="cat_footer" rows="3"><?php echo htmlspecialchars($row['cat_footer'] ?? ''); ?></textarea>
+
+            <label for="cat_footer_bottom">Category Bottom Footer Note (Under Items)</label>
+            <textarea id="cat_footer_bottom" name="cat_footer_bottom" rows="3"><?php echo htmlspecialchars($row['cat_footer_bottom'] ?? ''); ?></textarea>
 
             <button type="submit" name="submit" value="submit">Update Category</button>
         </form>

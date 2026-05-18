@@ -17,6 +17,7 @@ if (isset($_POST['submit'])) {
         $db_img_path = '';
         $db_icon_path = '';
         $cat_footer = trim($_POST['cat_footer'] ?? '');
+        $cat_footer_bottom = trim($_POST['cat_footer_bottom'] ?? '');
 
         // Handle Category Image
         if (isset($_FILES['item-img']) && $_FILES['item-img']['error'] === 0) {
@@ -54,8 +55,8 @@ if (isset($_POST['submit'])) {
         }
 
         if (empty($message)) {
-            $stmt = $conn->prepare("INSERT INTO categories (cat_name, cat_picture, cat_icon, cat_footer) VALUES (?, ?, ?, ?)");
-            $stmt->bind_param("ssss", $name, $db_img_path, $db_icon_path, $cat_footer);
+            $stmt = $conn->prepare("INSERT INTO categories (cat_name, cat_picture, cat_icon, cat_footer, cat_footer_bottom) VALUES (?, ?, ?, ?, ?)");
+            $stmt->bind_param("sssss", $name, $db_img_path, $db_icon_path, $cat_footer, $cat_footer_bottom);
             if ($stmt->execute()) {
                 $newId = $conn->insert_id;
 
@@ -93,8 +94,11 @@ $csrfToken = ensure_csrf_token();
             <label for="cat-icon">Category Icon (Optional)</label>
             <input type="file" name="cat-icon" id="cat-icon">
 
-            <label for="cat_footer">Category Footer Note</label>
-            <textarea id="cat_footer" name="cat_footer" placeholder="Enter footer text for this category" rows="3"></textarea>
+            <label for="cat_footer">Category Footer Note (Above Items)</label>
+            <textarea id="cat_footer" name="cat_footer" placeholder="Enter text to display above the items" rows="3"></textarea>
+
+            <label for="cat_footer_bottom">Category Bottom Footer Note (Under Items)</label>
+            <textarea id="cat_footer_bottom" name="cat_footer_bottom" placeholder="Enter text to display under the items" rows="3"></textarea>
 
             <button type="submit" name="submit" value="submit">Add Category</button>
         </form>
