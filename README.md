@@ -66,13 +66,13 @@ Copy the entire project folder to your local server's directory:
 ### Step 2: Database Setup
 
 1. Start your Apache and MySQL database server.
-2. Open phpMyAdmin: [http://localhost/phpmyadmin](http://localhost/phpmyadmin)
+2. Open phpMyAdmin: [http://localhost/phpmyadmin]
 3. Create a new database named `menu` (UTF-8 Unicode collation recommended).
 4. Go to **Import**, select `DB/updated_menu.sql` (recommended for latest schema adjustments) or `DB/menu.sql`, and click **Go** to complete database import.
 
 ### Step 3: Database Connection Configuration
 
-Edit **[includes/connection.php](file:///d:/xampp/htdocs/rest_menu/includes/connection.php)** to match your local server credentials:
+Edit **[includes/connection.php]** to match your local server credentials:
 
 ```php
 $dbHost = 'localhost';
@@ -84,20 +84,22 @@ $dbName = 'menu';          // Database name
 ### Step 4: Configure Write Permissions
 
 Ensure your server has write privileges on the folders designated for uploaded assets:
-- `bgs/` - Logo and background images
-- `items/` - Menu item thumbnails
+- `admin/bgs/` - Logo and background images
+- `admin/pics/` - The Vibe Images
+- `Items/` - Menu item thumbnails
 
 On Linux or Mac environments:
 ```bash
-chmod 755 bgs/
-chmod 755 items/
+chmod 755 admin/bgs/
+chmod 755 admin/pics/
+chmod 755 Items/
 ```
 
 ### Step 5: Default Admin Credentials
 
 Access the dashboard and log in using the pre-configured credentials:
-- **Username**: `user1`
-- **Password**: `123456`
+- **Username**: `admin`
+- **Password**: `admin2`
 
 > [!WARNING]
 > Ensure you change the password immediately in the database or admin interface after initial setup for production security.
@@ -162,7 +164,6 @@ rest_menu/
 │   ├── footer.css          # Public footer styling
 │   └── view.css            # View listing layout styling
 │
-├── bgs/                    # Background images and restaurant logos
 └── items/                  # Uploaded menu item images
 ```
 
@@ -170,7 +171,7 @@ rest_menu/
 
 ## 🎨 Styling & Color Customization
 
-The system features a centralized palette configuration. Rather than chasing colors through individual page stylesheets, global tokens are set inside [style/theme.css](file:///d:/xampp/htdocs/rest_menu/style/theme.css):
+The system features a centralized palette configuration. Rather than chasing colors through individual page stylesheets, global tokens are set inside [style/theme.css]:
 
 ### Active Theme variables (`:root` light theme):
 ```css
@@ -206,11 +207,11 @@ body.dark-mode {
 ## 🔍 Troubleshooting
 
 ### ❌ Database Connection Failure
-- Verify all database parameters (host, user, pass, database name) inside **[includes/connection.php](file:///d:/xampp/htdocs/rest_menu/includes/connection.php)**.
+- Verify all database parameters (host, user, pass, database name) inside **[includes/connection.php]**.
 - Ensure the local MySQL service is active in your control panel.
 
 ### ❌ Uploaded Images Do Not Render
-- Check file system directory permissions on both the `bgs/` and `items/` directories.
+- Check file system directory permissions on both the `admin/bgs/` and `items/` and `admin/pics/` directories.
 - Ensure the standard PHP values `upload_max_filesize` and `post_max_size` inside `php.ini` allow file transfers up to the size of your images.
 
 ### ❌ Dark Mode State Resets
