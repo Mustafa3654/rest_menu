@@ -16,7 +16,7 @@ $message = "";
 // -------------------------
 if (isset($_POST["submit"])) {
     if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
-        $message = "<div class='alert alert-danger'>Invalid request token. Please refresh and try again.</div>";
+        $message = "<div class='alert-custom alert-custom-error'>Invalid request token. Please refresh and try again.</div>";
     } else {
         $name = trim($_POST["item-name"]);
         $price_usd = trim($_POST["price-usd"]);
@@ -25,11 +25,11 @@ if (isset($_POST["submit"])) {
         $price_suffix = trim($_POST["price_suffix"] ?? '');
 
         if ($name === '') {
-            $message = "<div class='alert alert-danger'>Item Name is required.</div>";
+            $message = "<div class='alert-custom alert-custom-error'>Item Name is required.</div>";
         } else {
             // Validate USD price
             if ($price_usd !== '' && (!is_numeric($price_usd) || $price_usd < 0)) {
-                $message = "<div class='alert alert-danger'>USD Price must be a positive number.</div>";
+                $message = "<div class='alert-custom alert-custom-error'>USD Price must be a positive number.</div>";
             } else {
                 // Validate category exists
                 $stmt_cat = $conn->prepare("SELECT COUNT(*) FROM categories WHERE cat_name = ?");
@@ -40,7 +40,7 @@ if (isset($_POST["submit"])) {
                 $stmt_cat->close();
 
                 if (!$cat_exists) {
-                    $message = "<div class='alert alert-danger'>Selected category does not exist.</div>";
+                    $message = "<div class='alert-custom alert-custom-error'>Selected category does not exist.</div>";
                 } else {
                     $db_path = '';
                     if (isset($_FILES["item-img"]) && $_FILES["item-img"]["error"] === 0) {
@@ -68,9 +68,9 @@ if (isset($_POST["submit"])) {
                     if ($stmt->execute()) {
                         $newId = $conn->insert_id;
 
-                        $message = "<div class='alert alert-success'>Item Added Successfully!</div>";
+                        $message = "<div class='alert-custom alert-custom-success'>Item Added Successfully!</div>";
                     } else {
-                        $message = "<div class='alert alert-danger'>Database Error: " . htmlspecialchars($stmt->error) . "</div>";
+                        $message = "<div class='alert-custom alert-custom-error'>Database Error: " . htmlspecialchars($stmt->error) . "</div>";
                     }
                     $stmt->close();
                 }
@@ -87,28 +87,28 @@ $csrfToken = ensure_csrf_token();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Item</title>
-    <link rel="stylesheet" href="../style/admin_form.css">
+    <link rel="stylesheet" href="../style/tailwind.css">
 </head>
-<body>
-    <div class="form-container">
-        <h1>Add Item</h1>
+<body class="bg-[#F7F5EA] font-poppins min-h-screen flex items-center justify-center py-10">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-[500px] mx-auto">
+        <h1 class="text-[#42522B] text-center text-2xl font-bold mb-6">Add Item</h1>
         <?php echo $message; ?>
-        <form action="addItem" method="POST" enctype="multipart/form-data">
+        <form action="addItem" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
             <?php echo csrf_input(); ?>
-            <label for="item-name">Item Name</label>
-            <input type="text" id="item-name" name="item-name" placeholder="Enter item name" required>
+            <label for="item-name" class="font-bold text-sm">Item Name</label>
+            <input type="text" id="item-name" name="item-name" placeholder="Enter item name" required class="p-2.5 border border-gray-300 rounded-md text-sm">
             
-            <label for="ingredients">Item Ingredients</label>
-            <textarea id="ingredients" name="ingredients" placeholder="Enter item ingredients" rows="4"></textarea>
+            <label for="ingredients" class="font-bold text-sm">Item Ingredients</label>
+            <textarea id="ingredients" name="ingredients" placeholder="Enter item ingredients" rows="4" class="p-2.5 border border-gray-300 rounded-md text-sm resize-y"></textarea>
 
-            <label for="price-usd">Item Price (USD)</label>
-            <div style="display: flex; gap: 10px;">
-                <input type="number" id="price-usd" name="price-usd" placeholder="0.00" step="0.10" style="flex: 2;">
-                <input type="text" name="price_suffix" placeholder="/lb or LG" style="flex: 1;">
+            <label for="price-usd" class="font-bold text-sm">Item Price (USD)</label>
+            <div class="flex gap-2">
+                <input type="number" id="price-usd" name="price-usd" placeholder="0.00" step="0.10" class="p-2.5 border border-gray-300 rounded-md text-sm flex-[2]">
+                <input type="text" name="price_suffix" placeholder="/lb or LG" class="p-2.5 border border-gray-300 rounded-md text-sm flex-1">
             </div>
 
-            <label for="category">Item Category</label>
-            <select name="category" id="category" required>
+            <label for="category" class="font-bold text-sm">Item Category</label>
+            <select name="category" id="category" required class="p-2.5 border border-gray-300 rounded-md text-sm">
                 <option value="" disabled selected>Select a category</option>
                 <?php 
                 $sql = "SELECT cat_name FROM categories ORDER BY `Order` ASC";
@@ -119,17 +119,12 @@ $csrfToken = ensure_csrf_token();
                 ?>
             </select>
 
-            <label for="item-img">Item Image (Optional)</label>
-            <input type="file" name="item-img" id="item-img">
+            <label for="item-img" class="font-bold text-sm">Item Image (Optional)</label>
+            <input type="file" name="item-img" id="item-img" class="text-sm">
 
-            <button type="submit" name="submit" value="submit">Add Item</button> 
+            <button type="submit" name="submit" value="submit" class="py-3 bg-[#42522B] text-white font-bold rounded-lg cursor-pointer transition-colors hover:bg-[#2b3a1d]">Add Item</button> 
         </form>
-        <br>
-        <a href="dashboard" class="back-link"><button type="button">BACK</button></a>
+        <a href="dashboard" class="block mt-4 no-underline"><button type="button" class="w-full py-3 bg-[#6c757d] text-white font-bold rounded-lg cursor-pointer transition-colors hover:bg-[#5a6268]">BACK</button></a>
     </div>
-    
 </body>
 </html>
-
-
-

@@ -1,18 +1,15 @@
 </main>
 
-    <!-- External CSS for Footer -->
-    <link rel="stylesheet" href="<?php echo $BASE_URL; ?>style/footer.css">
-
     <footer class="site-footer">
-        <div class="container">
+        <div class="max-w-6xl mx-auto px-4">
             <div class="footer-top">
-                <div class="row gy-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
                     <!-- Brand Column -->
-                    <div class="col-lg-4">
+                    <div class="lg:col-span-4 md:col-span-full">
                         <div class="footer-widget">
                             <h2 class="footer-brand"><?php echo htmlspecialchars($settings['restaurant_name'] ?? 'Restaurant'); ?></h2>
                             <p class="footer-desc"><?php echo htmlspecialchars($settings['restaurant_description'] ?? 'Authentic flavors prepared with passion.'); ?></p>
-                            <div class="footer-social">
+                            <div class="footer-social lg:justify-start md:justify-center">
                                 <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
                                 <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
                                 <a href="https://wa.me/<?php echo preg_replace('/[^0-9]/', '', ($settings['country_code'] ?? '') . ($settings['whatsapp_number'] ?? '')); ?>" class="social-link"><i class="fab fa-whatsapp"></i></a>
@@ -21,7 +18,7 @@
                     </div>
 
                     <!-- Hours Column -->
-                    <div class="col-lg-3 col-md-4">
+                    <div class="lg:col-span-3 md:col-span-1">
                         <div class="footer-widget">
                             <h4 class="widget-title"><?php echo htmlspecialchars($settings['opening_title'] ?? 'Opening Hours'); ?></h4>
                             <div class="hours-list">
@@ -34,7 +31,7 @@
                     </div>
 
                     <!-- Contact Column -->
-                    <div class="col-lg-3 col-md-4">
+                    <div class="lg:col-span-3 md:col-span-1">
                         <div class="footer-widget">
                             <h4 class="widget-title">Contact Us</h4>
                             <ul class="contact-list">
@@ -59,7 +56,7 @@
                     </div>
 
                     <!-- Links Column -->
-                    <div class="col-lg-2 col-md-4">
+                    <div class="lg:col-span-2 md:col-span-1">
                         <div class="footer-widget">
                             <h4 class="widget-title">Navigation Bar</h4>
                             <ul class="footer-menu">
@@ -73,12 +70,12 @@
             </div>
 
             <div class="footer-bottom">
-                <div class="row">
-                    <div class="col-md-6">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div>
                         <p class="copyright">&copy; 2026 Mustafa. All rights reserved.</p>
                     </div>
-                    <div class="col-md-6 text-md-end">
-                        <p class="developer">Designed by Mustafa Abou El-Hajj</i></p>
+                    <div class="md:text-right">
+                        <p class="developer">Designed by Mustafa Abou El-Hajj</p>
                     </div>
                 </div>
             </div>
@@ -86,24 +83,9 @@
         <?php
 $mem_usage = round(memory_get_peak_usage(true) / 1024 / 1024, 2);
 ?>
-<div style="
-    position: fixed; 
-    bottom: 10px; 
-    right: 10px; 
-    background: #222; 
-    color: #00ff00; 
-    padding: 8px 12px; 
-    border-radius: 5px; 
-    font-family: monospace; 
-    font-size: 12px; 
-    z-index: 99999;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
-">
+<div class="debug-badge">
     Memory: <?php echo $mem_usage; ?> MB
 </div>
     </footer>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
+</html>

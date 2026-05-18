@@ -25,7 +25,7 @@ if (isset($_GET["category"])) {
 // -------------------------
 if (isset($_POST["submit"])) {
     if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
-        $message = "<div class='alert alert-danger'>Invalid request token. Please refresh and try again.</div>";
+        $message = "<div class='alert-custom alert-custom-error'>Invalid request token. Please refresh and try again.</div>";
     } else {
         $id = $_POST['id'];
         $cat = trim($_POST["cat-name"]);
@@ -57,7 +57,7 @@ if (isset($_POST["submit"])) {
             header("Location: viewCategories");
             exit;
         } else {
-            $message = "<div class='alert alert-danger'>Update Failed: " . htmlspecialchars($stmt->error) . "</div>";
+            $message = "<div class='alert-custom alert-custom-error'>Update Failed: " . htmlspecialchars($stmt->error) . "</div>";
         }
         $stmt->close();
     }
@@ -77,36 +77,32 @@ $csrfToken = ensure_csrf_token();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Category</title>
-    <link rel="stylesheet" href="../style/admin_form.css">
+    <link rel="stylesheet" href="../style/tailwind.css">
 </head>
-<body>
-    <div class="form-container">
-        <h1>Edit Category</h1>
+<body class="bg-[#F7F5EA] font-poppins min-h-screen flex items-center justify-center py-10">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-[500px] mx-auto">
+        <h1 class="text-[#42522B] text-center text-2xl font-bold mb-6">Edit Category</h1>
         <?php echo $message; ?>
-        <form action="editCategory.php?category=<?php echo urlencode($row['cat_name']); ?>" method="POST" enctype="multipart/form-data">
+        <form action="editCategory.php?category=<?php echo urlencode($row['cat_name']); ?>" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
             <?php echo csrf_input(); ?>
             <input type="hidden" name="id" value="<?php echo $row["cat_id"]; ?>">
             <input type="hidden" name="current_icon" value="<?php echo $row["cat_icon"]; ?>">
 
-            <label for="item-name">Category Name</label>
-            <input type="text" id="item-name" name="cat-name" value="<?php echo htmlspecialchars($row['cat_name']); ?>" required>
+            <label for="item-name" class="font-bold text-sm">Category Name</label>
+            <input type="text" id="item-name" name="cat-name" value="<?php echo htmlspecialchars($row['cat_name']); ?>" required class="p-2.5 border border-gray-300 rounded-md text-sm">
             
-            <label for="cat-icon">Category Icon (Optional)</label>
-            <input type="file" name="cat-icon" id="cat-icon">
+            <label for="cat-icon" class="font-bold text-sm">Category Icon (Optional)</label>
+            <input type="file" name="cat-icon" id="cat-icon" class="text-sm">
             <?php if (!empty($row['cat_icon'])): ?>
                 <img src="../<?php echo htmlspecialchars($row['cat_icon']); ?>" style="width: 50px; margin-top: 10px;" alt="Current Icon">
             <?php endif; ?>
 
-            <label for="cat_footer">Category Footer Note</label>
-            <textarea id="cat_footer" name="cat_footer" rows="3"><?php echo htmlspecialchars($row['cat_footer'] ?? ''); ?></textarea>
+            <label for="cat_footer" class="font-bold text-sm">Category Footer Note</label>
+            <textarea id="cat_footer" name="cat_footer" rows="3" class="p-2.5 border border-gray-300 rounded-md text-sm resize-y"><?php echo htmlspecialchars($row['cat_footer'] ?? ''); ?></textarea>
 
-            <button type="submit" name="submit" value="submit">Update Category</button>
+            <button type="submit" name="submit" value="submit" class="py-3 bg-[#42522B] text-white font-bold rounded-lg cursor-pointer transition-colors hover:bg-[#2b3a1d]">Update Category</button>
         </form>
-        <br>
-        <a href="viewCategories" class="back-link"><button type="button">BACK</button></a>
+        <a href="viewCategories" class="block mt-4 no-underline"><button type="button" class="w-full py-3 bg-[#6c757d] text-white font-bold rounded-lg cursor-pointer transition-colors hover:bg-[#5a6268]">BACK</button></a>
     </div>
 </body>
 </html>
-
-
-

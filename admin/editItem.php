@@ -16,7 +16,7 @@ $message = "";
 // -------------------------
 if (isset($_POST["submit"])) {
     if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
-        $message = "<div class='alert alert-danger'>Invalid request token. Please refresh and try again.</div>";
+        $message = "<div class='alert-custom alert-custom-error'>Invalid request token. Please refresh and try again.</div>";
     } else {
         $id = $_POST['id'];
         $name = trim($_POST['item-name']);
@@ -52,7 +52,7 @@ if (isset($_POST["submit"])) {
             header("Location: viewItems");
             exit;
         } else {
-            $message = "<div class='alert alert-danger'>Update Failed: " . htmlspecialchars($stmt->error) . "</div>";
+            $message = "<div class='alert-custom alert-custom-error'>Update Failed: " . htmlspecialchars($stmt->error) . "</div>";
         }
         $stmt->close();
     }
@@ -88,31 +88,31 @@ $csrfToken = ensure_csrf_token();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Item</title>
-    <link rel="stylesheet" href="../style/admin_form.css">
+    <link rel="stylesheet" href="../style/tailwind.css">
 </head>
-<body>
-    <div class="form-container">
-        <h1>Edit Item</h1>
+<body class="bg-[#F7F5EA] font-poppins min-h-screen flex items-center justify-center py-10">
+    <div class="bg-white p-8 rounded-xl shadow-lg w-[500px] mx-auto">
+        <h1 class="text-[#42522B] text-center text-2xl font-bold mb-6">Edit Item</h1>
         <?php echo $message; ?>
-        <form action="editItem" method="POST" enctype="multipart/form-data">
+        <form action="editItem" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
             <?php echo csrf_input(); ?>
             <input type="hidden" name="id" value="<?php echo $row["item_id"]; ?>">
             <input type="hidden" name="current_pic" value="<?php echo $row["item_pic"]; ?>">
 
-            <label for="item-name">Item Name</label>
-            <input type="text" id="item-name" name="item-name" value="<?php echo htmlspecialchars($row['item_name']); ?>" required>
+            <label for="item-name" class="font-bold text-sm">Item Name</label>
+            <input type="text" id="item-name" name="item-name" value="<?php echo htmlspecialchars($row['item_name']); ?>" required class="p-2.5 border border-gray-300 rounded-md text-sm">
             
-            <label for="ingredients">Item Ingredients</label>
-            <textarea id="ingredients" name="ingredients" rows="4"><?php echo htmlspecialchars($row['Ingredients']); ?></textarea>
+            <label for="ingredients" class="font-bold text-sm">Item Ingredients</label>
+            <textarea id="ingredients" name="ingredients" rows="4" class="p-2.5 border border-gray-300 rounded-md text-sm resize-y"><?php echo htmlspecialchars($row['Ingredients']); ?></textarea>
 
-            <label for="price-usd">Item Price (USD)</label>
-            <div style="display: flex; gap: 10px;">
-                <input type="number" id="price-usd" name="price-usd" value="<?php echo $row['item_priceusd']; ?>" step="0.01" style="flex: 2;">
-                <input type="text" name="price_suffix" value="<?php echo htmlspecialchars($row['price_suffix'] ?? ''); ?>" placeholder="/lb or LG" style="flex: 1;">
+            <label for="price-usd" class="font-bold text-sm">Item Price (USD)</label>
+            <div class="flex gap-2">
+                <input type="number" id="price-usd" name="price-usd" value="<?php echo $row['item_priceusd']; ?>" step="0.01" class="p-2.5 border border-gray-300 rounded-md text-sm flex-[2]">
+                <input type="text" name="price_suffix" value="<?php echo htmlspecialchars($row['price_suffix'] ?? ''); ?>" placeholder="/lb or LG" class="p-2.5 border border-gray-300 rounded-md text-sm flex-1">
             </div>
   
-            <label for="category">Item Category</label>
-            <select name="category" id="category" required>
+            <label for="category" class="font-bold text-sm">Item Category</label>
+            <select name="category" id="category" required class="p-2.5 border border-gray-300 rounded-md text-sm">
                 <?php 
                     $currentCategory = $row['item_category'];
                     $catSql = "SELECT cat_name FROM categories ORDER BY `Order` ASC";
@@ -124,20 +124,15 @@ $csrfToken = ensure_csrf_token();
                 ?>
             </select>
 
-            <label for="item-img">Item Image (Optional)</label>
-            <input type="file" name="item-img" id="item-img">
+            <label for="item-img" class="font-bold text-sm">Item Image (Optional)</label>
+            <input type="file" name="item-img" id="item-img" class="text-sm">
             <?php if (!empty($row['item_pic'])): ?>
                 <img src="../<?php echo htmlspecialchars($row['item_pic']); ?>" style="width: 80px; margin-top: 10px; border-radius: 8px;" alt="Current Image">
             <?php endif; ?>
 
-            <button type="submit" name="submit" value="update">Update Item</button> 
+            <button type="submit" name="submit" value="update" class="py-3 bg-[#42522B] text-white font-bold rounded-lg cursor-pointer transition-colors hover:bg-[#2b3a1d]">Update Item</button> 
         </form>
-        <br>
-        <a href="viewItems" class="back-link"><button type="button">BACK</button></a>
+        <a href="viewItems" class="block mt-4 no-underline"><button type="button" class="w-full py-3 bg-[#6c757d] text-white font-bold rounded-lg cursor-pointer transition-colors hover:bg-[#5a6268]">BACK</button></a>
     </div>
-    
 </body>
 </html>
-
-
-

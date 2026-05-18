@@ -17,22 +17,22 @@ $result = $stmt->get_result();
 include "header.php";
 ?>
 
-<div class="container">
+<div class="max-w-6xl mx-auto px-4 py-8">
     <?php
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()) {
                 
-                echo "<h4>Ingredients of: <br> &emsp;" . htmlspecialchars($row["item_name"]) . " </h4>";
+                echo "<h4 class='font-bold text-lg mb-4'>Ingredients of: <br> &emsp;" . htmlspecialchars($row["item_name"]) . " </h4>";
                 $ingredients = $row["Ingredients"];
                 $ing = array_map('trim', explode(",", $ingredients));
                 $listItems = "";
                 foreach ($ing as $item) {
-                    $listItems .= "<li class='list-group-item'>" . htmlspecialchars($item) . "</li>\n";
+                    $listItems .= "<li class='list-group-item px-4 py-2 border-b border-gray-200'>" . htmlspecialchars($item) . "</li>\n";
                 }
-                $unorderedList = "<ul class='list-group list-group-flush'>\n" . $listItems . "</ul>";
+                $unorderedList = "<ul class='list-none p-0 m-0 border border-gray-300 rounded-lg overflow-hidden'>\n" . $listItems . "</ul>";
                 echo $unorderedList;
                 ?>
-                <div class="col-3">
+                <div class="w-1/4 mt-4">
                                     <img src="<?php echo htmlspecialchars($row['item_pic']); ?>" alt="" style="width: 100%; height: auto; object-fit: cover; border-radius: 8px;">
                                 </div>
                                 <?php
@@ -48,5 +48,3 @@ include "header.php";
 <?php
 include "footer.php"
 ?>
-
-

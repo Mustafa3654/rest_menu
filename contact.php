@@ -55,10 +55,10 @@ $message = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
         $message = '
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="alert-custom alert-custom-error flex items-center gap-2" role="alert">
             <i class="fas fa-exclamation-circle me-2"></i>
             Invalid request token. Please refresh and try again.
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <button type="button" class="ml-auto bg-transparent border-none cursor-pointer text-lg leading-none opacity-50 hover:opacity-100" onclick="this.parentElement.remove()">&times;</button>
         </div>';
     } else {
 
@@ -81,10 +81,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
                     $message = '
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <div class="alert-custom alert-custom-success flex items-center gap-2" role="alert">
                         <i class="fas fa-check-circle me-2"></i>
                         Thank you for your message! We will get back to you soon.
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        <button type="button" class="ml-auto bg-transparent border-none cursor-pointer text-lg leading-none opacity-50 hover:opacity-100" onclick="this.parentElement.remove()">&times;</button>
                     </div>';
 
                     $telegram_chat_id  = $settings['chat_id'] ?? '';
@@ -107,10 +107,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 } else {
                     $message = '
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <div class="alert-custom alert-custom-error flex items-center gap-2" role="alert">
                         <i class="fas fa-exclamation-circle me-2"></i>
                         Something went wrong. Please try again later.
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        <button type="button" class="ml-auto bg-transparent border-none cursor-pointer text-lg leading-none opacity-50 hover:opacity-100" onclick="this.parentElement.remove()">&times;</button>
                     </div>';
                 }
 
@@ -118,19 +118,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             } else {
                 $message = '
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <div class="alert-custom alert-custom-error flex items-center gap-2" role="alert">
                     <i class="fas fa-exclamation-circle me-2"></i>
                     Database error. Please try again later.
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    <button type="button" class="ml-auto bg-transparent border-none cursor-pointer text-lg leading-none opacity-50 hover:opacity-100" onclick="this.parentElement.remove()">&times;</button>
                 </div>';
             }
 
         } else {
             $message = '
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <div class="alert-custom alert-custom-error flex items-center gap-2" role="alert">
                 <i class="fas fa-exclamation-circle me-2"></i>
                 Please fill in all fields.
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <button type="button" class="ml-auto bg-transparent border-none cursor-pointer text-lg leading-none opacity-50 hover:opacity-100" onclick="this.parentElement.remove()">&times;</button>
             </div>';
         }
     }
@@ -141,26 +141,23 @@ $csrfToken = ensure_csrf_token();
 
 <?php include 'includes/header.php'; ?>
 
-<link rel="stylesheet" href="style/contact.css">
-
-<section class="hero-section contact-hero-section" style="background-image: url('<?php echo htmlspecialchars($settings['contact_bg'] ?? ''); ?>');">
+<section class="contact-hero-section" style="background-image: url('<?php echo htmlspecialchars($settings['contact_bg'] ?? ''); ?>');">
     <div class="hero-content">
-        <h1 class="hero-title reveal-text">Contact Us</h1>
-        <p class="hero-subtitle reveal-text">We'd love to hear from you</p>
+        <h1 class="hero-title font-poppins font-extrabold mb-4 text-white">Contact Us</h1>
+        <p class="hero-subtitle text-white/80 text-lg"">We'd love to hear from you</p>
     </div>
 </section>
 
-<section class="contact-content">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
+<section class="py-20" style="background: var(--color-bg);">
+    <div class="max-w-6xl mx-auto px-4">
+        <div class="flex justify-center">
+            <div class="w-full max-w-5xl">
 
                 <?php echo $message; ?>
 
                 <div class="contact-card">
-                    <div class="row g-0">
-
-                        <div class="col-md-5">
+                    <div class="flex flex-col md:flex-row">
+                        <div class="md:w-5/12">
                             <div class="contact-info-section">
                                 <h3>Get in Touch</h3>
 
@@ -191,32 +188,67 @@ $csrfToken = ensure_csrf_token();
                             </div>
                         </div>
 
-                        <div class="col-md-7">
+                        <div class="md:w-7/12">
                             <div class="contact-form-section">
                                 <form method="POST">
                                     <?php echo csrf_input(); ?>
-                                    <div class="mb-3">
-                                        <label class="form-label">Name</label>
-                                        <input type="text" name="name" class="form-control" required>
+                                    <div class="mb-4">
+                                        <label class="form-label-custom">Name</label>
+                                        <input type="text" name="name" class="block w-full px-4 py-3 rounded-lg border text-base outline-none transition-all duration-300" style="border-color: #ced4da; background: #ffffff; color: #212529;" required>
                                     </div>
 
-                                    <div class="mb-3">
-                                        <label class="form-label">Phone Number</label>
-                                        <input type="text" name="phonenumber" class="form-control" required>
+                                    <div class="mb-4">
+                                        <label class="form-label-custom">Phone Number</label>
+                                        <input type="text" name="phonenumber" class="block w-full px-4 py-3 rounded-lg border text-base outline-none transition-all duration-300" style="border-color: #ced4da; background: #ffffff; color: #212529;" required>
                                     </div>
 
-                                    <div class="mb-3">
-                                        <label class="form-label">Subject</label>
-                                        <input type="text" name="subject" class="form-control" required>
+                                    <div class="mb-4">
+                                        <label class="form-label-custom">Subject</label>
+                                        <input type="text" name="subject" class="block w-full px-4 py-3 rounded-lg border text-base outline-none transition-all duration-300" style="border-color: #ced4da; background: #ffffff; color: #212529;" required>
                                     </div>
 
-                                    <div class="mb-3">
-                                        <label class="form-label">Message</label>
-                                        <textarea name="message" class="form-control" rows="4" required></textarea>
+                                    <div class="mb-4">
+                                        <label class="form-label-custom">Message</label>
+                                        <textarea name="message" class="block w-full px-4 py-3 rounded-lg border text-base outline-none transition-all duration-300" style="border-color: #ced4da; background: #ffffff; color: #212529;" rows="4" required></textarea>
                                     </div>
 
-                                    <button type="submit" class="btn-submit">Send Message</button>
+                                    <button type="submit" class="btn-submit w-full py-3 px-8 rounded-lg font-bold border-none transition-all duration-300 cursor-pointer" style="background: var(--color-accent); color: white;">Send Message</button>
                                 </form>
+
+                                <script>
+                                // Dark mode handling for contact form inputs
+                                (function() {
+                                    var inputs = document.querySelectorAll('.contact-form-section input, .contact-form-section textarea');
+                                    var html = document.documentElement;
+                                    function updateInputs() {
+                                        var isDark = html.classList.contains('dark');
+                                        inputs.forEach(function(el) {
+                                            if (isDark) {
+                                                el.style.borderColor = '#4b5563';
+                                                el.style.background = '#1f2937';
+                                                el.style.color = '#f3f4f6';
+                                            } else {
+                                                el.style.borderColor = '#ced4da';
+                                                el.style.background = '#ffffff';
+                                                el.style.color = '#212529';
+                                            }
+                                        });
+                                    }
+                                    updateInputs();
+                                    var observer = new MutationObserver(updateInputs);
+                                    observer.observe(html, { attributes: true, attributeFilter: ['class'] });
+                                    document.querySelectorAll('input:focus, textarea:focus').forEach(function(el) {
+                                        el.addEventListener('focus', function() {
+                                            this.style.borderColor = '#42522B';
+                                            this.style.boxShadow = '0 0 0 3px rgba(66, 82, 43, 0.25)';
+                                        });
+                                        el.addEventListener('blur', function() {
+                                            this.style.borderColor = html.classList.contains('dark') ? '#4b5563' : '#ced4da';
+                                            this.style.boxShadow = 'none';
+                                        });
+                                    });
+                                })();
+                                </script>
                             </div>
                         </div>
 
@@ -229,5 +261,3 @@ $csrfToken = ensure_csrf_token();
 </section>
 
 <?php include 'includes/footer.php'; ?>
-
-
