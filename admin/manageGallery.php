@@ -9,7 +9,7 @@ $message = "";
 // Handle Upload
 if (isset($_POST['upload'])) {
     if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
-        $message = "<div class='alert-custom alert-custom-error'>Invalid request token.</div>";
+        $message = "<div class='alert alert-danger'>Invalid request token.</div>";
     } else {
         if (isset($_FILES['photos'])) {
             $total = count($_FILES['photos']['name']);
@@ -46,12 +46,12 @@ if (isset($_POST['upload'])) {
                 }
             }
             if ($success_count > 0) {
-                $message = "<div class='alert-custom alert-custom-success'>$success_count photo(s) added to gallery!</div>";
+                $message = "<div class='alert alert-success'>$success_count photo(s) added to gallery!</div>";
                 if ($error_count > 0) {
-                    $message .= "<div class='alert-custom alert-custom-error'>$error_count photo(s) failed to upload (invalid type or error).</div>";
+                    $message .= "<div class='alert alert-warning'>$error_count photo(s) failed to upload (invalid type or error).</div>";
                 }
             } else if ($error_count > 0) {
-                $message = "<div class='alert-custom alert-custom-error'>Failed to upload photos. Invalid file types or errors.</div>";
+                $message = "<div class='alert alert-danger'>Failed to upload photos. Invalid file types or errors.</div>";
             }
         }
     }
@@ -70,7 +70,7 @@ if (isset($_GET['delete'])) {
         $delStmt = $conn->prepare("DELETE FROM gallery WHERE id = ?");
         $delStmt->bind_param("i", $id);
         $delStmt->execute();
-        $message = "<div class='alert-custom alert-custom-success'>Photo deleted.</div>";
+        $message = "<div class='alert alert-success'>Photo deleted.</div>";
     }
 }
 
@@ -83,31 +83,36 @@ $csrfToken = ensure_csrf_token();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Gallery</title>
-    <link rel="stylesheet" href="../style/tailwind.css">
+    <link rel="stylesheet" href="../style/admin_form.css">
+    <link rel="stylesheet" href="../style/admin-shared.css">
 </head>
-<body class="bg-[#F7F5EA] font-poppins min-h-screen flex items-center justify-center py-10">
-    <div class="bg-white p-8 rounded-xl shadow-lg w-[800px] mx-4">
-        <h1 class="text-[#42522B] text-center text-2xl font-bold mb-6">Manage Gallery</h1>
+<body>
+    <div class="form-container" style="width: 800px;">
+        <h1>Manage Gallery</h1>
         <?php echo $message; ?>
         
-        <form action="manageGallery" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
+        <form action="manageGallery" method="POST" enctype="multipart/form-data">
             <?php echo csrf_input(); ?>
-            <label for="photo" class="font-bold text-sm">Upload Vibe Photo(s)</label>
-            <input type="file" name="photos[]" id="photo" multiple required class="text-sm">
-            <button type="submit" name="upload" class="py-3 bg-[#42522B] text-white font-bold rounded-lg cursor-pointer transition-colors hover:bg-[#2b3a1d]">Upload to Gallery</button>
+            <label for="photo">Upload Vibe Photo(s)</label>
+            <input type="file" name="photos[]" id="photo" multiple required>
+            <button type="submit" name="upload">Upload to Gallery</button>
         </form>
 
-        <div class="grid grid-cols-[repeat(auto-fill,minmax(150px,1fr))] gap-4 mt-8">
+        <div class="gallery-grid">
             <?php while($row = $galleryItems->fetch_assoc()): ?>
-                <div class="relative rounded-lg overflow-hidden border border-gray-300">
-                    <img src="<?php echo $BASE_URL . htmlspecialchars($row['photo_path']); ?>" alt="Gallery Image" class="w-full h-[150px] object-cover">
-                    <a href="manageGallery?delete=<?php echo $row['id']; ?>" class="absolute top-1 right-1 bg-[rgba(231,76,60,0.9)] text-white px-2.5 py-1 rounded text-xs no-underline" onclick="return confirm('Delete this photo?')">Delete</a>
+                <div class="gallery-item">
+                    <img src="<?php echo $BASE_URL . htmlspecialchars($row['photo_path']); ?>" alt="Gallery Image">
+                    <a href="manageGallery?delete=<?php echo $row['id']; ?>" class="delete-btn" onclick="return confirm('Delete this photo?')">Delete</a>
                 </div>
             <?php endwhile; ?>
         </div>
 
         <br><br>
-        <a href="dashboard"><button type="button" class="w-full py-3 bg-[#6c757d] text-white font-bold rounded-lg cursor-pointer transition-colors hover:bg-[#5a6268]">Back to Dashboard</button></a>
+        <a href="dashboard"><button type="button" style="background:#666;">Back to Dashboard</button></a>
     </div>
 </body>
 </html>
+
+
+
+

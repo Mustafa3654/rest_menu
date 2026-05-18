@@ -39,9 +39,8 @@ A comprehensive, premium web-based restaurant menu management system built with 
 
 - **Backend**: PHP 7.2+ (Supports PDO prepared queries)
 - **Database**: MySQL 5.7+ / MariaDB 10.3+
-- **Frontend**: HTML5, Tailwind CSS v4, Vanilla JavaScript
-- **Icons**: Font Awesome v6 CDN
-- **Build Tool**: Tailwind CSS CLI (run locally, no server-side build needed)
+- **Frontend**: HTML5, CSS3 (Custom properties/variables), Vanilla JavaScript
+- **Icons**: Font Awesome v5/v6 CDN
 - **Server Environment**: Apache (fully compatible with local XAMPP/WampServer installs)
 
 ---
@@ -151,11 +150,17 @@ rest_menu/
 │   ├── menu.js             # Menu category filters and active styling
 │   └── cart.js             # Client-side order/cart logic
 │
-├── style/                  # Single CSS output
-│   └── tailwind.css        # Compiled Tailwind CSS (all styles)
-│
-├── src/                    # Tailwind source (build only, not deployed)
-│   └── input.css           # Theme config, components, animations
+├── style/                  # Modular styling system
+│   ├── theme.css           # Core design system tokens (colors, dark mode, glows)
+│   ├── index.css           # Home/landing page styling rules
+│   ├── menu.css            # Interactive menu listing layout
+│   ├── dashboard.css       # Core administrator panel styling
+│   ├── login.css           # Admin authentication styling
+│   ├── admin-shared.css    # Shared styling components for admin views
+│   ├── admin_form.css      # Styling for category & item editing forms
+│   ├── contact.css         # Location & contact information styling
+│   ├── footer.css          # Public footer styling
+│   └── view.css            # View listing layout styling
 │
 ├── bgs/                    # Background images and restaurant logos
 └── items/                  # Uploaded menu item images
@@ -165,29 +170,28 @@ rest_menu/
 
 ## 🎨 Styling & Color Customization
 
-The system uses **Tailwind CSS v4** with all custom theme values defined in [src/input.css](src/input.css) via the `@theme` directive.
+The system features a centralized palette configuration. Rather than chasing colors through individual page stylesheets, global tokens are set inside [style/theme.css](file:///d:/xampp/htdocs/rest_menu/style/theme.css):
 
-### Custom Theme Tokens:
+### Active Theme variables (`:root` light theme):
 ```css
-@theme {
-  --color-olive: #42522B;
-  --color-cream: #F7F5EA;
-  --color-khaki: #CBB58B;
-  --color-charcoal: #2B2B2A;
-  --font-poppins: "Poppins", sans-serif;
-  --font-inter: "Inter", sans-serif;
+:root {
+    --olive-green: #42522B;      /* Brand accent color */
+    --cream-white: #F7F5EA;      /* Cozy soft background */
+    --dark-charcoal: #2B2B2A;    /* Primary text */
+    --light-khaki: #CBB58B;      /* Delicate borders & shadows */
 }
 ```
 
-### Persistent Dark Mode:
-Dark mode is class-based — toggling the `dark` class on `<html>` via `localStorage`. Tailwind's `dark:` variant handles all overrides.
-
-### Rebuilding CSS (after theme changes):
-```bash
-npm run build     # one-time build
-npm run watch     # auto-rebuild on changes
+### Persistent Dark Mode variables:
+```css
+body.dark-mode {
+    --bg-color: #1a1f11;         /* Deep olive-infused dark base */
+    --card-bg: #2a2f1a;          /* Contrasted card panels */
+    --text-color: #f7f5ea;       /* High-readability light cream text */
+    --border-color: #42522b;
+    --accent-blue: #cbb58b;      /* Warm golden accent highlight */
+}
 ```
-Run locally on your machine, then upload the generated `style/tailwind.css` to your server. No build step is needed on the server.
 
 ---
 

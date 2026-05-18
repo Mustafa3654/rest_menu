@@ -34,17 +34,20 @@ $globalHasPhoto = ($globalPhotoCheck && $globalPhotoCheck->num_rows > 0);
     window.orderMethod = "<?php echo htmlspecialchars($settings['order_method'] ?? 'whatsapp'); ?>";
 </script>
 
-<section class="menu-header-custom" style="padding: 100px 0;">
+<!-- External CSS for Menu -->
+<link rel="stylesheet" href="style/menu.css">
+
+<section class="menu-header">
     <div class="menu-header-bg" style="background-image: url('<?php echo htmlspecialchars($settings['menu_bg'] ?? 'bgs/menu-bg.jpg'); ?>');"></div>
     <div class="menu-header-overlay"></div>
-    <div class="max-w-6xl mx-auto px-4">
+    <div class="container">
         <h1>Our Menu</h1>
         <p>Authentic flavors prepared with passion</p>
     </div>
 </section>
 
 <div class="category-tabs-wrapper">
-    <div class="max-w-6xl mx-auto px-4">
+    <div class="container">
         <div class="category-tabs">
             <?php
             $catSql = "SELECT * FROM categories ORDER BY `Order` ASC";
@@ -65,7 +68,7 @@ $globalHasPhoto = ($globalPhotoCheck && $globalPhotoCheck->num_rows > 0);
 </div>
 
 <section class="menu-content">
-    <div class="max-w-6xl mx-auto px-4">
+    <div class="container">
         <?php
         // Display Category Footer Note
         if (!empty($current_cat)) {
@@ -149,11 +152,11 @@ $globalHasPhoto = ($globalPhotoCheck && $globalPhotoCheck->num_rows > 0);
                         <?php
                     }
                 } else {
-                    echo '<div class="w-full text-center py-24" style="color: var(--color-muted);"><h3>No items found in this category.</h3></div>';
+                    echo '<div class="col-12 no-items"><h3>No items found in this category.</h3></div>';
                 }
                 $stmt->close();
             } else {
-                echo '<div class="w-full text-center py-24" style="color: var(--color-muted);"><h3>Please select a category.</h3></div>';
+                echo '<div class="col-12 no-items"><h3>Please select a category.</h3></div>';
             }
             ?>
         </div>
@@ -173,11 +176,11 @@ $globalHasPhoto = ($globalPhotoCheck && $globalPhotoCheck->num_rows > 0);
         <div id="cart-totals"></div>
         
         <!-- Customer Details Section -->
-        <div id="customer-details" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--color-border);">
-            <div class="mb-2">
+        <div id="customer-details" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+            <div class="form-group mb-2">
                 <input type="text" id="customer-name" placeholder="Your Name" class="cart-input">
             </div>
-            <div class="mb-3">
+            <div class="form-group mb-3">
                 <input type="tel" id="customer-phone" placeholder="Phone Number" class="cart-input">
             </div>
         </div>
@@ -199,7 +202,7 @@ $globalHasPhoto = ($globalPhotoCheck && $globalPhotoCheck->num_rows > 0);
             <h2 id="qv-title"></h2>
             <div class="menu-card-price">
                 <span id="qv-price-usd" class="price-usd"></span>
-                <span id="qv-price-suffix" style="font-size: 0.8em; color: var(--color-muted);"></span>
+                <span id="qv-price-suffix" style="font-size: 0.8em; color: var(--text-muted);"></span>
             </div>
             <p id="qv-ingredients" class="menu-card-desc"></p>
         </div>
@@ -211,3 +214,5 @@ $globalHasPhoto = ($globalPhotoCheck && $globalPhotoCheck->num_rows > 0);
 <script src="JS/cart.js"></script>
 
 <?php include 'includes/footer.php' ?>
+
+

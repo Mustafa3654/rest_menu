@@ -1,19 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Dark Mode Toggle Logic
     const themeToggle = document.getElementById('theme-toggle');
-    const html = document.documentElement;
+    const body = document.body;
     const icon = themeToggle ? themeToggle.querySelector('i') : null;
 
     if (themeToggle && icon) {
+        // Check for saved theme preference
         const currentTheme = localStorage.getItem('theme');
         if (currentTheme === 'dark') {
-            html.classList.add('dark');
+            body.classList.add('dark-mode');
             icon.classList.replace('fa-moon', 'fa-sun');
         }
 
         themeToggle.addEventListener('click', () => {
-            html.classList.toggle('dark');
+            body.classList.toggle('dark-mode');
             
-            if (html.classList.contains('dark')) {
+            if (body.classList.contains('dark-mode')) {
                 icon.classList.replace('fa-moon', 'fa-sun');
                 localStorage.setItem('theme', 'dark');
             } else {
