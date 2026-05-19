@@ -319,8 +319,8 @@ $csrfToken = ensure_csrf_token();
 </head> 
 <body data-open-gallery="<?php echo (isset($_POST['upload_gallery']) || isset($_GET['delete_gallery'])) ? 'true' : 'false'; ?>">
     <div class="form-container" style="max-width: 900px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h1 style="margin: 0;">Global Settings</h1>
+        <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 30px; gap: 15px;">
+            <h1 style="margin: 0; text-align: center;">Global Settings</h1>
             <a href="dashboard" class="back-link" style="margin: 0; display: inline-block;"><button type="button" style="padding: 8px 15px; font-size: 14px; margin: 0; width: auto; display: inline-block; background: #6c757d;">Back to Dashboard</button></a>
         </div>
         <?php echo $message; ?>
