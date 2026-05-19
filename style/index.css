@@ -77,7 +77,8 @@
 }
 
 .hero-title span {
-  color: var(--olive-green);
+  color: #f5e6c0;
+  text-shadow: 0 2px 12px rgba(203, 181, 139, 0.6);
 }
 
 .hero-description {

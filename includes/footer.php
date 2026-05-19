@@ -14,7 +14,8 @@
             <div class="footer-widget">
                 <h4 class="widget-title">HOURS</h4>
                 <div class="hours-list">
-                    <span class="day-time"><?php echo htmlspecialchars($settings['opening_hours'] ?? 'Mon - Sun · 12:00 - 22:00'); ?></span>
+                    <span class="day-time"><?php echo htmlspecialchars($settings['opening_title'] ?? 'Opens Daily'); ?></span>
+                    <span class="day-time"><?php echo htmlspecialchars($settings['opening_hours'] ?? '12:00a.m. - 12:00p.m.'); ?></span>
                 </div>
             </div>
 
