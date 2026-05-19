@@ -361,6 +361,10 @@ $csrfToken = ensure_csrf_token();
 
                 <h3 style="margin-top: 30px; margin-bottom: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 5px; color: #42522B;">Contact Info & Social Links</h3>
                 <div class="form-group">
+                    <label for="country_code">Country Code</label>
+                    <input type="text" name="country_code" value="<?php echo htmlspecialchars($settings['country_code'] ?? '+1'); ?>" placeholder="+1">
+                </div>
+                <div class="form-group">
                     <label for="restaurant_phone">Phone Number</label>
                     <br>
                     <input type="text" name="restaurant_phone" value="<?php echo htmlspecialchars($settings['restaurant_phone'] ?? ''); ?>">
@@ -370,15 +374,9 @@ $csrfToken = ensure_csrf_token();
                     <br>
                     <input type="email" name="restaurant_email" value="<?php echo htmlspecialchars($settings['restaurant_email'] ?? ''); ?>">
                 </div>
-                <div style="display: flex; gap: 15px; align-items: flex-end;">
-                    <div class="form-group" style="flex: 0 0 130px;">
-                        <label for="country_code" style="white-space: nowrap;">Country Code</label>
-                        <input type="text" name="country_code" value="<?php echo htmlspecialchars($settings['country_code'] ?? '+1'); ?>" placeholder="+1">
-                    </div>
-                    <div class="form-group" style="flex: 1;">
-                        <label for="whatsapp_number">WhatsApp Number</label>
-                        <input type="text" name="whatsapp_number" value="<?php echo htmlspecialchars($settings['whatsapp_number'] ?? ''); ?>" placeholder="70123456">
-                    </div>
+                <div class="form-group">
+                    <label for="whatsapp_number">WhatsApp Number</label>
+                    <input type="text" name="whatsapp_number" value="<?php echo htmlspecialchars($settings['whatsapp_number'] ?? ''); ?>" placeholder="70123456">
                 </div>
                 <div class="form-group">
                     <label for="restaurant_address">Address</label>
