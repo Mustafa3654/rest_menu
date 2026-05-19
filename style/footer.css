@@ -1,308 +1,121 @@
-/* Footer Styles */
-.site-footer {
-  background-color: var(--header-bg);
-  color: var(--text-color);
-  padding: 80px 0 0;
+/* Footer Styles — Fixed colors, immune to light/dark mode */
+.site-footer,
+body .site-footer,
+body.dark-mode .site-footer {
+  background-color: #42522B !important;
+  color: #F7F5EA !important;
+  padding: 60px 0 30px;
   font-family: "Inter", sans-serif;
-  transition: background-color 0.3s ease;
-  border-top: 1px solid var(--border-color);
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+  display: block;
 }
 
-.footer-top {
-  padding-bottom: 60px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+.footer-inner {
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 45px;
+  box-sizing: border-box;
 }
 
-body.dark-mode .footer-top {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+/* Desktop layout: split into 2 columns */
+@media (min-width: 768px) {
+  .footer-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 50px;
+  }
+  .brand-widget {
+    grid-column: 1 / -1;
+    margin-bottom: 10px;
+  }
+  .footer-bottom {
+    grid-column: 1 / -1;
+  }
 }
 
-.footer-brand {
-  font-family: "Poppins", sans-serif;
-  font-size: 30px;
-  font-weight: 800;
-  margin-bottom: 20px;
-  color: var(--olive-green);
-  letter-spacing: -0.5px;
-  transition: color 0.3s ease;
+.footer-pre-title {
+  color: #CBB58B !important;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 3px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  display: block;
 }
 
-body.dark-mode .footer-brand {
-  color: var(--text-color);
+.footer-title {
+  font-family: "Playfair Display", "Georgia", serif;
+  font-size: 38px;
+  font-weight: 500;
+  margin: 0 0 15px 0;
+  color: #F7F5EA !important;
 }
 
 .footer-desc {
-  color: var(--text-muted);
-  line-height: 1.8;
-  margin-bottom: 30px;
+  color: rgba(247, 245, 234, 0.85) !important;
   font-size: 15px;
-}
-
-.footer-social {
-  display: flex;
-  gap: 15px;
-}
-
-.social-link {
-  width: 42px;
-  height: 42px;
-  background: var(--card-bg);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-color);
-  text-decoration: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid var(--border-color);
-}
-
-.social-link:hover {
-  background: var(--accent-blue);
-  color: white !important;
-  transform: translateY(-4px);
-  box-shadow: 0 6px 15px rgba(66, 82, 43, 0.15);
-}
-
-.widget-title {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 30px;
-  position: relative;
-  padding-bottom: 12px;
-  color: var(--text-color);
-  font-family: "Poppins", sans-serif;
-}
-
-.widget-title::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 30px;
-  height: 2px;
-  background: var(--accent-blue);
-}
-
-.footer-menu,
-.contact-list {
-  list-style: none;
-  padding: 0;
   margin: 0;
+  line-height: 1.6;
+  max-width: 500px;
 }
 
-.footer-menu li {
-  margin-bottom: 12px;
+.site-footer .widget-title {
+  color: #CBB58B !important;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 2px;
+  font-weight: 600;
+  margin: 0 0 15px 0;
+  padding: 0;
 }
 
-.footer-menu a {
-  color: var(--text-muted);
-  text-decoration: none;
-  transition: all 0.3s ease;
-  display: inline-block;
-  position: relative;
+/* Override the ::after underline from admin-shared widget-title */
+.site-footer .widget-title::after {
+  display: none;
 }
 
-.footer-menu a::before {
-  content: "→";
-  position: absolute;
-  left: -15px;
-  opacity: 0;
-  transition: all 0.3s ease;
-  color: var(--accent-blue);
-}
-
-.footer-menu a:hover {
-  color: var(--accent-blue) !important;
-  padding-left: 15px;
-}
-
-.footer-menu a:hover::before {
-  left: 0;
-  opacity: 1;
-}
-
-.contact-list li {
+.hours-list,
+.visit-list {
   display: flex;
-  align-items: flex-start;
-  gap: 15px;
-  margin-bottom: 20px;
-  color: var(--text-muted);
-  font-size: 15px;
-  line-height: 1.5;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.contact-list i {
-  color: var(--accent-blue);
-  background: rgba(66, 82, 43, 0.08);
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
+.day-time,
+.contact-item {
+  color: rgba(247, 245, 234, 0.85) !important;
+  font-size: 15px;
+  line-height: 1.6;
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  flex-shrink: 0;
-  transition: all 0.3s ease;
+  gap: 10px;
 }
 
-body.dark-mode .contact-list i {
-  background: rgba(203, 181, 139, 0.12);
-  color: var(--text-muted);
-}
-
-.contact-list li:hover i {
-  background: var(--accent-blue);
-  color: white !important;
-  transform: rotate(15deg) scale(1.1);
-}
-
-.contact-list a {
-  color: var(--text-muted);
+.contact-item a {
+  color: rgba(247, 245, 234, 0.85) !important;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
-.contact-list a:hover {
-  color: var(--accent-blue);
-}
-
-/* Beautiful Hours Block Styling */
-.hours-list {
-  background: rgba(66, 82, 43, 0.04);
-  border-left: 3px solid var(--accent-blue);
-  padding: 20px;
-  border-radius: 0 16px 16px 0;
-  transition: all 0.3s ease;
-}
-
-body.dark-mode .hours-list {
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.hour-item .day {
-  font-weight: 600;
-  color: var(--text-color);
-  font-size: 14px;
-}
-
-.hour-item .time {
-  display: block;
-  color: var(--accent-blue);
-  font-weight: 700;
-  font-size: 16px;
-  margin-top: 5px;
+.contact-item a:hover {
+  color: #CBB58B !important;
 }
 
 .footer-bottom {
-  padding: 30px 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  margin-top: 20px;
+  padding-top: 30px;
+  border-top: 1px solid rgba(203, 181, 139, 0.25);
+  text-align: center;
 }
 
-body.dark-mode .footer-bottom {
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.copyright,
-.developer {
-  color: var(--text-muted);
-  font-size: 14px;
+.copyright {
+  color: rgba(247, 245, 234, 0.55) !important;
+  font-size: 13px;
   margin: 0;
-  line-height: 1.5;
-}
-
-.developer i {
-  color: #ff4d4d;
-}
-
-/* Mobile Footer Optimization - Highly Enhanced Layout */
-@media (max-width: 768px) {
-  .site-footer {
-    padding: 60px 0 0;
-  }
-
-  .footer-top {
-    padding-bottom: 40px;
-  }
-
-  .site-footer .footer-top .row {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-  }
-
-  .site-footer .footer-top .col-lg-4,
-  .site-footer .footer-top .col-lg-2,
-  .site-footer .footer-top .col-lg-3,
-  .site-footer .footer-top .col-md-4 {
-    flex: 0 0 100% !important;
-    max-width: 100% !important;
-    width: 100% !important;
-    padding: 0 20px !important;
-    margin-bottom: 40px !important;
-    text-align: left !important;
-  }
-
-  /* Center only the Brand Section */
-  .site-footer .footer-top .col-lg-4:first-child {
-    text-align: center !important;
-    margin-bottom: 45px !important;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-    padding-bottom: 40px !important;
-  }
-
-  body.dark-mode .site-footer .footer-top .col-lg-4:first-child {
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  }
-
-  .footer-social {
-    justify-content: center !important;
-  }
-
-  .widget-title {
-    margin-bottom: 25px;
-    font-size: 19px;
-  }
-
-  .widget-title::after {
-    left: 0;
-  }
-
-  /* Clean spacing for hours block on mobile */
-  .hours-list {
-    margin-top: 10px;
-    padding: 15px 18px;
-  }
-
-  .footer-bottom {
-    padding: 25px 0;
-  }
-
-  .footer-bottom .text-md-end {
-    text-align: center !important;
-    margin-top: 12px;
-  }
-
-  .footer-bottom .col-md-6 {
-    text-align: center !important;
-  }
-}
-
-/* Button Glow Animation */
-@keyframes borderGlow {
-  0% {
-    box-shadow: 0 0 5px rgba(66, 82, 43, 0.5),
-      0 0 10px rgba(66, 82, 43, 0.3);
-    border-color: rgba(66, 82, 43, 0.5);
-  }
-  50% {
-    box-shadow: 0 0 15px rgba(66, 82, 43, 0.9),
-      0 0 25px rgba(66, 82, 43, 0.5);
-    border-color: rgba(66, 82, 43, 1);
-  }
-  100% {
-    box-shadow: 0 0 5px rgba(66, 82, 43, 0.5),
-      0 0 10px rgba(66, 82, 43, 0.3);
-    border-color: rgba(66, 82, 43, 0.5);
-  }
 }

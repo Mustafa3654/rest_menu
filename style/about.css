@@ -1,0 +1,400 @@
+/* About Page and About Preview Section Styles */
+
+/* Hero Section Styles */
+.hero-section {
+  position: relative;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* Dark overlay */
+  backdrop-filter: blur(5px); /* Blur effect */
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-title {
+  font-family: "Poppins", sans-serif;
+  font-size: 48px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  color: white;
+}
+
+.hero-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 18px;
+}
+
+/* Dark Mode Adjustments for Hero Section */
+body.dark-mode .hero-section::before {
+  background: rgba(0, 0, 0, 0.7); /* Darker overlay in dark mode */
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 32px;
+  }
+  .hero-section {
+    height: 300px;
+  }
+}
+
+/* General Section Reveal Integration */
+.about-preview-section {
+  padding: 100px 0;
+  background: var(--bg-color);
+  overflow: hidden;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.about-image-container {
+  position: relative;
+  padding: 15px;
+}
+
+.about-image-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.about-img {
+  width: 100%;
+  border-radius: 24px;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 15px 35px rgba(66, 82, 43, 0.1);
+  transition: all 0.5s ease;
+}
+
+.about-image-wrapper:hover .about-img {
+  transform: scale(1.02);
+  box-shadow: 0 20px 45px rgba(66, 82, 43, 0.2);
+}
+
+/* Experience Badge */
+.about-experience-badge {
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  background: var(--olive-green);
+  color: var(--cream-white);
+  padding: 25px;
+  border-radius: 20px;
+  border: 2px solid var(--light-khaki);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  animation: borderGlow 3s infinite ease-in-out;
+  z-index: 10;
+}
+
+body.dark-mode .about-experience-badge {
+  background: var(--card-bg);
+  color: var(--text-color);
+}
+
+.badge-num {
+  font-family: "Poppins", sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--light-khaki);
+}
+
+.badge-text {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 5px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Text Content */
+.about-text-content {
+  padding-left: 20px;
+}
+
+.about-subtitle {
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--light-khaki);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.about-title {
+  font-family: "Poppins", sans-serif;
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 800;
+  color: var(--text-color);
+  line-height: 1.2;
+  margin-bottom: 25px;
+}
+
+.about-title span {
+  color: var(--light-khaki);
+}
+
+.about-desc {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+/* Feature Checklist */
+.about-features {
+  margin: 30px 0;
+}
+
+.feature-item {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-color);
+  padding: 10px 0;
+}
+
+.feature-item i {
+  color: var(--olive-green);
+  font-size: 18px;
+}
+
+body.dark-mode .feature-item i {
+  color: var(--light-khaki);
+}
+
+/* Button CTA */
+.btn-about-more {
+  display: inline-flex;
+  align-items: center;
+  background: var(--accent-blue);
+  color: var(--bg-color) !important;
+  padding: 14px 35px;
+  border-radius: 30px;
+  font-weight: 700;
+  text-decoration: none;
+  border: 1px solid var(--accent-blue);
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(66, 82, 43, 0.15);
+}
+
+.btn-about-more:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(66, 82, 43, 0.3);
+  filter: brightness(1.15);
+}
+
+.btn-about-more i {
+  transition: transform 0.3s ease;
+}
+
+.btn-about-more:hover i {
+  transform: translateX(5px);
+}
+
+/* ==========================================================================
+   Dedicated About Page Styles
+   ========================================================================== */
+
+/* Hero Section */
+.about-hero-section {
+  background-size: cover;
+  background-position: center;
+}
+
+/* Core Values Section */
+.about-values-section {
+  padding: 100px 0;
+  background: var(--bg-color);
+}
+
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+  margin-top: 50px;
+}
+
+.value-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 40px 30px;
+  text-align: center;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.value-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(66, 82, 43, 0.1);
+  border-color: var(--olive-green);
+}
+
+.value-icon {
+  width: 70px;
+  height: 70px;
+  background: rgba(66, 82, 43, 0.1);
+  color: var(--olive-green);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  margin-bottom: 25px;
+  transition: all 0.3s ease;
+}
+
+body.dark-mode .value-icon {
+  background: rgba(203, 181, 139, 0.1);
+  color: var(--light-khaki);
+}
+
+.value-card:hover .value-icon {
+  background: var(--olive-green);
+  color: var(--cream-white);
+  transform: scale(1.1);
+}
+
+body.dark-mode .value-card:hover .value-icon {
+  background: var(--light-khaki);
+  color: #1a1f11;
+}
+
+.value-card h4 {
+  font-family: "Poppins", sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 15px;
+  color: var(--text-color);
+}
+
+.value-card p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Chef Showcase Section */
+.chef-showcase-section {
+  padding: 100px 0;
+  background: var(--card-bg);
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.chef-img-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.chef-img {
+  width: 100%;
+  border-radius: 24px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+}
+
+.chef-badge {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: var(--olive-green);
+  color: var(--cream-white);
+  padding: 8px 18px;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.chef-details h3 {
+  font-family: "Poppins", sans-serif;
+  font-size: 36px;
+  font-weight: 800;
+  margin-bottom: 5px;
+  color: var(--text-color);
+}
+
+.chef-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--light-khaki);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  display: block;
+  margin-bottom: 25px;
+}
+
+.chef-signature {
+  font-family: 'Dancing Script', cursive;
+  font-size: 32px;
+  color: var(--olive-green);
+  margin-top: 30px;
+  display: block;
+}
+
+body.dark-mode .chef-signature {
+  color: var(--light-khaki);
+}
+
+/* Responsive Tweaks */
+@media (max-width: 991px) {
+  .about-preview-section {
+    padding: 70px 0;
+  }
+  .about-image-container {
+    max-width: 500px;
+    margin: 0 auto 50px auto;
+  }
+  .about-text-content {
+    padding-left: 0;
+  }
+  .chef-details {
+    margin-top: 40px;
+  }
+}
+
+@media (max-width: 576px) {
+  .about-experience-badge {
+    right: 10px;
+    bottom: -15px;
+    padding: 15px 20px;
+  }
+  .badge-num {
+    font-size: 24px;
+  }
+  .badge-text {
+    font-size: 10px;
+  }
+}

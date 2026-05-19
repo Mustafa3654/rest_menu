@@ -17,6 +17,7 @@ $mapLink = $settings['restaurant_maps'] ?? '#';
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 <!-- External CSS for Index -->
 <link rel="stylesheet" href="style/index.css">
+<link rel="stylesheet" href="style/about.css">
 
 <!-- Hero Section -->
 <section class="hero-section">
@@ -133,6 +134,8 @@ if ($hasPhotos):
         </div>
     </div>
 </section>
+
+
 
 <!-- Combined Info Section -->
 <section class="combined-info-section">

@@ -64,6 +64,7 @@ $accentRgb    = '203, 181, 139'; // Gold Glow
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto align-items-center">
                     <li class="nav-item"><a class="nav-link" href="<?php echo $BASE_URL; ?>index">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?php echo $BASE_URL; ?>about">About Us</a></li>
                     <li class="nav-item"><a class="nav-link" href="<?php echo $BASE_URL; ?>menu">Menu</a></li>
                     <li class="nav-item"><a class="nav-link" href="<?php echo $BASE_URL; ?>contact">Contact</a></li>
                     <?php if ($isAdmin): ?>
