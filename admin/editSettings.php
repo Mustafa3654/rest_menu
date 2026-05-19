@@ -315,48 +315,9 @@ $csrfToken = ensure_csrf_token();
     <title>Edit Settings</title>
     <link rel="stylesheet" href="../style/admin_form.css">
     <link rel="stylesheet" href="../style/admin-shared.css">
-    <style>
-        .settings-tabs {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 25px;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 15px;
-        }
-        .tab-btn {
-            background: #f1f3f5;
-            border: 1px solid #dee2e6;
-            color: #495057;
-            padding: 10px 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            font-family: 'Poppins', sans-serif;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .tab-btn:hover {
-            background: #e2e6ea;
-            color: #212529;
-        }
-        .tab-btn.active {
-            background: #42522B;
-            color: white;
-            border-color: #42522B;
-        }
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+    <link rel="stylesheet" href="../style/editSettings.css">
 </head> 
-<body>
+<body data-open-gallery="<?php echo (isset($_POST['upload_gallery']) || isset($_GET['delete_gallery'])) ? 'true' : 'false'; ?>">
     <div class="form-container" style="max-width: 900px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h1 style="margin: 0;">Global Settings</h1>
@@ -724,38 +685,7 @@ $csrfToken = ensure_csrf_token();
         </div>
     </div>
 
-    <script>
-    function openTab(tabId, btn) {
-        // Hide all tabs
-        document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
-        // Remove active class
-        document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-        
-        // Show selected tab
-        document.getElementById(tabId).style.display = 'block';
-        if(btn) btn.classList.add('active');
-
-        // Hide the main save button if gallery tab is open (since it has its own forms)
-        const saveContainer = document.getElementById('save-settings-container');
-        if (saveContainer) {
-            if (tabId === 'tab-gallery') {
-                saveContainer.style.display = 'none';
-            } else {
-                saveContainer.style.display = 'flex';
-            }
-        }
-    }
-    
-    // Auto-open gallery tab if redirected from an upload/delete
-    <?php if (isset($_POST['upload_gallery']) || isset($_GET['delete_gallery'])): ?>
-        document.addEventListener('DOMContentLoaded', () => {
-            const galleryBtn = document.getElementById('gallery-tab-btn');
-            if (galleryBtn) {
-                openTab('tab-gallery', galleryBtn);
-            }
-        });
-    <?php endif; ?>
-    </script>
+    <script src="../JS/editSettings.js"></script>
 </body>
 </html>
 
