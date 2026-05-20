@@ -127,12 +127,12 @@ if (isset($_POST['update_settings'])) {
         $order_method = trim($_POST['order_method'] ?? 'whatsapp');
 
         // Banners
-        $banner1_visible = isset($_POST['banner1_visible']) ? '1' : '0';
+        $banner1_visible = ($_POST['banner1_visible'] ?? '0') === '1' ? '1' : '0';
         $banner1_t1 = trim($_POST['banner1_t1'] ?? 'THANK YOU FOR SUPPORTING LOCAL');
         $banner1_t2 = trim($_POST['banner1_t2'] ?? 'Made with fresh ingredients & lots of love');
         $banner1_t3 = trim($_POST['banner1_t3'] ?? 'AUTHENTIC MEDITERRANEAN FLAVOR');
 
-        $banner2_visible = isset($_POST['banner2_visible']) ? '1' : '0';
+        $banner2_visible = ($_POST['banner2_visible'] ?? '0') === '1' ? '1' : '0';
         $banner2_t1 = trim($_POST['banner2_t1'] ?? 'FRESH INGREDIENTS');
         $banner2_t2 = trim($_POST['banner2_t2'] ?? 'MADE DAILY');
         $banner2_t3 = trim($_POST['banner2_t3'] ?? 'AUTHENTIC RECIPES');
@@ -471,7 +471,7 @@ $csrfToken = ensure_csrf_token();
                 <div class="form-group">
                     <input type="hidden" name="banner1_visible" value="0">
                     <label>
-                        <input type="checkbox" name="banner1_visible" value="1" <?php echo !empty($settings['banner1_visible'] ?? 1) ? 'checked' : ''; ?>> Show Green Banner
+                        <input type="checkbox" name="banner1_visible" value="1" <?php echo !empty($settings['banner1_visible'] ?? 0) ? 'checked' : ''; ?>> Show Green Banner
                     </label>
                 </div>
                 <div class="form-group">
@@ -491,7 +491,7 @@ $csrfToken = ensure_csrf_token();
                 <div class="form-group">
                     <input type="hidden" name="banner2_visible" value="0">
                     <label>
-                        <input type="checkbox" name="banner2_visible" value="1" <?php echo !empty($settings['banner2_visible'] ?? 1) ? 'checked' : ''; ?>> Show Cream Banner
+                        <input type="checkbox" name="banner2_visible" value="1" <?php echo !empty($settings['banner2_visible'] ?? 0) ? 'checked' : ''; ?>> Show Cream Banner
                     </label>
                 </div>
                 <div class="form-group">

@@ -35,6 +35,7 @@ $mapLink = $settings['restaurant_maps'] ?? '#';
 </section>
 
 <!-- Dark Green Banner (3 custom texts) -->
+<?php if (!empty($settings['banner1_visible'])): ?>
 <section class="green-banner-section">
     <div class="container">
         <div class="green-banner">
@@ -67,6 +68,7 @@ $mapLink = $settings['restaurant_maps'] ?? '#';
         </div>
     </div>
 </section>
+<?php endif; ?>
 
 <?php
 $galleryRes = $conn->query("SELECT * FROM gallery ORDER BY created_at DESC LIMIT 6");
@@ -77,6 +79,7 @@ if ($hasPhotos):
 <section class="gallery-section">
     <div class="container">
         <div class="section-header" style="text-align: center; margin-bottom: 50px;">
+            <br>
             <h2 class="gallery-title" style="font-family: 'Poppins', sans-serif; font-size: 42px; font-weight: 800; color: var(--text-color);">The <span style="color: var(--accent-blue);">Vibe</span></h2>
             <p style="color: var(--text-muted); font-size: 18px;">A glimpse into our kitchen and atmosphere.</p>
         </div>
@@ -97,6 +100,7 @@ if ($hasPhotos):
 <?php endif; ?>
 
 <!-- Cream Banner (4 custom texts) -->
+<?php if (!empty($settings['banner2_visible'])): ?>
 <section class="cream-banner-section">
     <div class="container">
         <div class="cream-banner">
@@ -134,6 +138,7 @@ if ($hasPhotos):
         </div>
     </div>
 </section>
+<?php endif; ?>
 
 
 
