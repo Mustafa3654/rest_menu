@@ -87,6 +87,28 @@ body.dark-mode .site-footer {
   gap: 8px;
 }
 
+.hours-list {
+  padding: 20px 18px;
+  border-left: 4px solid #3d4f25;
+  gap: 10px;
+  background-color: #F7F4EB;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.hours-list .day-time:first-child {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2E2C28 !important;
+}
+
+.hours-list .day-time:last-child {
+  font-size: 26px;
+  font-weight: 700;
+  color: #42522B !important;
+  letter-spacing: 0.02em;
+}
+
 .day-time,
 .contact-item {
   color: rgba(247, 245, 234, 0.85) !important;
@@ -115,7 +137,7 @@ body.dark-mode .site-footer {
 }
 
 .copyright {
-  color: rgba(247, 245, 234, 0.55) !important;
+  color: #F7F5EA !important;
   font-size: 13px;
   margin: 0;
 }

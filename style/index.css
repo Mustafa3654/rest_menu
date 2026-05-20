@@ -407,33 +407,48 @@
   .green-banner {
     flex-direction: column;
     border-radius: 24px;
-    padding: 30px 20px;
-    gap: 20px;
+    padding: 20px 15px;
+    gap: 12px;
   }
   .banner-separator {
-    width: 80%;
+    width: 85%;
     height: 1px;
-    margin: 10px 0;
+    margin: 4px 0;
   }
   .banner-item.middle-item {
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
   }
   .banner-item.middle-item svg {
     display: none; /* Hide decorative olive branches on mobile to save vertical space */
   }
+  .banner-text {
+    font-size: 12px;
+  }
+  .banner-text.cursive-text {
+    font-size: 18px;
+  }
+  .green-banner i {
+    font-size: 16px;
+  }
 
   .cream-banner {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     border-radius: 20px;
-    padding: 30px 20px;
-    gap: 15px;
+    padding: 18px 12px;
+    gap: 16px 8px;
   }
   .cream-banner-separator {
-    width: 60%;
-    height: 1.5px;
-    margin: 8px 0;
+    display: none; /* Hide separators in grid layout */
+  }
+  .cream-banner-item {
+    gap: 8px;
+  }
+  .cream-banner-text {
+    font-size: 12px;
+  }
+  .cream-banner i {
+    font-size: 16px;
   }
 }
-
-

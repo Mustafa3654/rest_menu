@@ -135,6 +135,9 @@ $globalHasPhoto = ($globalPhotoCheck && $globalPhotoCheck->num_rows > 0);
                                 <div onclick="openQuickView(this)" style="cursor: pointer; display: block;">
                                 <h3 class="menu-card-title"><?php echo htmlspecialchars($item['item_name']); ?></h3>
                                 </div>
+                                <?php if (!empty($item['Ingredients']) && $item['Ingredients'] !== '0'): ?>
+                                    <p class="menu-card-desc"><?php echo htmlspecialchars($item['Ingredients']); ?></p>
+                                <?php endif; ?>
                                 <div class="menu-card-price">
                                     <?php 
                                     $usd_price = $item['item_priceusd'] > 0 ? '$' . number_format($item['item_priceusd'], 2) : '';
@@ -144,9 +147,6 @@ $globalHasPhoto = ($globalPhotoCheck && $globalPhotoCheck->num_rows > 0);
                                     ?>
                                     <span class="price-usd"><?php echo $usd_price; ?></span>
                                 </div>
-                                <?php if (!empty($item['Ingredients']) && $item['Ingredients'] !== '0'): ?>
-                                    <p class="menu-card-desc"><?php echo htmlspecialchars($item['Ingredients']); ?></p>
-                                <?php endif; ?>
                                 <div class="cart-controls" onclick="event.stopPropagation();">
                                     <!-- Buttons injected by JS -->
                                 </div>

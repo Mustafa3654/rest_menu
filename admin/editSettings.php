@@ -127,10 +127,12 @@ if (isset($_POST['update_settings'])) {
         $order_method = trim($_POST['order_method'] ?? 'whatsapp');
 
         // Banners
+        $banner1_visible = isset($_POST['banner1_visible']) ? '1' : '0';
         $banner1_t1 = trim($_POST['banner1_t1'] ?? 'THANK YOU FOR SUPPORTING LOCAL');
         $banner1_t2 = trim($_POST['banner1_t2'] ?? 'Made with fresh ingredients & lots of love');
         $banner1_t3 = trim($_POST['banner1_t3'] ?? 'AUTHENTIC MEDITERRANEAN FLAVOR');
 
+        $banner2_visible = isset($_POST['banner2_visible']) ? '1' : '0';
         $banner2_t1 = trim($_POST['banner2_t1'] ?? 'FRESH INGREDIENTS');
         $banner2_t2 = trim($_POST['banner2_t2'] ?? 'MADE DAILY');
         $banner2_t3 = trim($_POST['banner2_t3'] ?? 'AUTHENTIC RECIPES');
@@ -207,6 +209,8 @@ if (isset($_POST['update_settings'])) {
                 opening_title = ?,
                 country_code = ?,
                 order_method = ?,
+                banner1_visible = ?,
+                banner2_visible = ?,
                 banner1_t1 = ?,
                 banner1_t2 = ?,
                 banner1_t3 = ?,
@@ -246,10 +250,11 @@ if (isset($_POST['update_settings'])) {
                 value4_title = ?,
                 value4_desc = ?
                 WHERE id = ?");
-            $stmt->bind_param("ssssssssssssssssssssssssssssssssssssssssi", 
+            $stmt->bind_param(str_repeat("s", 57) . "i", 
                 $name, $logo_path, $home_bg_path, $menu_bg_path, $contact_bg_path, 
                 $phone, $email, $address, $maps, $desc, $hours, $whatsapp, $insta, $fb, 
                 $opening_title, $country_code, $order_method,
+                $banner1_visible, $banner2_visible,
                 $banner1_t1, $banner1_t2, $banner1_t3,
                 $banner2_t1, $banner2_t2, $banner2_t3, $banner2_t4,
                 $about_title, $about_subtitle, $about_desc1, $about_desc2,
@@ -269,10 +274,11 @@ if (isset($_POST['update_settings'])) {
         } else {
             $stmt = $conn->prepare("INSERT INTO settings (restaurant_name, restaurant_logo, home_bg, menu_bg, contact_bg, restaurant_phone, restaurant_email, restaurant_address, restaurant_maps, restaurant_description, opening_hours, whatsapp_number, instagram_url, facebook_url, opening_title, country_code, order_method, banner1_t1, banner1_t2, banner1_t3, banner2_t1, banner2_t2, banner2_t3, banner2_t4, about_title, about_subtitle, about_desc1, about_desc2, about_image, about_chef_image, about_chef_title, about_chef_subtitle, about_chef_name, about_chef_bio1, about_chef_bio2, about_years, about_years_label, about_bg, chat_id, bot_token, values_title, values_subtitle, values_desc, value1_icon, value1_title, value1_desc, value2_icon, value2_title, value2_desc, value3_icon, value3_title, value3_desc, value4_icon, value4_title, value4_desc) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param("ssssssssssssssssssssssssssssssssssssssss", 
+            $stmt->bind_param(str_repeat("s", 55), 
                 $name, $logo_path, $home_bg_path, $menu_bg_path, $contact_bg_path, 
                 $phone, $email, $address, $maps, $desc, $hours, $whatsapp, $insta, $fb, 
                 $opening_title, $country_code, $order_method,
+                $banner1_visible, $banner2_visible,
                 $banner1_t1, $banner1_t2, $banner1_t3,
                 $banner2_t1, $banner2_t2, $banner2_t3, $banner2_t4,
                 $about_title, $about_subtitle, $about_desc1, $about_desc2,
@@ -316,6 +322,7 @@ $csrfToken = ensure_csrf_token();
     <link rel="stylesheet" href="../style/admin_form.css">
     <link rel="stylesheet" href="../style/admin-shared.css">
     <link rel="stylesheet" href="../style/editSettings.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head> 
 <body data-open-gallery="<?php echo (isset($_POST['upload_gallery']) || isset($_GET['delete_gallery'])) ? 'true' : 'false'; ?>">
     <div class="form-container" style="max-width: 900px;">
@@ -462,6 +469,12 @@ $csrfToken = ensure_csrf_token();
             <div id="tab-banners" class="tab-content">
                 <h3 style="margin-bottom: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 5px; color: #42522B;">Dark Green Banner (3 Texts)</h3>
                 <div class="form-group">
+                    <input type="hidden" name="banner1_visible" value="0">
+                    <label>
+                        <input type="checkbox" name="banner1_visible" value="1" <?php echo !empty($settings['banner1_visible'] ?? 1) ? 'checked' : ''; ?>> Show Green Banner
+                    </label>
+                </div>
+                <div class="form-group">
                     <label for="banner1_t1">Green Banner - Text 1</label>
                     <input type="text" name="banner1_t1" value="<?php echo htmlspecialchars($settings['banner1_t1'] ?? 'THANK YOU FOR SUPPORTING LOCAL'); ?>">
                 </div>
@@ -475,6 +488,12 @@ $csrfToken = ensure_csrf_token();
                 </div>
 
                 <h3 style="margin-top: 30px; margin-bottom: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 5px; color: #42522B;">Cream Banner (4 Texts)</h3>
+                <div class="form-group">
+                    <input type="hidden" name="banner2_visible" value="0">
+                    <label>
+                        <input type="checkbox" name="banner2_visible" value="1" <?php echo !empty($settings['banner2_visible'] ?? 1) ? 'checked' : ''; ?>> Show Cream Banner
+                    </label>
+                </div>
                 <div class="form-group">
                     <label for="banner2_t1">Cream Banner - Text 1</label>
                     <input type="text" name="banner2_t1" value="<?php echo htmlspecialchars($settings['banner2_t1'] ?? 'FRESH INGREDIENTS'); ?>">
@@ -546,12 +565,56 @@ $csrfToken = ensure_csrf_token();
                     <textarea name="values_desc" rows="5"><?php echo htmlspecialchars($settings['values_desc'] ?? 'Our commitment to authenticity and excellence shapes everything we do in our kitchen.'); ?></textarea>
                 </div>
 
+                <style>
+                    .icon-picker-grid {
+                        display: grid;
+                        grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+                        gap: 8px;
+                        margin-bottom: 15px;
+                        padding: 10px;
+                        background: #fff;
+                        border: 1px solid #ddd;
+                        border-radius: 8px;
+                        max-height: 180px;
+                        overflow-y: auto;
+                    }
+                    .icon-picker-item {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        width: 44px;
+                        height: 44px;
+                        border: 2px solid #e0e0e0;
+                        border-radius: 8px;
+                        cursor: pointer;
+                        font-size: 18px;
+                        color: #555;
+                        transition: all 0.2s ease;
+                        background: #fafafa;
+                    }
+                    .icon-picker-item:hover {
+                        border-color: #42522B;
+                        color: #42522B;
+                        background: #f0f4e8;
+                        transform: scale(1.1);
+                    }
+                    .icon-picker-item.selected {
+                        border-color: #42522B;
+                        background: #42522B;
+                        color: #F7F5EA;
+                        box-shadow: 0 2px 8px rgba(66, 82, 43, 0.3);
+                    }
+                    .icon-picker-label {
+                        font-weight: 600;
+                        margin-bottom: 6px;
+                        color: #42522B;
+                        font-size: 14px;
+                    }
+                </style>
+
                 <div style="background: rgba(0,0,0,0.03); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
                     <h4 style="font-size: 16px; margin-bottom: 10px; color: #42522B;">Value 1</h4>
-                    <div class="form-group">
-                        <label for="value1_icon">FontAwesome Icon Class</label>
-                        <input type="text" name="value1_icon" value="<?php echo htmlspecialchars($settings['value1_icon'] ?? 'fas fa-seedling'); ?>">
-                    </div>
+                    <input type="hidden" name="value1_icon" id="value1_icon" value="<?php echo htmlspecialchars($settings['value1_icon'] ?? 'fas fa-seedling'); ?>">
                     <div class="form-group">
                         <label for="value1_title">Title</label>
                         <input type="text" name="value1_title" value="<?php echo htmlspecialchars($settings['value1_title'] ?? '100% Fresh Daily'); ?>">
@@ -564,10 +627,9 @@ $csrfToken = ensure_csrf_token();
 
                 <div style="background: rgba(0,0,0,0.03); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
                     <h4 style="font-size: 16px; margin-bottom: 10px; color: #42522B;">Value 2</h4>
-                    <div class="form-group">
-                        <label for="value2_icon">FontAwesome Icon Class</label>
-                        <input type="text" name="value2_icon" value="<?php echo htmlspecialchars($settings['value2_icon'] ?? 'fas fa-scroll'); ?>">
-                    </div>
+                    <input type="hidden" name="value2_icon" id="value2_icon" value="<?php echo htmlspecialchars($settings['value2_icon'] ?? 'fas fa-scroll'); ?>">
+                    <div class="icon-picker-label">Choose Icon</div>
+                    <div class="icon-picker-grid" data-target="value2_icon"></div>
                     <div class="form-group">
                         <label for="value2_title">Title</label>
                         <input type="text" name="value2_title" value="<?php echo htmlspecialchars($settings['value2_title'] ?? 'Authentic Recipes'); ?>">
@@ -580,10 +642,9 @@ $csrfToken = ensure_csrf_token();
 
                 <div style="background: rgba(0,0,0,0.03); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
                     <h4 style="font-size: 16px; margin-bottom: 10px; color: #42522B;">Value 3</h4>
-                    <div class="form-group">
-                        <label for="value3_icon">FontAwesome Icon Class</label>
-                        <input type="text" name="value3_icon" value="<?php echo htmlspecialchars($settings['value3_icon'] ?? 'fas fa-heart'); ?>">
-                    </div>
+                    <input type="hidden" name="value3_icon" id="value3_icon" value="<?php echo htmlspecialchars($settings['value3_icon'] ?? 'fas fa-heart'); ?>">
+                    <div class="icon-picker-label">Choose Icon</div>
+                    <div class="icon-picker-grid" data-target="value3_icon"></div>
                     <div class="form-group">
                         <label for="value3_title">Title</label>
                         <input type="text" name="value3_title" value="<?php echo htmlspecialchars($settings['value3_title'] ?? 'Prepared With Love'); ?>">
@@ -596,10 +657,9 @@ $csrfToken = ensure_csrf_token();
 
                 <div style="background: rgba(0,0,0,0.03); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
                     <h4 style="font-size: 16px; margin-bottom: 10px; color: #42522B;">Value 4</h4>
-                    <div class="form-group">
-                        <label for="value4_icon">FontAwesome Icon Class</label>
-                        <input type="text" name="value4_icon" value="<?php echo htmlspecialchars($settings['value4_icon'] ?? 'fas fa-hands-helping'); ?>">
-                    </div>
+                    <input type="hidden" name="value4_icon" id="value4_icon" value="<?php echo htmlspecialchars($settings['value4_icon'] ?? 'fas fa-hands-helping'); ?>">
+                    <div class="icon-picker-label">Choose Icon</div>
+                    <div class="icon-picker-grid" data-target="value4_icon"></div>
                     <div class="form-group">
                         <label for="value4_title">Title</label>
                         <input type="text" name="value4_title" value="<?php echo htmlspecialchars($settings['value4_title'] ?? 'Warm Hospitality'); ?>">
