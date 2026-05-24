@@ -32,6 +32,7 @@ $globalHasPhoto = ($globalPhotoCheck && $globalPhotoCheck->num_rows > 0);
     // Pass restaurant settings to JS
     window.restaurantPhone = "<?php echo htmlspecialchars(($settings['country_code'] ?? '') . ($settings['whatsapp_number'] ?? '')); ?>";
     window.orderMethod = "<?php echo htmlspecialchars($settings['order_method'] ?? 'whatsapp'); ?>";
+    window.cartEnabled = <?php echo !isset($settings['show_cart']) ? 'true' : (((string)$settings['show_cart'] === '1') ? 'true' : 'false'); ?>;
 </script>
 
 <!-- External CSS for Menu -->
@@ -147,9 +148,11 @@ $globalHasPhoto = ($globalPhotoCheck && $globalPhotoCheck->num_rows > 0);
                                     ?>
                                     <span class="price-usd"><?php echo $usd_price; ?></span>
                                 </div>
-                                <div class="cart-controls" onclick="event.stopPropagation();">
-                                    <!-- Buttons injected by JS -->
-                                </div>
+                                <?php if (!isset($settings['show_cart']) || (string)$settings['show_cart'] === '1'): ?>
+                                    <div class="cart-controls" onclick="event.stopPropagation();">
+                                        <!-- Buttons injected by JS -->
+                                    </div>
+                                <?php endif; ?>
                             </div>
                         </div>
 
@@ -178,33 +181,35 @@ $globalHasPhoto = ($globalPhotoCheck && $globalPhotoCheck->num_rows > 0);
     </div>
 </section>
 
-<!-- Cart Modal -->
-<div id="cart-modal">
-    <div class="cart-modal-content">
-        <div class="cart-header">
-            <h2>Your Order</h2>
-            <button class="close-cart" onclick="cart.closeCart()"><i class="fas fa-times"></i></button>
-        </div>
-        <div id="cart-items-container">
-            <!-- Items injected by JS -->
-        </div>
-        <div id="cart-totals"></div>
-        
-        <!-- Customer Details Section -->
-        <div id="customer-details" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
-            <div class="form-group mb-2">
-                <input type="text" id="customer-name" placeholder="Your Name" class="cart-input">
+<?php if (!isset($settings['show_cart']) || (string)$settings['show_cart'] === '1'): ?>
+    <!-- Cart Modal -->
+    <div id="cart-modal">
+        <div class="cart-modal-content">
+            <div class="cart-header">
+                <h2>Your Order</h2>
+                <button class="close-cart" onclick="cart.closeCart()"><i class="fas fa-times"></i></button>
             </div>
-            <div class="form-group mb-3">
-                <input type="tel" id="customer-phone" placeholder="Phone Number" class="cart-input">
+            <div id="cart-items-container">
+                <!-- Items injected by JS -->
             </div>
-        </div>
+            <div id="cart-totals"></div>
+            
+            <!-- Customer Details Section -->
+            <div id="customer-details" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+                <div class="form-group mb-2">
+                    <input type="text" id="customer-name" placeholder="Your Name" class="cart-input">
+                </div>
+                <div class="form-group mb-3">
+                    <input type="tel" id="customer-phone" placeholder="Phone Number" class="cart-input">
+                </div>
+            </div>
 
-        <button class="checkout-btn" onclick="cart.checkout()" id="main-checkout-btn">
-            <i id="checkout-btn-icon" class="fab fa-whatsapp"></i> <span id="checkout-btn-text">Order on WhatsApp</span>
-        </button>
+            <button class="checkout-btn" onclick="cart.checkout()" id="main-checkout-btn">
+                <i id="checkout-btn-icon" class="fab fa-whatsapp"></i> <span id="checkout-btn-text">Order on WhatsApp</span>
+            </button>
+        </div>
     </div>
-</div>
+<?php endif; ?>
 
 <!-- Quick View Modal -->
 <div id="quickview-modal" class="modal-overlay" style="display: none;">

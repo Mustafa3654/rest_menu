@@ -41,6 +41,17 @@ try {
     die("Database connection error: " . $e->getMessage() . "<br>Make sure MySQL is running in XAMPP.");
 }
 
+// Lightweight schema guard for incremental features.
+// Keeps older databases working without manual ALTERs.
+try {
+    $col = $conn->query("SHOW COLUMNS FROM settings LIKE 'show_cart'");
+    if (!$col || $col->num_rows === 0) {
+        $conn->query("ALTER TABLE settings ADD COLUMN show_cart TINYINT(1) NOT NULL DEFAULT 1");
+    }
+} catch (Throwable $e) {
+    // Non-fatal: pages can still render with defaults if the column can't be added.
+}
+
 // Include core helpers
 include_once __DIR__ . '/auth.php';
 ?>

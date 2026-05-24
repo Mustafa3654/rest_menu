@@ -125,6 +125,7 @@ if (isset($_POST['update_settings'])) {
         $email = trim($_POST['restaurant_email'] ?? '');
         $country_code = trim($_POST['country_code'] ?? '+1');
         $order_method = trim($_POST['order_method'] ?? 'whatsapp');
+        $show_cart = isset($_POST['show_cart']) ? '1' : '0';
 
         // Banners
         $banner1_visible = ($_POST['banner1_visible'] ?? '0') === '1' ? '1' : '0';
@@ -209,6 +210,7 @@ if (isset($_POST['update_settings'])) {
                 opening_title = ?,
                 country_code = ?,
                 order_method = ?,
+                show_cart = ?,
                 banner1_visible = ?,
                 banner2_visible = ?,
                 banner1_t1 = ?,
@@ -250,10 +252,10 @@ if (isset($_POST['update_settings'])) {
                 value4_title = ?,
                 value4_desc = ?
                 WHERE id = ?");
-            $stmt->bind_param(str_repeat("s", 57) . "i", 
+            $stmt->bind_param(str_repeat("s", 58) . "i", 
                 $name, $logo_path, $home_bg_path, $menu_bg_path, $contact_bg_path, 
                 $phone, $email, $address, $maps, $desc, $hours, $whatsapp, $insta, $fb, 
-                $opening_title, $country_code, $order_method,
+                $opening_title, $country_code, $order_method, $show_cart,
                 $banner1_visible, $banner2_visible,
                 $banner1_t1, $banner1_t2, $banner1_t3,
                 $banner2_t1, $banner2_t2, $banner2_t3, $banner2_t4,
@@ -272,12 +274,12 @@ if (isset($_POST['update_settings'])) {
                 $settings['id']
             );
         } else {
-            $stmt = $conn->prepare("INSERT INTO settings (restaurant_name, restaurant_logo, home_bg, menu_bg, contact_bg, restaurant_phone, restaurant_email, restaurant_address, restaurant_maps, restaurant_description, opening_hours, whatsapp_number, instagram_url, facebook_url, opening_title, country_code, order_method, banner1_t1, banner1_t2, banner1_t3, banner2_t1, banner2_t2, banner2_t3, banner2_t4, about_title, about_subtitle, about_desc1, about_desc2, about_image, about_chef_image, about_chef_title, about_chef_subtitle, about_chef_name, about_chef_bio1, about_chef_bio2, about_years, about_years_label, about_bg, chat_id, bot_token, values_title, values_subtitle, values_desc, value1_icon, value1_title, value1_desc, value2_icon, value2_title, value2_desc, value3_icon, value3_title, value3_desc, value4_icon, value4_title, value4_desc) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            $stmt->bind_param(str_repeat("s", 55), 
+            $stmt = $conn->prepare("INSERT INTO settings (restaurant_name, restaurant_logo, home_bg, menu_bg, contact_bg, restaurant_phone, restaurant_email, restaurant_address, restaurant_maps, restaurant_description, opening_hours, whatsapp_number, instagram_url, facebook_url, opening_title, country_code, order_method, show_cart, banner1_t1, banner1_t2, banner1_t3, banner2_t1, banner2_t2, banner2_t3, banner2_t4, about_title, about_subtitle, about_desc1, about_desc2, about_image, about_chef_image, about_chef_title, about_chef_subtitle, about_chef_name, about_chef_bio1, about_chef_bio2, about_years, about_years_label, about_bg, chat_id, bot_token, values_title, values_subtitle, values_desc, value1_icon, value1_title, value1_desc, value2_icon, value2_title, value2_desc, value3_icon, value3_title, value3_desc, value4_icon, value4_title, value4_desc) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt->bind_param(str_repeat("s", 56), 
                 $name, $logo_path, $home_bg_path, $menu_bg_path, $contact_bg_path, 
                 $phone, $email, $address, $maps, $desc, $hours, $whatsapp, $insta, $fb, 
-                $opening_title, $country_code, $order_method,
+                $opening_title, $country_code, $order_method, $show_cart,
                 $banner1_visible, $banner2_visible,
                 $banner1_t1, $banner1_t2, $banner1_t3,
                 $banner2_t1, $banner2_t2, $banner2_t3, $banner2_t4,
@@ -444,6 +446,14 @@ $csrfToken = ensure_csrf_token();
                     <?php if (!empty($settings['menu_bg'])): ?>
                         <img src="../<?php echo htmlspecialchars($settings['menu_bg']); ?>" class="current-logo" alt="Menu BG">
                     <?php endif; ?>
+                </div>
+
+                <div class="form-group">
+                    <label for="show_cart" style="display: block; margin-bottom: 8px;">Cart / Add Button</label>
+                    <label style="display: inline-flex; align-items: center; gap: 10px; cursor: pointer;">
+                        <input type="checkbox" id="show_cart" name="show_cart" value="1" <?php echo (!isset($settings['show_cart']) || (string)$settings['show_cart'] === '1') ? 'checked' : ''; ?>>
+                        <span>Show “Add to cart” buttons and cart checkout</span>
+                    </label>
                 </div>
 
                 <h3 style="margin-top: 30px; margin-bottom: 15px; border-bottom: 2px solid var(--border-color); padding-bottom: 5px; color: #42522B;">Contact Page Settings</h3>

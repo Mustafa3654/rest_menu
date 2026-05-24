@@ -10,9 +10,30 @@ class Cart {
     }
 
     init() {
+        if (!this.isCartEnabled()) {
+            this.teardownCartUI();
+            return;
+        }
         this.renderCartButton();
         this.updateButtons();
         this.updateCheckoutButtonUI();
+    }
+
+    isCartEnabled() {
+        // menu.php sets window.cartEnabled; default to enabled if missing.
+        if (typeof window.cartEnabled === 'undefined') return true;
+        return window.cartEnabled === true || window.cartEnabled === 1 || window.cartEnabled === '1';
+    }
+
+    teardownCartUI() {
+        // Remove any injected controls and hide modal/button if present.
+        document.querySelectorAll('.cart-controls').forEach(el => (el.innerHTML = ''));
+
+        const floatingBtn = document.getElementById('floating-cart-btn');
+        if (floatingBtn) floatingBtn.remove();
+
+        const modal = document.getElementById('cart-modal');
+        if (modal) modal.remove();
     }
 
     updateCheckoutButtonUI() {
