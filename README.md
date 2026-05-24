@@ -94,15 +94,15 @@ $dbName = 'menu';          // Database name
 ### Step 4: Configure Write Permissions
 
 Ensure your server has write privileges on the folders designated for uploaded assets:
-- `admin/bgs/` - Logo and background images
-- `admin/pics/` - Gallery and vibe images
-- `items/` - Menu item thumbnails
+- `assets/images/admin/bgs/` - Logo and background images
+- `assets/images/admin/pics/` - Gallery and vibe images
+- `assets/images/items/` - Menu item thumbnails
 
 On Linux or Mac environments:
 ```bash
-chmod 755 admin/bgs/
-chmod 755 admin/pics/
-chmod 755 items/
+chmod 755 assets/images/admin/bgs/
+chmod 755 assets/images/admin/pics/
+chmod 755 assets/images/items/
 ```
 
 ### Step 5: Default Admin Credentials
@@ -144,9 +144,36 @@ rest_menu/
 │   ├── editTelegram.php    # Telegram bot configuration management
 │   ├── exportItems.php     # Export menu items to CSV format
 │   ├── importItems.php     # Bulk import/update menu items from CSV format
-│   ├── manageGallery.php   # Gallery and slider settings
-│   ├── bgs/                # Admin-specific background settings templates
-│   └── pics/               # Admin-specific picture library
+│   └── manageGallery.php   # Gallery and slider settings
+│
+├── assets/                 # Static assets
+│   ├── css/                # Modular styling system
+│   │   ├── theme.css       # Core design system tokens (colors, dark mode, glows)
+│   │   ├── index.css       # Home/landing page styling rules
+│   │   ├── about.css       # About page styling rules
+│   │   ├── menu.css        # Interactive menu listing & cart styling
+│   │   ├── dashboard.css   # Core administrator panel styling
+│   │   ├── login.css       # Admin authentication styling
+│   │   ├── editSettings.css# Admin edit settings view styling
+│   │   ├── add.css         # Page addition component styles
+│   │   ├── admin-shared.css# Shared styling components for admin views
+│   │   ├── admin_form.css  # Styling for category & item editing forms
+│   │   ├── contact.css     # Location & contact information styling
+│   │   ├── footer.css      # Public footer styling
+│   │   ├── header.css      # Navigation header styling
+│   │   └── view.css        # View listing layout styling
+│   ├── js/                 # Interactive scripts
+│   │   ├── theme.js        # Persistent Light/Dark mode toggler logic
+│   │   ├── index.js        # Home page gallery slider interactions
+│   │   ├── menu.js         # Menu category filters and active styling
+│   │   ├── cart.js         # Client-side order/cart logic & WhatsApp/SMS checkout
+│   │   ├── editSettings.js # Admin dashboard settings validation/handlers
+│   │   └── login.js        # Admin authentication helpers
+│   └── images/
+│       ├── items/          # Uploaded menu item images
+│       └── admin/
+│           ├── bgs/        # Logo and background images
+│           └── pics/       # Gallery and vibe pictures
 │
 ├── includes/               # Common shared templates & logic
 │   ├── auth.php            # Admin session authentication and CSRF security handlers
@@ -154,41 +181,16 @@ rest_menu/
 │   ├── header.php          # Site layout top navigation header component
 │   └── footer.php          # Site layout footer component
 │
-├── Databases/              # Database SQL scripts
-│   ├── menu.sql            # Core database schema with sample data
-│   └── empty_menu.sql      # Fresh database schema structure
-│
-├── JS/                     # Interactive scripts
-│   ├── theme.js            # Persistent Light/Dark mode toggler logic
-│   ├── index.js            # Home page gallery slider interactions
-│   ├── menu.js             # Menu category filters and active styling
-│   ├── cart.js             # Client-side order/cart logic & WhatsApp/SMS checkout
-│   ├── editSettings.js     # Admin dashboard settings validation/handlers
-│   └── login.js            # Admin authentication helpers
-│
-├── style/                  # Modular styling system
-│   ├── theme.css           # Core design system tokens (colors, dark mode, glows)
-│   ├── index.css           # Home/landing page styling rules
-│   ├── about.css           # About page styling rules
-│   ├── menu.css            # Interactive menu listing & cart styling
-│   ├── dashboard.css       # Core administrator panel styling
-│   ├── login.css           # Admin authentication styling
-│   ├── editSettings.css    # Admin edit settings view styling
-│   ├── add.css             # Page addition component styles
-│   ├── admin-shared.css    # Shared styling components for admin views
-│   ├── admin_form.css      # Styling for category & item editing forms
-│   ├── contact.css         # Location & contact information styling
-│   ├── footer.css          # Public footer styling
-│   └── view.css            # View listing layout styling
-│
-└── items/                  # Uploaded menu item images
+└── Databases/              # Database SQL scripts
+    ├── menu.sql            # Core database schema with sample data
+    └── empty_menu.sql      # Fresh database schema structure
 ```
 
 ---
 
 ## 🎨 Styling & Color Customization
 
-The system features a centralized palette configuration. Rather than chasing colors through individual page stylesheets, global tokens are set inside [style/theme.css](file:///d:/xampp/htdocs/rest_menu/style/theme.css):
+The system features a centralized palette configuration. Rather than chasing colors through individual page stylesheets, global tokens are set inside [assets/css/theme.css](file:///d:/xampp/htdocs/rest_menu/assets/css/theme.css):
 
 ### Active Theme variables (`:root` light theme):
 ```css
@@ -229,7 +231,7 @@ body.dark-mode {
 - Ensure the local MySQL service is active in your control panel.
 
 ### ❌ Uploaded Images Do Not Render
-- Check file system directory permissions on both the `admin/bgs/`, `items/` and `admin/pics/` directories.
+- Check file system directory permissions on the `assets/images/` directories (`admin/bgs/`, `admin/pics/`, `items/`).
 - Ensure the standard PHP values `upload_max_filesize` and `post_max_size` inside `php.ini` allow file transfers up to the size of your images.
 
 ### ❌ Dark Mode State Resets
