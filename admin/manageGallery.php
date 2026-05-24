@@ -24,13 +24,12 @@ if (isset($_POST['upload'])) {
                     $allowed_exs = array("jpg", "jpeg", "png", "webp");
 
                     if (in_array($img_ex, $allowed_exs)) {
-                        $upload_folder = 'pics/';
+                        $upload_folder = '../assets/images/admin/pics/';
                         if (!is_dir($upload_folder)) mkdir($upload_folder, 0755, true);
                         $new_img_name = uniqid("VIBE-", true).'.'.$img_ex;
                         $img_upload_path = $upload_folder . $new_img_name;
                         
-                        // We store the path as admin/pics/ so it works relative to the frontend index.php
-                        $db_path = 'admin/pics/' . $new_img_name;
+                        $db_path = 'assets/images/admin/pics/' . $new_img_name;
 
                         if (move_uploaded_file($tmp_name, $img_upload_path)) {
                             $stmt = $conn->prepare("INSERT INTO gallery (photo_path) VALUES (?)");
@@ -83,8 +82,8 @@ $csrfToken = ensure_csrf_token();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Gallery</title>
-    <link rel="stylesheet" href="../style/admin_form.css">
-    <link rel="stylesheet" href="../style/admin-shared.css">
+    <link rel="stylesheet" href="../assets/css/admin_form.css">
+    <link rel="stylesheet" href="../assets/css/admin-shared.css">
 </head>
 <body>
     <div class="form-container" style="width: 800px;">

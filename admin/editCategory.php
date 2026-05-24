@@ -40,12 +40,12 @@ if (isset($_POST["submit"])) {
             $allowed_exs = array("jpg", "jpeg", "png", "webp");
 
             if (in_array($img_ex, $allowed_exs)) {
-                $upload_folder = '../items/';
+                $upload_folder = '../assets/images/items/';
                 if (!is_dir($upload_folder)) mkdir($upload_folder, 0755, true);
                 $new_img_name = uniqid("ICON-", true).'.'.$img_ex;
                 $icon_upload_path = $upload_folder . $new_img_name;
                 if (move_uploaded_file($tmp_name, $icon_upload_path)) {
-                    $icon_path = 'items/' . $new_img_name;
+                    $icon_path = 'assets/images/items/' . $new_img_name;
                 }
             }
         }
@@ -78,7 +78,7 @@ $csrfToken = ensure_csrf_token();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Category</title>
-    <link rel="stylesheet" href="../style/admin_form.css">
+    <link rel="stylesheet" href="../assets/css/admin_form.css">
 </head>
 <body>
     <div class="form-container">

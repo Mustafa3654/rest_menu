@@ -10,7 +10,7 @@ require_admin('../login');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=0.8">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="../style/dashboard.css?v=1.1">
+    <link rel="stylesheet" href="../assets/css/dashboard.css?v=1.1">
 </head>
 <body>
     <div class="dashboard-container"> 

@@ -18,7 +18,7 @@ function uploadSettingsImage(string $fieldName, string $prefix, string $currentP
         return $currentPath;
     }
 
-    $targetDir = "bgs/";
+    $targetDir = "../assets/images/admin/bgs/";
     if (!is_dir($targetDir)) {
         mkdir($targetDir, 0755, true);
     }
@@ -27,7 +27,7 @@ function uploadSettingsImage(string $fieldName, string $prefix, string $currentP
     $targetFile = $targetDir . $fileName;
 
     if (move_uploaded_file($_FILES[$fieldName]["tmp_name"], $targetFile)) {
-        return "admin/bgs/" . $fileName;
+        return "assets/images/admin/bgs/" . $fileName;
     }
 
     return $currentPath;
@@ -53,13 +53,13 @@ if (isset($_POST['upload_gallery'])) {
                     $allowed_exs = array("jpg", "jpeg", "png", "webp");
 
                     if (in_array($img_ex, $allowed_exs)) {
-                        $upload_folder = 'pics/';
+                        $upload_folder = '../assets/images/admin/pics/';
                         if (!is_dir($upload_folder)) mkdir($upload_folder, 0755, true);
                         $new_img_name = uniqid("VIBE-", true).'.'.$img_ex;
                         $img_upload_path = $upload_folder . $new_img_name;
                         
                         // We store the path as admin/pics/ so it works relative to the frontend index.php
-                        $db_path = 'admin/pics/' . $new_img_name;
+                        $db_path = 'assets/images/admin/pics/' . $new_img_name;
 
                         if (move_uploaded_file($tmp_name, $img_upload_path)) {
                             $stmt = $conn->prepare("INSERT INTO gallery (photo_path) VALUES (?)");
@@ -178,9 +178,9 @@ if (isset($_POST['update_settings'])) {
         $home_bg_path = $settings['home_bg'] ?? '';
         $menu_bg_path = $settings['menu_bg'] ?? '';
         $contact_bg_path = $settings['contact_bg'] ?? '';
-        $about_image_path = $settings['about_image'] ?? 'admin/bgs/about_story.png';
-        $about_chef_image_path = $settings['about_chef_image'] ?? 'admin/bgs/about_chef.png';
-        $about_bg_path = $settings['about_bg'] ?? 'admin/bgs/hero-bg.jpg';
+        $about_image_path = $settings['about_image'] ?? 'assets/images/admin/bgs/about_story.png';
+        $about_chef_image_path = $settings['about_chef_image'] ?? 'assets/images/admin/bgs/about_chef.png';
+        $about_bg_path = $settings['about_bg'] ?? 'assets/images/admin/bgs/hero-bg.jpg';
 
         $logo_path = uploadSettingsImage('restaurant_logo', 'logo', $logo_path);
         $home_bg_path = uploadSettingsImage('home_bg', 'home', $home_bg_path);
@@ -321,9 +321,9 @@ $csrfToken = ensure_csrf_token();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Settings</title>
-    <link rel="stylesheet" href="../style/admin_form.css">
-    <link rel="stylesheet" href="../style/admin-shared.css">
-    <link rel="stylesheet" href="../style/editSettings.css">
+    <link rel="stylesheet" href="../assets/css/admin_form.css">
+    <link rel="stylesheet" href="../assets/css/admin-shared.css">
+    <link rel="stylesheet" href="../assets/css/editSettings.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head> 
 <body data-open-gallery="<?php echo (isset($_POST['upload_gallery']) || isset($_GET['delete_gallery'])) ? 'true' : 'false'; ?>">
@@ -753,7 +753,7 @@ $csrfToken = ensure_csrf_token();
         </div>
     </div>
 
-    <script src="../JS/editSettings.js"></script>
+    <script src="../assets/js/editSettings.js"></script>
 </body>
 </html>
 

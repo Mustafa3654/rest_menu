@@ -92,8 +92,8 @@ $csrfToken = ensure_csrf_token();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <link rel="stylesheet" href="style/login.css">
-    <script src="JS/login.js" defer></script>
+    <link rel="stylesheet" href="assets/css/login.css">
+    <script src="assets/js/login.js" defer></script>
 </head>
 <body>
     <div class="dashboard-container">

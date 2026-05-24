@@ -34,10 +34,10 @@ $accentRgb    = '203, 181, 139'; // Gold Glow
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Global Header CSS -->
-    <link rel="stylesheet" href="<?php echo $BASE_URL; ?>style/header.css">
+    <link rel="stylesheet" href="<?php echo $BASE_URL; ?>assets/css/header.css">
 
     <!-- Theme Style -->
-    <link rel="stylesheet" href="<?php echo $BASE_URL; ?>style/theme.css">
+    <link rel="stylesheet" href="<?php echo $BASE_URL; ?>assets/css/theme.css">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg">
@@ -81,7 +81,7 @@ $accentRgb    = '203, 181, 139'; // Gold Glow
     </nav>
 	    
 	    <!-- External Theme JS -->
-	    <script src="<?php echo $BASE_URL; ?>JS/theme.js"></script>
+	    <script src="<?php echo $BASE_URL; ?>assets/js/theme.js"></script>
     <main>
 
 

@@ -16,12 +16,12 @@ $mapLink = $settings['restaurant_maps'] ?? '#';
 <!-- Swiper CSS -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 <!-- External CSS for Index -->
-<link rel="stylesheet" href="style/index.css">
-<link rel="stylesheet" href="style/about.css">
+<link rel="stylesheet" href="assets/css/index.css">
+<link rel="stylesheet" href="assets/css/about.css">
 
 <!-- Hero Section -->
 <section class="hero-section">
-    <div class="hero-bg" style="background-image: url('<?php echo htmlspecialchars($settings['home_bg'] ?? 'bgs/hero-bg.jpg'); ?>');"></div>
+    <div class="hero-bg" style="background-image: url('<?php echo htmlspecialchars($settings['home_bg'] ?? 'assets/images/admin/bgs/hero-bg.jpg'); ?>');"></div>
     <div class="hero-overlay"></div>
     <div class="hero-content">
         <h1 class="hero-title">Welcome to <span><?php echo htmlspecialchars($settings['restaurant_name'] ?? 'Our Kitchen'); ?></span></h1>
@@ -180,7 +180,7 @@ if ($hasPhotos):
 
 
 <!-- External JS for Index -->
-<script src="JS/index.js"></script>
+<script src="assets/js/index.js"></script>
 
 <?php include 'includes/footer.php' ?>
 

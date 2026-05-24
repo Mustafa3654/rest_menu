@@ -36,10 +36,10 @@ $globalHasPhoto = ($globalPhotoCheck && $globalPhotoCheck->num_rows > 0);
 </script>
 
 <!-- External CSS for Menu -->
-<link rel="stylesheet" href="style/menu.css">
+<link rel="stylesheet" href="assets/css/menu.css">
 
 <section class="menu-header">
-    <div class="menu-header-bg" style="background-image: url('<?php echo htmlspecialchars($settings['menu_bg'] ?? 'bgs/menu-bg.jpg'); ?>');"></div>
+    <div class="menu-header-bg" style="background-image: url('<?php echo htmlspecialchars($settings['menu_bg'] ?? 'assets/images/admin/bgs/menu-bg.jpg'); ?>');"></div>
     <div class="menu-header-overlay"></div>
     <div class="container">
         <h1>Our Menu</h1>
@@ -128,7 +128,7 @@ $globalHasPhoto = ($globalPhotoCheck && $globalPhotoCheck->num_rows > 0);
                             <?php elseif ($globalHasPhoto): ?>
                                 <div onclick="openQuickView(this)" style="cursor: pointer; display: block;">
                                 <div class="menu-card-img-container placeholder-img">
-                                    <img src="items/placeholder-food.png" alt="No image" class="menu-card-img">
+                                    <img src="assets/images/items/placeholder-food.png" alt="No image" class="menu-card-img">
                                 </div>
                                 </div>
                             <?php endif; ?>
@@ -230,8 +230,8 @@ $globalHasPhoto = ($globalPhotoCheck && $globalPhotoCheck->num_rows > 0);
 </div>
 
 <!-- External JS for Menu -->
-<script src="JS/menu.js"></script>
-<script src="JS/cart.js"></script>
+<script src="assets/js/menu.js"></script>
+<script src="assets/js/cart.js"></script>
 
 <?php include 'includes/footer.php' ?>
 

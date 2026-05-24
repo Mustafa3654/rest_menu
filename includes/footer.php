@@ -1,7 +1,7 @@
 </main>
 
     <!-- External CSS for Footer -->
-    <link rel="stylesheet" href="<?php echo $BASE_URL; ?>style/footer.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="<?php echo $BASE_URL; ?>assets/css/footer.css?v=<?php echo time(); ?>">
 
     <footer class="site-footer">
         <div class="footer-inner">

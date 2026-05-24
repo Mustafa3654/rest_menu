@@ -141,7 +141,7 @@ $csrfToken = ensure_csrf_token();
 
 <?php include 'includes/header.php'; ?>
 
-<link rel="stylesheet" href="style/contact.css">
+<link rel="stylesheet" href="assets/css/contact.css">
 
 <section class="hero-section contact-hero-section" style="background-image: url('<?php echo htmlspecialchars($settings['contact_bg'] ?? ''); ?>');">
     <div class="hero-content">

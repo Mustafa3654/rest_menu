@@ -97,16 +97,16 @@ CREATE TABLE `gallery` (
 --
 
 INSERT INTO `gallery` (`id`, `photo_path`, `created_at`) VALUES
-(10, 'admin/pics/VIBE-6a097bdee405e3.18468677.jpeg', '2026-05-17 08:27:10'),
-(11, 'admin/pics/VIBE-6a097bdee5e3b5.07149715.jpeg', '2026-05-17 08:27:10'),
-(12, 'admin/pics/VIBE-6a097bdee738e4.20778092.jpeg', '2026-05-17 08:27:10'),
-(13, 'admin/pics/VIBE-6a097bdee89521.88826768.jpeg', '2026-05-17 08:27:10'),
-(14, 'admin/pics/VIBE-6a097bdee9c529.17942774.jpeg', '2026-05-17 08:27:10'),
-(15, 'admin/pics/VIBE-6a097bdeeae615.71194129.jpeg', '2026-05-17 08:27:10'),
-(16, 'admin/pics/VIBE-6a097bdeec25b5.78933111.jpeg', '2026-05-17 08:27:10'),
-(17, 'admin/pics/VIBE-6a097bdeed6b57.68382703.jpeg', '2026-05-17 08:27:10'),
-(18, 'admin/pics/VIBE-6a097bdeee86c6.40744973.jpeg', '2026-05-17 08:27:10'),
-(19, 'admin/pics/VIBE-6a097bdef018a5.16114756.jpeg', '2026-05-17 08:27:10');
+(10, 'assets/images/admin/pics/VIBE-6a097bdee405e3.18468677.jpeg', '2026-05-17 08:27:10'),
+(11, 'assets/images/admin/pics/VIBE-6a097bdee5e3b5.07149715.jpeg', '2026-05-17 08:27:10'),
+(12, 'assets/images/admin/pics/VIBE-6a097bdee738e4.20778092.jpeg', '2026-05-17 08:27:10'),
+(13, 'assets/images/admin/pics/VIBE-6a097bdee89521.88826768.jpeg', '2026-05-17 08:27:10'),
+(14, 'assets/images/admin/pics/VIBE-6a097bdee9c529.17942774.jpeg', '2026-05-17 08:27:10'),
+(15, 'assets/images/admin/pics/VIBE-6a097bdeeae615.71194129.jpeg', '2026-05-17 08:27:10'),
+(16, 'assets/images/admin/pics/VIBE-6a097bdeec25b5.78933111.jpeg', '2026-05-17 08:27:10'),
+(17, 'assets/images/admin/pics/VIBE-6a097bdeed6b57.68382703.jpeg', '2026-05-17 08:27:10'),
+(18, 'assets/images/admin/pics/VIBE-6a097bdeee86c6.40744973.jpeg', '2026-05-17 08:27:10'),
+(19, 'assets/images/admin/pics/VIBE-6a097bdef018a5.16114756.jpeg', '2026-05-17 08:27:10');
 
 -- --------------------------------------------------------
 
@@ -204,8 +204,8 @@ CREATE TABLE `settings` (
   `restaurant_description` text DEFAULT NULL,
   `opening_hours` varchar(255) DEFAULT NULL,
   `opening_title` varchar(255) DEFAULT 'Open Daily',
-  `home_bg` varchar(255) DEFAULT 'bgs/home-bg.jpg',
-  `menu_bg` varchar(255) DEFAULT 'bgs/menu-bg.jpg',
+  `home_bg` varchar(255) DEFAULT 'assets/images/admin/bgs/home-bg.jpg',
+  `menu_bg` varchar(255) DEFAULT 'assets/images/admin/bgs/menu-bg.jpg',
   `contact_bg` varchar(255) DEFAULT NULL,
   `whatsapp_number` varchar(50) DEFAULT NULL,
   `instagram_url` varchar(255) DEFAULT NULL,
@@ -226,8 +226,8 @@ CREATE TABLE `settings` (
   `about_subtitle` varchar(255) DEFAULT 'Our Legacy',
   `about_desc1` text DEFAULT NULL,
   `about_desc2` text DEFAULT NULL,
-  `about_image` varchar(255) DEFAULT 'admin/bgs/about_story.png',
-  `about_chef_image` varchar(255) DEFAULT 'admin/bgs/about_chef.png',
+  `about_image` varchar(255) DEFAULT 'assets/images/admin/bgs/about_story.png',
+  `about_chef_image` varchar(255) DEFAULT 'assets/images/admin/bgs/about_chef.png',
   `about_chef_title` varchar(255) DEFAULT 'The Passion Behind the Plate',
   `about_chef_subtitle` varchar(255) DEFAULT 'Handcrafted Culinary Artistry',
   `about_chef_name` varchar(255) DEFAULT 'Nabil',
@@ -235,7 +235,7 @@ CREATE TABLE `settings` (
   `about_chef_bio2` text DEFAULT NULL,
   `about_years` varchar(50) DEFAULT '15+',
   `about_years_label` varchar(255) DEFAULT 'Years of Tradition',
-  `about_bg` varchar(255) DEFAULT 'admin/bgs/hero-bg.jpg',
+  `about_bg` varchar(255) DEFAULT 'assets/images/admin/bgs/hero-bg.jpg',
   `values_title` varchar(255) DEFAULT 'What We Stand For',
   `values_subtitle` varchar(255) DEFAULT 'Our Principles',
   `values_desc` text DEFAULT NULL,
@@ -258,7 +258,7 @@ CREATE TABLE `settings` (
 --
 
 INSERT INTO `settings` (`id`, `restaurant_name`, `restaurant_logo`, `restaurant_email`, `restaurant_phone`, `restaurant_address`, `restaurant_maps`, `restaurant_description`, `opening_hours`, `opening_title`, `home_bg`, `menu_bg`, `contact_bg`, `whatsapp_number`, `instagram_url`, `facebook_url`, `chat_id`, `bot_token`, `country_code`, `order_method`, `banner1_t1`, `banner1_t2`, `banner1_t3`, `banner2_t1`, `banner2_t2`, `banner2_t3`, `banner2_t4`) VALUES
-(1, 'Nabil Mediterranean Food', 'admin/bgs/logo_1779008183_logo.png', 'nabilskitchen@outlook.com', '(216) 376-9591', '4640 Richmond Road - 200 Warrensville, OH 44128', '', '', '9:00AM - 6:00PM', 'Monday - Saturday', 'admin/bgs/home_1779008244_WhatsApp Image 2026-05-16 at 5.21.26 PM.jpeg', 'admin/bgs/menu_1779008244_WhatsApp Image 2026-05-16 at 5.16.51 PMmm.jpeg', 'admin/bgs/contact_1779008244_WhatsApp Image 2026-05-16 at 5.16.51 PMm.jpeg', '(216) 376-9591', '', '', 0, '', '+1', 'sms', 'THANK YOU FOR SUPPORTING LOCAL BUSINESS', 'Made with fresh ingredients & lots of love', 'AUTHENTIC MEDITERRANEAN FLAVOR', 'FRESH INGREDIENTS', 'MADE DAILY', 'AUTHENTIC RECIPES', 'MADE WITH LOTS OF LOVE ❤️');
+(1, 'Nabil Mediterranean Food', 'assets/images/admin/bgs/logo_1779008183_logo.png', 'nabilskitchen@outlook.com', '(216) 376-9591', '4640 Richmond Road - 200 Warrensville, OH 44128', '', '', '9:00AM - 6:00PM', 'Monday - Saturday', 'assets/images/admin/bgs/home_1779008244_WhatsApp Image 2026-05-16 at 5.21.26 PM.jpeg', 'assets/images/admin/bgs/menu_1779008244_WhatsApp Image 2026-05-16 at 5.16.51 PMmm.jpeg', 'assets/images/admin/bgs/contact_1779008244_WhatsApp Image 2026-05-16 at 5.16.51 PMm.jpeg', '(216) 376-9591', '', '', 0, '', '+1', 'sms', 'THANK YOU FOR SUPPORTING LOCAL BUSINESS', 'Made with fresh ingredients & lots of love', 'AUTHENTIC MEDITERRANEAN FLAVOR', 'FRESH INGREDIENTS', 'MADE DAILY', 'AUTHENTIC RECIPES', 'MADE WITH LOTS OF LOVE ❤️');
 
 -- --------------------------------------------------------
 

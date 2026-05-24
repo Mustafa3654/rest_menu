@@ -50,12 +50,12 @@ if (isset($_POST["submit"])) {
                         $allowed_exs = array("jpg", "jpeg", "png", "gif", "webp");
                         
                         if (in_array($img_ex, $allowed_exs)) {
-                            $target_dir = "../items/";
+                            $target_dir = "../assets/images/items/";
                             if (!is_dir($target_dir)) mkdir($target_dir, 0755, true);
                             $unique_filename = uniqid("IMG-", true) . '.' . $img_ex;
                             $target_file = $target_dir . $unique_filename;
                             if (move_uploaded_file($tmp_name, $target_file)) {
-                                $db_path = "items/" . $unique_filename;
+                                $db_path = "assets/images/items/" . $unique_filename;
                             }
                         }
                     }
@@ -87,7 +87,7 @@ $csrfToken = ensure_csrf_token();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Item</title>
-    <link rel="stylesheet" href="../style/admin_form.css">
+    <link rel="stylesheet" href="../assets/css/admin_form.css">
 </head>
 <body>
     <div class="form-container">

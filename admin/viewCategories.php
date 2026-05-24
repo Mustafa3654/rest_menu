@@ -16,9 +16,9 @@ $csrfToken = ensure_csrf_token();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Categories</title>
-    <link rel="stylesheet" href="../style/view.css?v=1.1" />
+    <link rel="stylesheet" href="../assets/css/view.css?v=1.1" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="../style/admin-shared.css?v=1.1">
+    <link rel="stylesheet" href="../assets/css/admin-shared.css?v=1.1">
 </head>
 <body>
     <div class="cat-container">
