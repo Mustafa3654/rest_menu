@@ -3,6 +3,7 @@ include "../includes/connection.php";
 include "../includes/auth.php";
 start_secure_session();
 require_admin();
+check_session_timeout(30);
 
 // -------------------------
 // Load current settings (cached)
@@ -86,20 +87,24 @@ if (isset($_POST['upload_gallery'])) {
     }
 }
 
-// Handle Gallery Delete
-if (isset($_GET['delete_gallery'])) {
-    $id = $_GET['delete_gallery'];
-    $stmt = $conn->prepare("SELECT photo_path FROM gallery WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $res = $stmt->get_result();
-    if ($row = $res->fetch_assoc()) {
-        $real_path = '../' . $row['photo_path'];
-        if (file_exists($real_path)) unlink($real_path);
-        $delStmt = $conn->prepare("DELETE FROM gallery WHERE id = ?");
-        $delStmt->bind_param("i", $id);
-        $delStmt->execute();
-        $message = "<div class='alert alert-success'>Photo deleted.</div>";
+// Handle Gallery Delete (POST only, CSRF-protected)
+if (isset($_POST['delete_gallery'])) {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+        $message = "<div class='alert alert-danger'>Invalid request token.</div>";
+    } else {
+        $id = (int)$_POST['delete_gallery'];
+        $stmt = $conn->prepare("SELECT photo_path FROM gallery WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        if ($row = $res->fetch_assoc()) {
+            $real_path = '../' . $row['photo_path'];
+            if (file_exists($real_path)) unlink($real_path);
+            $delStmt = $conn->prepare("DELETE FROM gallery WHERE id = ?");
+            $delStmt->bind_param("i", $id);
+            $delStmt->execute();
+            $message = "<div class='alert alert-success'>Photo deleted.</div>";
+        }
     }
 }
 
@@ -326,7 +331,7 @@ $csrfToken = ensure_csrf_token();
     <link rel="stylesheet" href="../assets/css/editSettings.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head> 
-<body data-open-gallery="<?php echo (isset($_POST['upload_gallery']) || isset($_GET['delete_gallery'])) ? 'true' : 'false'; ?>">
+<body data-open-gallery="<?php echo (isset($_POST['upload_gallery']) || isset($_POST['delete_gallery'])) ? 'true' : 'false'; ?>">
     <div class="form-container" style="max-width: 900px;">
         <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin-bottom: 30px; gap: 15px;">
             <h1 style="margin: 0; text-align: center;">Global Settings</h1>
@@ -746,7 +751,11 @@ $csrfToken = ensure_csrf_token();
                 <?php while($row = $galleryItems->fetch_assoc()): ?>
                     <div class="gallery-item">
                         <img src="../<?php echo htmlspecialchars($row['photo_path']); ?>" alt="Gallery Image">
-                        <a href="editSettings?delete_gallery=<?php echo $row['id']; ?>" class="delete-btn" onclick="return confirm('Delete this photo?')">Delete</a>
+                        <form method="POST" action="editSettings" style="display:inline;" onsubmit="return confirm('Delete this photo?')">
+                            <?php echo csrf_input(); ?>
+                            <input type="hidden" name="delete_gallery" value="<?php echo (int)$row['id']; ?>">
+                            <button type="submit" class="delete-btn">Delete</button>
+                        </form>
                     </div>
                 <?php endwhile; ?>
             </div>

@@ -22,6 +22,15 @@ $accentRgb    = '203, 181, 139'; // Gold Glow
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="<?php echo htmlspecialchars($settings['restaurant_description'] ?? 'Discover our authentic Mediterranean menu.'); ?>">
+    <meta name="keywords" content="restaurant, menu, mediterranean, lebanese, food, <?php echo htmlspecialchars($restaurantName); ?>">
+    <meta property="og:title" content="<?php echo htmlspecialchars($restaurantName); ?>">
+    <meta property="og:description" content="<?php echo htmlspecialchars($settings['restaurant_description'] ?? 'Discover our authentic Mediterranean menu.'); ?>">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="<?php echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . htmlspecialchars($_SERVER['HTTP_HOST'] ?? '') . htmlspecialchars($_SERVER['REQUEST_URI'] ?? '/'); ?>">
+    <?php if (!empty($restaurantLogo)): ?>
+    <meta property="og:image" content="<?php echo $BASE_URL . htmlspecialchars($restaurantLogo); ?>">
+    <?php endif; ?>
     <title><?php echo htmlspecialchars($restaurantName); ?></title>
     
     <!-- Bootstrap CSS -->

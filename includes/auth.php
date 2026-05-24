@@ -72,6 +72,24 @@ if (!function_exists('csrf_input')) {
     }
 }
 
+if (!function_exists('check_session_timeout')) {
+    /**
+     * Check for idle session timeout (default 30 minutes).
+     * Call this on every admin page load after start_secure_session().
+     */
+    function check_session_timeout(int $timeoutMinutes = 30): void
+    {
+        $timeout = $timeoutMinutes * 60;
+        if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity']) > $timeout) {
+            $_SESSION = [];
+            session_destroy();
+            header('Location: ../login?timeout=1');
+            exit;
+        }
+        $_SESSION['last_activity'] = time();
+    }
+}
+
 // -------------------------
 // Settings caching (per-session)
 // -------------------------

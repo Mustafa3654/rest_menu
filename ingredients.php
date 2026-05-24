@@ -14,7 +14,7 @@ $stmt->bind_param("i", $itemId);
 $stmt->execute();
 $result = $stmt->get_result();
 
-include "header.php";
+include "includes/header.php";
 ?>
 
 <div class="container">
@@ -33,7 +33,7 @@ include "header.php";
                 echo $unorderedList;
                 ?>
                 <div class="col-3">
-                                    <img src="<?php echo htmlspecialchars($row['item_pic']); ?>" alt="" style="width: 100%; height: auto; object-fit: cover; border-radius: 8px;">
+                                    <img src="<?php echo htmlspecialchars($row['item_pic']); ?>" alt="" loading="lazy" style="width: 100%; height: auto; object-fit: cover; border-radius: 8px;">
                                 </div>
                                 <?php
             }
@@ -46,7 +46,7 @@ include "header.php";
 </div>
 
 <?php
-include "footer.php"
+include "includes/footer.php"
 ?>
 
 

@@ -89,7 +89,7 @@ if ($hasPhotos):
                 <?php
                 while ($gRow = $galleryRes->fetch_assoc()) {
                     echo '<div class="swiper-slide gallery-slide">';
-                    echo '    <img src="' . htmlspecialchars($gRow['photo_path']) . '" alt="Restaurant Vibe">';
+                    echo '    <img src="' . htmlspecialchars($gRow['photo_path']) . '" alt="Restaurant Vibe" loading="lazy">';
                     echo '</div>';
                 }
                 ?>

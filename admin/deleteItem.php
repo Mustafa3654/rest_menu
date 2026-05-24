@@ -3,6 +3,7 @@ include "../includes/connection.php";
 include "../includes/auth.php";
 start_secure_session();
 require_admin();
+check_session_timeout(30);
 
 // Allow deletion only via POST from CSRF-protected forms.
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

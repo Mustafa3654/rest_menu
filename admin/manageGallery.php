@@ -3,6 +3,7 @@ include "../includes/connection.php";
 include "../includes/auth.php";
 start_secure_session();
 require_admin();
+check_session_timeout(30);
 
 $message = "";
 
@@ -56,20 +57,24 @@ if (isset($_POST['upload'])) {
     }
 }
 
-// Handle Delete
-if (isset($_GET['delete'])) {
-    $id = $_GET['delete'];
-    $stmt = $conn->prepare("SELECT photo_path FROM gallery WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $res = $stmt->get_result();
-    if ($row = $res->fetch_assoc()) {
-        $real_path = '../' . $row['photo_path'];
-        if (file_exists($real_path)) unlink($real_path);
-        $delStmt = $conn->prepare("DELETE FROM gallery WHERE id = ?");
-        $delStmt->bind_param("i", $id);
-        $delStmt->execute();
-        $message = "<div class='alert alert-success'>Photo deleted.</div>";
+// Handle Delete (POST only, CSRF-protected)
+if (isset($_POST['delete'])) {
+    if (!verify_csrf_token($_POST['csrf_token'] ?? null)) {
+        $message = "<div class='alert alert-danger'>Invalid request token.</div>";
+    } else {
+        $id = (int)$_POST['delete'];
+        $stmt = $conn->prepare("SELECT photo_path FROM gallery WHERE id = ?");
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        if ($row = $res->fetch_assoc()) {
+            $real_path = '../' . $row['photo_path'];
+            if (file_exists($real_path)) unlink($real_path);
+            $delStmt = $conn->prepare("DELETE FROM gallery WHERE id = ?");
+            $delStmt->bind_param("i", $id);
+            $delStmt->execute();
+            $message = "<div class='alert alert-success'>Photo deleted.</div>";
+        }
     }
 }
 
@@ -101,7 +106,11 @@ $csrfToken = ensure_csrf_token();
             <?php while($row = $galleryItems->fetch_assoc()): ?>
                 <div class="gallery-item">
                     <img src="<?php echo $BASE_URL . htmlspecialchars($row['photo_path']); ?>" alt="Gallery Image">
-                    <a href="manageGallery?delete=<?php echo $row['id']; ?>" class="delete-btn" onclick="return confirm('Delete this photo?')">Delete</a>
+                    <form method="POST" action="manageGallery" style="display:inline;" onsubmit="return confirm('Delete this photo?')">
+                        <?php echo csrf_input(); ?>
+                        <input type="hidden" name="delete" value="<?php echo (int)$row['id']; ?>">
+                        <button type="submit" class="delete-btn">Delete</button>
+                    </form>
                 </div>
             <?php endwhile; ?>
         </div>

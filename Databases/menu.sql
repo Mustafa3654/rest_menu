@@ -179,10 +179,10 @@ INSERT INTO `items` (`item_id`, `item_name`, `item_category`, `Ingredients`, `it
 CREATE TABLE `orders` (
   `id` int(11) NOT NULL,
   `customer_name` varchar(255) DEFAULT NULL,
-  `total_lbp` bigint(20) DEFAULT 0,
+
   `total_usd` decimal(10,2) DEFAULT 0.00,
   `whatsapp_number` varchar(20) DEFAULT NULL,
-  `items_json` text NOT NULL COMMENT 'JSON array of order items',
+
   `status` enum('pending','sent','failed') DEFAULT 'pending',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -3,13 +3,16 @@ include "../includes/connection.php";
 include "../includes/auth.php";
 start_secure_session();
 require_admin();
+check_session_timeout(30);
 
 
 // -------------------------
-// Read filters
+// Read filters & pagination
 // -------------------------
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $category_filter = isset($_GET['category']) ? trim($_GET['category']) : '';
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$perPage = 10;
 
 // -------------------------
 // Load settings (cached)
@@ -37,25 +40,45 @@ if ($catResult) {
 }
 
 // -------------------------
-// Load filtered items
+// Build filter conditions
 // -------------------------
-$sql = "SELECT * FROM items WHERE 1=1";
+$where = "";
 $params = [];
 $types = "";
 
 if ($search !== '') {
-    $sql .= " AND item_name LIKE ?";
+    $where .= " AND item_name LIKE ?";
     $params[] = "%$search%";
     $types .= "s";
 }
 
 if ($category_filter !== '') {
-    $sql .= " AND item_category = ?";
+    $where .= " AND item_category = ?";
     $params[] = $category_filter;
     $types .= "s";
 }
 
-$sql .= " ORDER BY item_category, item_name";
+// Count total matching items
+$countSql = "SELECT COUNT(*) AS total FROM items WHERE 1=1" . $where;
+$countStmt = $conn->prepare($countSql);
+if (!empty($params)) {
+    $countStmt->bind_param($types, ...$params);
+}
+$countStmt->execute();
+$countResult = $countStmt->get_result();
+$totalItems = (int)$countResult->fetch_assoc()['total'];
+$countStmt->close();
+$totalPages = max(1, (int)ceil($totalItems / $perPage));
+if ($page > $totalPages) $page = $totalPages;
+$offset = ($page - 1) * $perPage;
+
+// -------------------------
+// Load filtered items (paginated)
+// -------------------------
+$sql = "SELECT * FROM items WHERE 1=1" . $where . " ORDER BY item_category, item_name LIMIT ? OFFSET ?";
+$params[] = $perPage;
+$params[] = $offset;
+$types .= "ii";
 $stmt = $conn->prepare($sql);
 if (!empty($params)) {
     $stmt->bind_param($types, ...$params);
@@ -167,6 +190,30 @@ $stmt->close();
                         </span>
                     </div>
                 <?php endforeach; ?>
+            </div>
+            <div class="pagination">
+                <?php
+                $queryParams = [];
+                if ($search !== '') $queryParams['search'] = $search;
+                if ($category_filter !== '') $queryParams['category'] = $category_filter;
+
+                if ($page > 1):
+                    $queryParams['page'] = $page - 1;
+                    echo '<a href="viewItems?' . http_build_query($queryParams) . '" class="page-link">&laquo; Prev</a>';
+                endif;
+
+                for ($i = 1; $i <= $totalPages; $i++):
+                    $queryParams['page'] = $i;
+                    $active = $i === $page ? ' class="page-link active"' : ' class="page-link"';
+                    echo '<a href="viewItems?' . http_build_query($queryParams) . '"' . $active . '>' . $i . '</a>';
+                endfor;
+
+                if ($page < $totalPages):
+                    $queryParams['page'] = $page + 1;
+                    echo '<a href="viewItems?' . http_build_query($queryParams) . '" class="page-link">Next &raquo;</a>';
+                endif;
+                ?>
+                <span class="page-info"><?php echo $totalItems; ?> total items</span>
             </div>
         <?php else: ?>
             <div class='alert alert-info' style='text-align:center; padding: 20px;'>No items found.</div>

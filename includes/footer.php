@@ -35,24 +35,7 @@
             </div>
         </div>
         
-        <?php
-        $mem_usage = round(memory_get_peak_usage(true) / 1024 / 1024, 2);
-        ?>
-        <div style="
-            position: fixed; 
-            bottom: 10px; 
-            right: 10px; 
-            background: #222; 
-            color: #00ff00; 
-            padding: 8px 12px; 
-            border-radius: 5px; 
-            font-family: monospace; 
-            font-size: 12px; 
-            z-index: 99999;
-            box-shadow: 0 0 10px rgba(0,0,0,0.5);
-        ">
-            Memory: <?php echo $mem_usage; ?> MB
-        </div>
+
     </footer>
 
     <!-- Bootstrap JS -->

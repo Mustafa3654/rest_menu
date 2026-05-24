@@ -3,11 +3,14 @@ include "../includes/connection.php";
 include "../includes/auth.php";
 start_secure_session();
 require_admin();
+check_session_timeout(30);
 
 // -------------------------
-// Read filters
+// Read filters & pagination
 // -------------------------
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$perPage = 10;
 $csrfToken = ensure_csrf_token();
 ?>
 <!DOCTYPE html>
@@ -34,17 +37,32 @@ $csrfToken = ensure_csrf_token();
         </div>
 
         <?php
-        $sql = "SELECT * FROM categories WHERE 1=1";
+        $where = "";
         $params = [];
         $types = "";
 
         if (!empty($search)) {
-            $sql .= " AND cat_name LIKE ?";
+            $where .= " AND cat_name LIKE ?";
             $params[] = "%$search%";
             $types .= "s";
         }
 
-        $sql .= " ORDER BY cat_name";
+        // Count total
+        $countStmt = $conn->prepare("SELECT COUNT(*) AS total FROM categories WHERE 1=1" . $where);
+        if (!empty($params)) {
+            $countStmt->bind_param($types, ...$params);
+        }
+        $countStmt->execute();
+        $totalCats = (int)$countStmt->get_result()->fetch_assoc()['total'];
+        $countStmt->close();
+        $totalPages = max(1, (int)ceil($totalCats / $perPage));
+        if ($page > $totalPages) $page = $totalPages;
+        $offset = ($page - 1) * $perPage;
+
+        $sql = "SELECT * FROM categories WHERE 1=1" . $where . " ORDER BY cat_name LIMIT ? OFFSET ?";
+        $params[] = $perPage;
+        $params[] = $offset;
+        $types .= "ii";
 
         $stmt = $conn->prepare($sql);
         if (!empty($params)) {
@@ -74,6 +92,26 @@ $csrfToken = ensure_csrf_token();
                         </span>
                       </div>";
             }
+            echo '</div>';
+
+            // Pagination nav
+            echo '<div class="pagination">';
+            $qp = [];
+            if ($search !== '') $qp['search'] = $search;
+            if ($page > 1):
+                $qp['page'] = $page - 1;
+                echo '<a href="viewCategories?' . http_build_query($qp) . '" class="page-link">&laquo; Prev</a>';
+            endif;
+            for ($i = 1; $i <= $totalPages; $i++):
+                $qp['page'] = $i;
+                $active = $i === $page ? ' class="page-link active"' : ' class="page-link"';
+                echo '<a href="viewCategories?' . http_build_query($qp) . '"' . $active . '>' . $i . '</a>';
+            endfor;
+            if ($page < $totalPages):
+                $qp['page'] = $page + 1;
+                echo '<a href="viewCategories?' . http_build_query($qp) . '" class="page-link">Next &raquo;</a>';
+            endif;
+            echo '<span class="page-info">' . $totalCats . ' total categories</span>';
             echo '</div>';
         } else {
             echo "<div class='alert alert-info' style='text-align:center; padding: 20px;'>No categories found.</div>";

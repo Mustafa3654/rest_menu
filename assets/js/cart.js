@@ -222,7 +222,7 @@ class Cart {
         totalsContainer.innerHTML = totalHtml;
     }
 
-    checkout() {
+    async checkout() {
         if (this.items.length === 0) return;
 
         // Check for Combo Items Warning
@@ -259,6 +259,34 @@ class Cart {
 
         message += `\nName: ${customerName}`;
         message += `\nPhone: ${customerPhone}`;
+
+        // Save order to database first
+        try {
+            const payload = {
+                customer_name: customerName,
+                customer_phone: customerPhone,
+                total_usd: totals.usd,
+                items: this.items.map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    category: item.category,
+                    quantity: item.quantity,
+                    priceUsd: item.priceUsd,
+                    priceSuffix: item.priceSuffix
+                }))
+            };
+            const res = await fetch('save_order', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await res.json();
+            if (!result.success) {
+                console.error('Order save failed:', result.error);
+            }
+        } catch (e) {
+            console.error('Order save error:', e);
+        }
 
         // Get phone number from a global variable set in php, strip non-digits
         const phone = (window.restaurantPhone || '').replace(/\D/g, ''); 
