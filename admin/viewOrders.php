@@ -9,6 +9,8 @@ $csrfToken = ensure_csrf_token();
 $page = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
 $perPage = 20;
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+$dateFrom = isset($_GET['date_from']) ? trim($_GET['date_from']) : date('Y-m-d');
+$dateTo = isset($_GET['date_to']) ? trim($_GET['date_to']) : date('Y-m-d', strtotime('+1 month'));
 
 $where = "";
 $params = [];
@@ -20,6 +22,11 @@ if ($search !== '') {
     $params[] = "%$search%";
     $types .= "ss";
 }
+
+$where .= " AND DATE(created_at) >= ? AND DATE(created_at) <= ?";
+$params[] = $dateFrom;
+$params[] = $dateTo;
+$types .= "ss";
 
 $countStmt = $conn->prepare("SELECT COUNT(*) AS total FROM orders WHERE 1=1" . $where);
 if (!empty($params)) {
@@ -52,7 +59,7 @@ $stmt->close();
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
     $order_id = (int)$_POST['order_id'];
     $new_status = $_POST['new_status'];
-    $allowed = ['pending', 'sent', 'failed'];
+    $allowed = ['pending', 'sent', 'cancelled'];
     if (in_array($new_status, $allowed)) {
         if ($new_status === 'sent') {
             $upd = $conn->prepare("UPDATE orders SET status = ?, completed_at = NOW() WHERE id = ?");
@@ -89,11 +96,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
         <?php endif; ?>
 
         <div class="controls">
-            <div class="search-box">
-                <form method="GET">
+            <form method="GET" style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; width:100%;">
+                <div class="search-box" style="flex:1; min-width:180px;">
                     <input type="text" name="search" placeholder="Search by name or phone..." value="<?php echo htmlspecialchars($search); ?>">
-                </form>
-            </div>
+                </div>
+                <label style="font-size:13px; color:#42522B; font-weight:600;">From:
+                    <input type="date" name="date_from" value="<?php echo $dateFrom; ?>" style="margin-left:4px; padding:8px; border:1px solid #CBB58B; border-radius:5px; font-size:13px;">
+                </label>
+                <label style="font-size:13px; color:#42522B; font-weight:600;">To:
+                    <input type="date" name="date_to" value="<?php echo $dateTo; ?>" style="margin-left:4px; padding:8px; border:1px solid #CBB58B; border-radius:5px; font-size:13px;">
+                </label>
+                <button type="submit" style="padding:8px 16px; background:#42522B; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:600;">Filter</button>
+            </form>
         </div>
 
         <?php if (count($rows) > 0): ?>
@@ -130,7 +144,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
                                 <select name="new_status" class="status-select">
                                     <option value="pending" <?php echo $r['status'] === 'pending' ? 'selected' : ''; ?>>Pending</option>
                                     <option value="sent" <?php echo $r['status'] === 'sent' ? 'selected' : ''; ?>>Sent</option>
-                                    <option value="failed" <?php echo $r['status'] === 'failed' ? 'selected' : ''; ?>>Failed</option>
+                                    <option value="cancelled" <?php echo $r['status'] === 'cancelled' ? 'selected' : ''; ?>>Cancelled</option>
                                 </select>
                                 <button type="submit" name="update_status" class="update-btn"><i class="fas fa-check"></i></button>
                             </form>
@@ -143,6 +157,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
                 <?php
                 $qp = [];
                 if ($search !== '') $qp['search'] = $search;
+                $qp['date_from'] = $dateFrom;
+                $qp['date_to'] = $dateTo;
                 if ($page > 1):
                     $qp['page'] = $page - 1;
                     echo '<a href="viewOrders?' . http_build_query($qp) . '" class="page-link">&laquo; Prev</a>';

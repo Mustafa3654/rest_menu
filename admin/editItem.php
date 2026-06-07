@@ -25,6 +25,7 @@ if (isset($_POST["submit"])) {
         $ingredients = $_POST["ingredients"];
         $cat = $_POST["category"];
         $price_suffix = $_POST["price_suffix"] ?? '';
+        $item_order = (int)($_POST["item_order"] ?? 0);
         $pic_path = $_POST['current_pic'];
 
         // Handle image upload
@@ -45,8 +46,8 @@ if (isset($_POST["submit"])) {
             }
         }
 
-        $stmt = $conn->prepare("UPDATE items SET item_name=?, Ingredients=?, item_priceusd=?, price_suffix=?, item_category=?, item_pic=? WHERE item_id=?");
-        $stmt->bind_param("ssdsssi", $name, $ingredients, $priceusd, $price_suffix, $cat, $pic_path, $id);
+        $stmt = $conn->prepare("UPDATE items SET item_name=?, Ingredients=?, item_priceusd=?, price_suffix=?, item_category=?, item_pic=?, `Order`=? WHERE item_id=?");
+        $stmt->bind_param("ssdsssii", $name, $ingredients, $priceusd, $price_suffix, $cat, $pic_path, $item_order, $id);
         
         if ($stmt->execute()) {
 
@@ -130,6 +131,9 @@ $csrfToken = ensure_csrf_token();
             <?php if (!empty($row['item_pic'])): ?>
                 <img src="../<?php echo htmlspecialchars($row['item_pic']); ?>" style="width: 80px; margin-top: 10px; border-radius: 8px;" alt="Current Image">
             <?php endif; ?>
+
+            <label for="item_order">Display Order</label>
+            <input type="number" name="item_order" id="item_order" value="<?php echo (int)($row['Order'] ?? 0); ?>" min="0" placeholder="0 = first">
 
             <button type="submit" name="submit" value="update">Update Item</button> 
         </form>

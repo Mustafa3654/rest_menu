@@ -24,23 +24,6 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `audit_log`
---
-
-CREATE TABLE `audit_log` (
-  `id` int(11) NOT NULL,
-  `username` varchar(100) NOT NULL,
-  `action` varchar(50) NOT NULL COMMENT 'create, update, delete, login',
-  `entity` varchar(50) NOT NULL COMMENT 'item, category, settings, etc.',
-  `entity_id` int(11) DEFAULT NULL,
-  `details` text DEFAULT NULL,
-  `ip_address` varchar(45) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `categories`
 --
 
@@ -183,8 +166,9 @@ CREATE TABLE `orders` (
   `total_usd` decimal(10,2) DEFAULT 0.00,
   `whatsapp_number` varchar(20) DEFAULT NULL,
 
-  `status` enum('pending','sent','failed') DEFAULT 'pending',
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+  `status` enum('pending','sent','cancelled') DEFAULT 'pending',
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `completed_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -285,16 +269,6 @@ INSERT INTO `users` (`user_id`, `username`, `userpassword`, `isAdmin`) VALUES
 --
 
 --
--- Indexes for table `audit_log`
---
-ALTER TABLE `audit_log`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `idx_entity` (`entity`),
-  ADD KEY `idx_action` (`action`),
-  ADD KEY `idx_username` (`username`),
-  ADD KEY `idx_created` (`created_at`);
-
---
 -- Indexes for table `categories`
 --
 ALTER TABLE `categories`
@@ -344,12 +318,6 @@ ALTER TABLE `users`
 --
 -- AUTO_INCREMENT for dumped tables
 --
-
---
--- AUTO_INCREMENT for table `audit_log`
---
-ALTER TABLE `audit_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `categories`

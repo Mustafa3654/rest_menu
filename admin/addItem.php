@@ -24,6 +24,7 @@ if (isset($_POST["submit"])) {
         $category = trim($_POST["category"]);
         $ingredients = trim($_POST["ingredients"] ?? '');
         $price_suffix = trim($_POST["price_suffix"] ?? '');
+        $item_order = (int)($_POST["item_order"] ?? 0);
 
         if ($name === '') {
             $message = "<div class='alert alert-danger'>Item Name is required.</div>";
@@ -63,8 +64,8 @@ if (isset($_POST["submit"])) {
 
                     $price_usd = $price_usd === '' ? 0 : (float)$price_usd;
 
-                    $stmt = $conn->prepare("INSERT INTO items (item_name, item_category, Ingredients, item_priceusd, price_suffix, item_pic) VALUES (?, ?, ?, ?, ?, ?)");
-                    $stmt->bind_param("sssdss", $name, $category, $ingredients, $price_usd, $price_suffix, $db_path);
+                    $stmt = $conn->prepare("INSERT INTO items (item_name, item_category, Ingredients, item_priceusd, price_suffix, item_pic, `Order`) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                    $stmt->bind_param("sssdssi", $name, $category, $ingredients, $price_usd, $price_suffix, $db_path, $item_order);
                     
                     if ($stmt->execute()) {
                         $newId = $conn->insert_id;
@@ -122,6 +123,9 @@ $csrfToken = ensure_csrf_token();
 
             <label for="item-img">Item Image (Optional)</label>
             <input type="file" name="item-img" id="item-img">
+
+            <label for="item_order">Display Order</label>
+            <input type="number" name="item_order" id="item_order" value="0" min="0" placeholder="0 = first">
 
             <button type="submit" name="submit" value="submit">Add Item</button> 
         </form>

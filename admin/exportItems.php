@@ -18,10 +18,10 @@ $output = fopen('php://output', 'w');
 fputs($output, "\xEF\xBB\xBF");
 
 // Write CSV headers
-fputcsv($output, ['ID', 'Name', 'Category', 'Price USD', 'Price Suffix', 'Ingredients', 'Image Path']);
+fputcsv($output, ['ID', 'Name', 'Category', 'Price USD', 'Price Suffix', 'Ingredients', 'Image Path', 'Order']);
 
 // Fetch all items from database
-$sql = "SELECT item_id, item_name, item_category, item_priceusd, price_suffix, Ingredients, item_pic FROM items ORDER BY item_category, item_name";
+$sql = "SELECT item_id, item_name, item_category, item_priceusd, price_suffix, Ingredients, item_pic, `Order` FROM items ORDER BY `Order` ASC, item_category, item_name";
 $result = $conn->query($sql);
 
 if ($result) {
@@ -33,7 +33,8 @@ if ($result) {
             $row['item_priceusd'],
             $row['price_suffix'],
             $row['Ingredients'],
-            $row['item_pic']
+            $row['item_pic'],
+            $row['Order']
         ]);
     }
 }

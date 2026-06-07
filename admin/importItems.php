@@ -82,7 +82,8 @@ if (isset($_POST["import"])) {
         'price usd' => array_search('price usd', $headers),
         'price suffix' => array_search('price suffix', $headers),
         'ingredients' => array_search('ingredients', $headers),
-        'image path' => array_search('image path', $headers)
+        'image path' => array_search('image path', $headers),
+        'order' => array_search('order', $headers)
     ];
 
     // Validate required columns
@@ -115,6 +116,7 @@ if (isset($_POST["import"])) {
         $price_suffix = ($col_map['price suffix'] !== false && isset($row[$col_map['price suffix']])) ? trim($row[$col_map['price suffix']]) : '';
         $ingredients = ($col_map['ingredients'] !== false && isset($row[$col_map['ingredients']])) ? trim($row[$col_map['ingredients']]) : '';
         $image_path = ($col_map['image path'] !== false && isset($row[$col_map['image path']])) ? trim($row[$col_map['image path']]) : '';
+        $item_order = ($col_map['order'] !== false && isset($row[$col_map['order']])) ? (int)trim($row[$col_map['order']]) : 0;
 
         // Validate required fields
         if (empty($name)) {
@@ -166,8 +168,8 @@ if (isset($_POST["import"])) {
 
         if ($item_exists) {
             // Update existing item
-            $update_stmt = $conn->prepare("UPDATE items SET item_name = ?, item_category = ?, item_priceusd = ?, price_suffix = ?, Ingredients = ?, item_pic = ? WHERE item_id = ?");
-            $update_stmt->bind_param("ssdsssi", $name, $category, $price_usd, $price_suffix, $ingredients, $image_path, $id);
+            $update_stmt = $conn->prepare("UPDATE items SET item_name = ?, item_category = ?, item_priceusd = ?, price_suffix = ?, Ingredients = ?, item_pic = ?, `Order` = ? WHERE item_id = ?");
+            $update_stmt->bind_param("ssdsssii", $name, $category, $price_usd, $price_suffix, $ingredients, $image_path, $item_order, $id);
             
             if ($update_stmt->execute()) {
                 $updated_count++;
@@ -178,8 +180,8 @@ if (isset($_POST["import"])) {
             $update_stmt->close();
         } else {
             // Insert new item
-            $insert_stmt = $conn->prepare("INSERT INTO items (item_name, item_category, item_priceusd, price_suffix, Ingredients, item_pic) VALUES (?, ?, ?, ?, ?, ?)");
-            $insert_stmt->bind_param("ssdsss", $name, $category, $price_usd, $price_suffix, $ingredients, $image_path);
+            $insert_stmt = $conn->prepare("INSERT INTO items (item_name, item_category, item_priceusd, price_suffix, Ingredients, item_pic, `Order`) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $insert_stmt->bind_param("ssdsssi", $name, $category, $price_usd, $price_suffix, $ingredients, $image_path, $item_order);
             
             if ($insert_stmt->execute()) {
                 $inserted_count++;

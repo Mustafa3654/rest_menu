@@ -75,7 +75,7 @@ $offset = ($page - 1) * $perPage;
 // -------------------------
 // Load filtered items (paginated)
 // -------------------------
-$sql = "SELECT * FROM items WHERE 1=1" . $where . " ORDER BY item_category, item_name LIMIT ? OFFSET ?";
+$sql = "SELECT * FROM items WHERE 1=1" . $where . " ORDER BY `Order` ASC, item_category, item_name LIMIT ? OFFSET ?";
 $params[] = $perPage;
 $params[] = $offset;
 $types .= "ii";
@@ -164,7 +164,8 @@ $stmt->close();
                 <div class="item-row item-header">
                     <span>Item Name</span>
                     <span>Category</span>
-                    <span class="price-usd-header">Price (USD)</span>
+                    <span>Price (USD)</span>
+                    <span>Order</span>
                     <span>Edit</span>
                     <span>Delete</span>
                 </div>
@@ -179,7 +180,8 @@ $stmt->close();
                     <div class='item-row' data-usd-price="<?php echo htmlspecialchars($usd_price); ?>">
                         <span><?php echo htmlspecialchars($row["item_name"]); ?></span>
                         <span><?php echo htmlspecialchars($row["item_category"]); ?></span>
-                        <span class='price-usd'><?php echo $usd_price; ?></span>
+                        <span><?php echo $usd_price; ?></span>
+                        <span><?php echo (int)$row["Order"]; ?></span>
                         <span><a href='editItem?item=<?php echo urlencode($row["item_name"]); ?>&category=<?php echo urlencode($row["item_category"]); ?>'><i class='fas fa-pen'></i></a></span>
                         <span>
                             <form method='POST' action='deleteItem' style='display:inline;' onsubmit='return confirm("Are you sure?");'>

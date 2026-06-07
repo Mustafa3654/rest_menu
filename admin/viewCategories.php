@@ -59,7 +59,7 @@ $csrfToken = ensure_csrf_token();
         if ($page > $totalPages) $page = $totalPages;
         $offset = ($page - 1) * $perPage;
 
-        $sql = "SELECT * FROM categories WHERE 1=1" . $where . " ORDER BY cat_name LIMIT ? OFFSET ?";
+        $sql = "SELECT * FROM categories WHERE 1=1" . $where . " ORDER BY `Order` ASC, cat_name LIMIT ? OFFSET ?";
         $params[] = $perPage;
         $params[] = $offset;
         $types .= "ii";
@@ -75,6 +75,7 @@ $csrfToken = ensure_csrf_token();
             echo '<div class="item-list">';
             echo '<div class="cat-row item-header">';
             echo '<span>Category Name</span>';
+            echo '<span>Order</span>';
             echo '<span>Edit</span>';
             echo '<span>Delete</span>';
             echo '</div>';
@@ -82,6 +83,7 @@ $csrfToken = ensure_csrf_token();
             while($row = $result->fetch_assoc()) {
                 echo "<div class='cat-row'>
                         <span>".htmlspecialchars($row["cat_name"])."</span>
+                        <span>".(int)($row['Order'] ?? 0)."</span>
                         <span><a href='editCategory?category=" . urlencode($row["cat_name"]) . "'><i class='fas fa-pen'></i></a></span>
                         <span>
                             <form method='POST' action='deleteCategory' style='display:inline;' onsubmit='return confirm(\"Are you sure?\");'>
