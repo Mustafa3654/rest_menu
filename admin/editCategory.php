@@ -1,6 +1,7 @@
 <?php 
 include "../includes/connection.php";
 include "../includes/auth.php";
+include "../includes/webp_helper.php";
 start_secure_session();
 require_admin();
 check_session_timeout(30);
@@ -35,20 +36,21 @@ if (isset($_POST["submit"])) {
         $cat_footer_bottom = trim($_POST['cat_footer_bottom'] ?? '');
         $cat_order = (int)($_POST['cat_order'] ?? 0);
 
+        // Handle Category Icon — auto-convert to WebP
         if (isset($_FILES['cat-icon']) && $_FILES['cat-icon']['error'] === 0) {
-            $img_name = $_FILES['cat-icon']['name'];
-            $tmp_name = $_FILES['cat-icon']['tmp_name'];
-            $img_ex = strtolower(pathinfo($img_name, PATHINFO_EXTENSION));
-            $allowed_exs = array("jpg", "jpeg", "png", "webp");
-
-            if (in_array($img_ex, $allowed_exs)) {
-                $upload_folder = '../assets/images/items/';
-                if (!is_dir($upload_folder)) mkdir($upload_folder, 0755, true);
-                $new_img_name = uniqid("ICON-", true).'.'.$img_ex;
-                $icon_upload_path = $upload_folder . $new_img_name;
-                if (move_uploaded_file($tmp_name, $icon_upload_path)) {
-                    $icon_path = 'assets/images/items/' . $new_img_name;
+            $result_path = process_upload_to_webp(
+                $_FILES['cat-icon']['tmp_name'],
+                $_FILES['cat-icon']['name'],
+                '../assets/images/items/',
+                'ICON',
+                'assets/images/items/'
+            );
+            if ($result_path !== false) {
+                // Delete old icon if it exists
+                if (!empty($icon_path) && file_exists('../' . $icon_path)) {
+                    @unlink('../' . $icon_path);
                 }
+                $icon_path = $result_path;
             }
         }
       

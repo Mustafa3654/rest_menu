@@ -1,6 +1,7 @@
 <?php
 include "../includes/connection.php";
 include "../includes/auth.php";
+include "../includes/webp_helper.php";
 start_secure_session();
 require_admin();
 check_session_timeout(30);
@@ -19,27 +20,19 @@ if (isset($_POST['upload'])) {
 
             for ($i = 0; $i < $total; $i++) {
                 if ($_FILES['photos']['error'][$i] === 0) {
-                    $img_name = $_FILES['photos']['name'][$i];
-                    $tmp_name = $_FILES['photos']['tmp_name'][$i];
-                    $img_ex = strtolower(pathinfo($img_name, PATHINFO_EXTENSION));
-                    $allowed_exs = array("jpg", "jpeg", "png", "webp");
+                    $result_path = process_upload_to_webp(
+                        $_FILES['photos']['tmp_name'][$i],
+                        $_FILES['photos']['name'][$i],
+                        '../assets/images/admin/pics/',
+                        'VIBE',
+                        'assets/images/admin/pics/'
+                    );
 
-                    if (in_array($img_ex, $allowed_exs)) {
-                        $upload_folder = '../assets/images/admin/pics/';
-                        if (!is_dir($upload_folder)) mkdir($upload_folder, 0755, true);
-                        $new_img_name = uniqid("VIBE-", true).'.'.$img_ex;
-                        $img_upload_path = $upload_folder . $new_img_name;
-                        
-                        $db_path = 'assets/images/admin/pics/' . $new_img_name;
-
-                        if (move_uploaded_file($tmp_name, $img_upload_path)) {
-                            $stmt = $conn->prepare("INSERT INTO gallery (photo_path) VALUES (?)");
-                            $stmt->bind_param("s", $db_path);
-                            $stmt->execute();
-                            $success_count++;
-                        } else {
-                            $error_count++;
-                        }
+                    if ($result_path !== false) {
+                        $stmt = $conn->prepare("INSERT INTO gallery (photo_path) VALUES (?)");
+                        $stmt->bind_param("s", $result_path);
+                        $stmt->execute();
+                        $success_count++;
                     } else {
                         $error_count++;
                     }
@@ -105,7 +98,7 @@ $csrfToken = ensure_csrf_token();
         <div class="gallery-grid">
             <?php while($row = $galleryItems->fetch_assoc()): ?>
                 <div class="gallery-item">
-                    <img src="<?php echo $BASE_URL . htmlspecialchars($row['photo_path']); ?>" alt="Gallery Image">
+                    <img src="../<?php echo htmlspecialchars($row['photo_path']); ?>" alt="Gallery Image" loading="lazy" width="150" height="110">
                     <form method="POST" action="manageGallery" style="display:inline;" onsubmit="return confirm('Delete this photo?')">
                         <?php echo csrf_input(); ?>
                         <input type="hidden" name="delete" value="<?php echo (int)$row['id']; ?>">

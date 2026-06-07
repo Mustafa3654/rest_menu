@@ -59,7 +59,7 @@ $globalHasPhoto = ($globalPhotoCheck && $globalPhotoCheck->num_rows > 0);
                     $iconSrc = !empty($cat['cat_icon']) && filter_var($cat['cat_icon'], FILTER_VALIDATE_URL) === false
                         ? htmlspecialchars($cat['cat_icon'])
                         : '';
-                    $iconHtml = !empty($iconSrc) ? '<img src="'.$iconSrc.'" class="category-icon" alt="" loading="lazy">' : '';
+                    $iconHtml = !empty($iconSrc) ? '<img src="'.$iconSrc.'" class="category-icon" alt="" loading="lazy" width="24" height="24">' : '';
                     echo '<a href="menu?category='.urlencode($cat['cat_name']).'" class="category-tab '.$isActive.'">'.$iconHtml.'<span>'.htmlspecialchars($cat['cat_name']).'</span></a>';
                 }
             }
@@ -122,13 +122,13 @@ $globalHasPhoto = ($globalPhotoCheck && $globalPhotoCheck->num_rows > 0);
                             <?php if (!empty($item['item_pic'])): ?>
                                 <div onclick="openQuickView(this)" style="cursor: pointer; display: block;">
                                 <div class="menu-card-img-container">
-                                    <img src="<?php echo htmlspecialchars($item['item_pic']); ?>" alt="<?php echo htmlspecialchars($item['item_name']); ?>" loading="lazy" class="menu-card-img">
+                                    <img src="<?php echo htmlspecialchars($item['item_pic']); ?>" alt="<?php echo htmlspecialchars($item['item_name']); ?>" loading="lazy" class="menu-card-img" width="350" height="250">
                                 </div>
                                 </div>
                             <?php elseif ($globalHasPhoto): ?>
                                 <div onclick="openQuickView(this)" style="cursor: pointer; display: block;">
                                 <div class="menu-card-img-container placeholder-img">
-                                    <img src="assets/images/items/placeholder-food.png" alt="No image" loading="lazy" class="menu-card-img">
+                                    <img src="assets/images/items/placeholder-food.png" alt="No image" loading="lazy" class="menu-card-img" width="350" height="250">
                                 </div>
                                 </div>
                             <?php endif; ?>

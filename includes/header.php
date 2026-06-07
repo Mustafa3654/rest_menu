@@ -47,6 +47,9 @@ $accentRgb    = '203, 181, 139'; // Gold Glow
 
     <!-- Theme Style -->
     <link rel="stylesheet" href="<?php echo $BASE_URL; ?>assets/css/theme.css">
+    
+    <!-- Preload Hero Background Image (LCP Optimization) -->
+    <link rel="preload" as="image" href="<?php echo htmlspecialchars($settings['menu_bg'] ?? 'assets/images/admin/bgs/menu-bg.jpg'); ?>">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg">

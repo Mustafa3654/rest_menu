@@ -1,6 +1,7 @@
 <?php 
 include "../includes/connection.php";
 include "../includes/auth.php";
+include "../includes/webp_helper.php";
 start_secure_session();
 require_admin();
 check_session_timeout(30);
@@ -28,21 +29,21 @@ if (isset($_POST["submit"])) {
         $item_order = (int)($_POST["item_order"] ?? 0);
         $pic_path = $_POST['current_pic'];
 
-        // Handle image upload
+        // Handle image upload — auto-convert to WebP
         if (isset($_FILES['item-img']) && $_FILES['item-img']['error'] === 0) {
-            $img_name = $_FILES['item-img']['name'];
-            $tmp_name = $_FILES['item-img']['tmp_name'];
-            $img_ex = strtolower(pathinfo($img_name, PATHINFO_EXTENSION));
-            $allowed_exs = array("jpg", "jpeg", "png", "gif", "webp");
-
-            if (in_array($img_ex, $allowed_exs)) {
-                $upload_folder = '../assets/images/items/';
-                if (!is_dir($upload_folder)) mkdir($upload_folder, 0755, true);
-                $new_img_name = uniqid("IMG-", true).'.'.$img_ex;
-                $img_upload_path = $upload_folder . $new_img_name;
-                if (move_uploaded_file($tmp_name, $img_upload_path)) {
-                    $pic_path = 'assets/images/items/' . $new_img_name;
+            $result_path = process_upload_to_webp(
+                $_FILES['item-img']['tmp_name'],
+                $_FILES['item-img']['name'],
+                '../assets/images/items/',
+                'IMG',
+                'assets/images/items/'
+            );
+            if ($result_path !== false) {
+                // Delete old image if it exists
+                if (!empty($pic_path) && file_exists('../' . $pic_path)) {
+                    @unlink('../' . $pic_path);
                 }
+                $pic_path = $result_path;
             }
         }
 

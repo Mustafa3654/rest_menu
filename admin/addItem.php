@@ -1,6 +1,7 @@
 <?php
 include "../includes/connection.php";
 include "../includes/auth.php";
+include "../includes/webp_helper.php";
 start_secure_session();
 require_admin();
 check_session_timeout(30);
@@ -46,19 +47,15 @@ if (isset($_POST["submit"])) {
                 } else {
                     $db_path = '';
                     if (isset($_FILES["item-img"]) && $_FILES["item-img"]["error"] === 0) {
-                        $img_name = $_FILES['item-img']['name'];
-                        $tmp_name = $_FILES['item-img']['tmp_name'];
-                        $img_ex = strtolower(pathinfo($img_name, PATHINFO_EXTENSION));
-                        $allowed_exs = array("jpg", "jpeg", "png", "gif", "webp");
-                        
-                        if (in_array($img_ex, $allowed_exs)) {
-                            $target_dir = "../assets/images/items/";
-                            if (!is_dir($target_dir)) mkdir($target_dir, 0755, true);
-                            $unique_filename = uniqid("IMG-", true) . '.' . $img_ex;
-                            $target_file = $target_dir . $unique_filename;
-                            if (move_uploaded_file($tmp_name, $target_file)) {
-                                $db_path = "assets/images/items/" . $unique_filename;
-                            }
+                        $result_path = process_upload_to_webp(
+                            $_FILES['item-img']['tmp_name'],
+                            $_FILES['item-img']['name'],
+                            '../assets/images/items/',
+                            'IMG',
+                            'assets/images/items/'
+                        );
+                        if ($result_path !== false) {
+                            $db_path = $result_path;
                         }
                     }
 

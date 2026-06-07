@@ -1,6 +1,7 @@
 <?php
 include "../includes/connection.php";
 include "../includes/auth.php";
+include "../includes/webp_helper.php";
 start_secure_session();
 require_admin();
 check_session_timeout(30);
@@ -12,6 +13,7 @@ $settings = get_settings();
 
 /**
  * Reuse the existing path unless a new file is uploaded successfully.
+ * Automatically converts uploaded images to WebP format.
  */
 function uploadSettingsImage(string $fieldName, string $prefix, string $currentPath): string
 {
@@ -19,16 +21,20 @@ function uploadSettingsImage(string $fieldName, string $prefix, string $currentP
         return $currentPath;
     }
 
-    $targetDir = "../assets/images/admin/bgs/";
-    if (!is_dir($targetDir)) {
-        mkdir($targetDir, 0755, true);
-    }
+    $result_path = process_upload_to_webp(
+        $_FILES[$fieldName]['tmp_name'],
+        $_FILES[$fieldName]['name'],
+        '../assets/images/admin/bgs/',
+        $prefix,
+        'assets/images/admin/bgs/'
+    );
 
-    $fileName = $prefix . "_" . time() . "_" . basename($_FILES[$fieldName]["name"]);
-    $targetFile = $targetDir . $fileName;
-
-    if (move_uploaded_file($_FILES[$fieldName]["tmp_name"], $targetFile)) {
-        return "assets/images/admin/bgs/" . $fileName;
+    if ($result_path !== false) {
+        // Delete old image if it exists and is different
+        if (!empty($currentPath) && file_exists('../' . $currentPath)) {
+            @unlink('../' . $currentPath);
+        }
+        return $result_path;
     }
 
     return $currentPath;
@@ -48,28 +54,19 @@ if (isset($_POST['upload_gallery'])) {
 
             for ($i = 0; $i < $total; $i++) {
                 if ($_FILES['photos']['error'][$i] === 0) {
-                    $img_name = $_FILES['photos']['name'][$i];
-                    $tmp_name = $_FILES['photos']['tmp_name'][$i];
-                    $img_ex = strtolower(pathinfo($img_name, PATHINFO_EXTENSION));
-                    $allowed_exs = array("jpg", "jpeg", "png", "webp");
+                    $result_path = process_upload_to_webp(
+                        $_FILES['photos']['tmp_name'][$i],
+                        $_FILES['photos']['name'][$i],
+                        '../assets/images/admin/pics/',
+                        'VIBE',
+                        'assets/images/admin/pics/'
+                    );
 
-                    if (in_array($img_ex, $allowed_exs)) {
-                        $upload_folder = '../assets/images/admin/pics/';
-                        if (!is_dir($upload_folder)) mkdir($upload_folder, 0755, true);
-                        $new_img_name = uniqid("VIBE-", true).'.'.$img_ex;
-                        $img_upload_path = $upload_folder . $new_img_name;
-                        
-                        // We store the path as admin/pics/ so it works relative to the frontend index.php
-                        $db_path = 'assets/images/admin/pics/' . $new_img_name;
-
-                        if (move_uploaded_file($tmp_name, $img_upload_path)) {
-                            $stmt = $conn->prepare("INSERT INTO gallery (photo_path) VALUES (?)");
-                            $stmt->bind_param("s", $db_path);
-                            $stmt->execute();
-                            $success_count++;
-                        } else {
-                            $error_count++;
-                        }
+                    if ($result_path !== false) {
+                        $stmt = $conn->prepare("INSERT INTO gallery (photo_path) VALUES (?)");
+                        $stmt->bind_param("s", $result_path);
+                        $stmt->execute();
+                        $success_count++;
                     } else {
                         $error_count++;
                     }
