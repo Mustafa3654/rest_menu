@@ -188,13 +188,6 @@ $csrfToken = ensure_csrf_token();
                                     </div>
                                 </div>
 
-                                <div class="info-item">
-                                    <div class="info-icon"><i class="fab fa-whatsapp"></i></div>
-                                    <div class="info-text">
-                                        <h5>WhatsApp</h5>
-                                        <p><?php echo htmlspecialchars($settings['whatsapp_number'] ?? ''); ?></p>
-                                    </div>
-                                </div>
                             </div>
                         </div>
 

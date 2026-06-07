@@ -15,7 +15,9 @@ body {
   border-radius: 20px;
   border: 1px solid #CBB58B;
   box-shadow: 0 8px 30px rgba(66, 82, 43, 0.08);
-  width: 550px;
+  width: 100%;
+  max-width: 550px;
+  box-sizing: border-box;
 }
 
 .dashboard-container {
@@ -24,7 +26,9 @@ body {
   border-radius: 20px;
   border: 1px solid #CBB58B;
   box-shadow: 0 8px 30px rgba(66, 82, 43, 0.08);
-  width: 900px;
+  width: 100%;
+  max-width: 1100px;
+  box-sizing: border-box;
 }
 
 h1 {

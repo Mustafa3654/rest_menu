@@ -251,6 +251,7 @@ class Cart {
         // Add Customer Details
         const customerName = document.getElementById('customer-name').value.trim();
         const customerPhone = document.getElementById('customer-phone').value.trim();
+        const customerNote = document.getElementById('customer-note') ? document.getElementById('customer-note').value.trim() : '';
 
         if (!customerName || !customerPhone) {
             this.showToast('Please enter your name and phone number');
@@ -259,12 +260,16 @@ class Cart {
 
         message += `\nName: ${customerName}`;
         message += `\nPhone: ${customerPhone}`;
+        if (customerNote) {
+            message += `\nNotes: ${customerNote}`;
+        }
 
         // Save order to database first
         try {
             const payload = {
                 customer_name: customerName,
                 customer_phone: customerPhone,
+                notes: customerNote,
                 total_usd: totals.usd,
                 items: this.items.map(item => ({
                     id: item.id,

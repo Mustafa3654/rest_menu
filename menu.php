@@ -199,8 +199,11 @@ $globalHasPhoto = ($globalPhotoCheck && $globalPhotoCheck->num_rows > 0);
                 <div class="form-group mb-2">
                     <input type="text" id="customer-name" placeholder="Your Name" class="cart-input">
                 </div>
-                <div class="form-group mb-3">
+                <div class="form-group mb-2">
                     <input type="tel" id="customer-phone" placeholder="Phone Number" class="cart-input">
+                </div>
+                <div class="form-group mb-3">
+                    <textarea id="customer-note" placeholder="Special Instructions / Notes (Optional)" class="cart-input" rows="2" style="resize: none;"></textarea>
                 </div>
             </div>
 
@@ -230,8 +233,8 @@ $globalHasPhoto = ($globalPhotoCheck && $globalPhotoCheck->num_rows > 0);
 </div>
 
 <!-- External JS for Menu -->
-<script src="assets/js/menu.js"></script>
-<script src="assets/js/cart.js"></script>
+<script src="assets/js/menu.js?v=1.1"></script>
+<script src="assets/js/cart.js?v=1.1"></script>
 
 <?php include 'includes/footer.php' ?>
 

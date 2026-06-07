@@ -54,10 +54,9 @@ $accentRgb    = '203, 181, 139'; // Gold Glow
             <!-- Left Placeholder for centering balance -->
             <div class="header-placeholder d-lg-none" style="width: 80px;"></div>
 
-            <!-- Centered Brand: Logo + Name Below -->
+            <!-- Centered Brand: Logo Only -->
             <a class="navbar-brand centered-brand d-flex flex-column align-items-center" href="<?php echo $BASE_URL; ?>index">
                 <img src="<?php echo $BASE_URL . htmlspecialchars($restaurantLogo); ?>" alt="Logo">
-                <span class="brand-name"><?php echo htmlspecialchars($restaurantName); ?></span>
             </a>
 
             <!-- Right Controls: Theme Toggle & Burger -->

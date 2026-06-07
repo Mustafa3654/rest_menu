@@ -52,6 +52,15 @@ try {
     // Non-fatal: pages can still render with defaults if the column can't be added.
 }
 
+try {
+    $col = $conn->query("SHOW COLUMNS FROM orders LIKE 'notes'");
+    if (!$col || $col->num_rows === 0) {
+        $conn->query("ALTER TABLE orders ADD COLUMN notes TEXT DEFAULT NULL");
+    }
+} catch (Throwable $e) {
+    // Non-fatal
+}
+
 // Include core helpers
 include_once __DIR__ . '/auth.php';
 ?>

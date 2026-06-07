@@ -113,7 +113,7 @@
         /* Order rows */
         .order-row {
             display: grid;
-            grid-template-columns: 0.5fr 1.2fr 1.2fr 0.6fr 0.8fr 0.9fr 0.9fr 1fr;
+            grid-template-columns: 0.4fr 1fr 1fr 1.5fr 0.6fr 0.8fr 0.9fr 0.9fr 1fr;
             align-items: center;
             text-align: center;
             padding: 15px 10px;
@@ -147,5 +147,27 @@
             cursor: pointer;
         }
         .update-btn:hover { background: #2b3a1d; }
+
+        @media (max-width: 991px) {
+            .dashboard-container {
+                padding: 20px 15px !important;
+                margin: 10px;
+                width: calc(100% - 20px) !important;
+            }
+            .item-list {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 10px;
+            }
+            .order-row {
+                min-width: 1050px; /* Prevents columns from squeezing */
+            }
+            .item-row {
+                min-width: 800px;
+            }
+            .cat-row {
+                min-width: 500px;
+            }
+        }
     
 

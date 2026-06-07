@@ -17,10 +17,11 @@ $params = [];
 $types = "";
 
 if ($search !== '') {
-    $where .= " AND (customer_name LIKE ? OR whatsapp_number LIKE ?)";
+    $where .= " AND (customer_name LIKE ? OR whatsapp_number LIKE ? OR notes LIKE ?)";
     $params[] = "%$search%";
     $params[] = "%$search%";
-    $types .= "ss";
+    $params[] = "%$search%";
+    $types .= "sss";
 }
 
 $where .= " AND DATE(created_at) >= ? AND DATE(created_at) <= ?";
@@ -78,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Orders</title>
     <link rel="stylesheet" href="../assets/css/view.css?v=1.1" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
@@ -116,6 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
                     <span>ID</span>
                     <span>Customer</span>
                     <span>Phone</span>
+                    <span>Notes</span>
                     <span>Total</span>
                     <span>Status</span>
                     <span>Ordered</span>
@@ -130,6 +132,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
                         <span><?php echo (int)$r['id']; ?></span>
                         <span><?php echo htmlspecialchars($r['customer_name'] ?? ''); ?></span>
                         <span><?php echo htmlspecialchars($r['whatsapp_number'] ?? ''); ?></span>
+                        <span style="font-size: 13px; text-align: left; max-height: 60px; overflow-y: auto; word-break: break-word; padding: 0 4px;"><?php echo !empty($r['notes']) ? htmlspecialchars($r['notes']) : '-'; ?></span>
                         <span><?php echo $total; ?></span>
                         <span>
                             <span class="status-badge status-<?php echo htmlspecialchars($r['status'] ?? 'pending'); ?>">

@@ -18,6 +18,10 @@ if (!$input) {
 
 $customer_name = trim($input['customer_name'] ?? '');
 $customer_phone = trim($input['customer_phone'] ?? '');
+$notes = isset($input['notes']) ? trim($input['notes']) : null;
+if ($notes === '') {
+    $notes = null;
+}
 $items = $input['items'] ?? [];
 $total_usd = (float)($input['total_usd'] ?? 0);
 
@@ -27,8 +31,8 @@ if (empty($customer_name) || empty($customer_phone) || empty($items)) {
     exit;
 }
 
-$stmt = $conn->prepare("INSERT INTO orders (customer_name, whatsapp_number, total_usd, status) VALUES (?, ?, ?, 'pending')");
-$stmt->bind_param("ssd", $customer_name, $customer_phone, $total_usd);
+$stmt = $conn->prepare("INSERT INTO orders (customer_name, whatsapp_number, total_usd, notes, status) VALUES (?, ?, ?, ?, 'pending')");
+$stmt->bind_param("ssds", $customer_name, $customer_phone, $total_usd, $notes);
 
 if ($stmt->execute()) {
     echo json_encode(['success' => true, 'order_id' => $stmt->insert_id]);

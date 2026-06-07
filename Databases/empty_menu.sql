@@ -88,10 +88,9 @@ CREATE TABLE `items` (
 CREATE TABLE `orders` (
   `id` int(11) NOT NULL,
   `customer_name` varchar(255) DEFAULT NULL,
-
   `total_usd` decimal(10,2) DEFAULT 0.00,
   `whatsapp_number` varchar(20) DEFAULT NULL,
-
+  `notes` text DEFAULT NULL,
   `status` enum('pending','sent','cancelled') DEFAULT 'pending',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `completed_at` datetime DEFAULT NULL
