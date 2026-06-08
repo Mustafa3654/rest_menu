@@ -63,6 +63,7 @@ try {
 
 // Include core helpers
 include_once __DIR__ . '/auth.php';
+include_once __DIR__ . '/webp_helper.php';
 ?>
 
 

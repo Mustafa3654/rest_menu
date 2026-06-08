@@ -19,6 +19,19 @@
   z-index: 1;
 }
 
+.menu-header-bg-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: blur(5px);
+  transform: scale(1.1);
+  z-index: 1;
+}
+
 .menu-header-overlay {
   position: absolute;
   top: 0;

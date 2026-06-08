@@ -143,7 +143,9 @@ $csrfToken = ensure_csrf_token();
 
 <link rel="stylesheet" href="assets/css/contact.css">
 
-<section class="hero-section contact-hero-section" style="background-image: url('<?php echo htmlspecialchars($settings['contact_bg'] ?? ''); ?>');">
+<section class="hero-section contact-hero-section">
+    <?php $contactBg = webp_url($settings['contact_bg'] ?? 'assets/images/admin/bgs/contact-bg.jpg'); ?>
+    <img src="<?php echo htmlspecialchars($contactBg); ?>" alt="" class="hero-bg-img" fetchpriority="high">
     <div class="hero-content">
         <h1 class="hero-title reveal-text">Contact Us</h1>
         <p class="hero-subtitle reveal-text">We'd love to hear from you</p>

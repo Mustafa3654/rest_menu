@@ -29,27 +29,51 @@ $accentRgb    = '203, 181, 139'; // Gold Glow
     <meta property="og:type" content="website">
     <meta property="og:url" content="<?php echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . '://' . htmlspecialchars($_SERVER['HTTP_HOST'] ?? '') . htmlspecialchars($_SERVER['REQUEST_URI'] ?? '/'); ?>">
     <?php if (!empty($restaurantLogo)): ?>
-    <meta property="og:image" content="<?php echo $BASE_URL . htmlspecialchars($restaurantLogo); ?>">
+    <meta property="og:image" content="<?php echo $BASE_URL . htmlspecialchars(webp_url($restaurantLogo)); ?>">
     <?php endif; ?>
     <title><?php echo htmlspecialchars($restaurantName); ?></title>
-    
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
+    <!-- Preconnect to external origins -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Google Fonts (async) – includes Poppins, Inter, and Dancing Script -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Dancing+Script:wght@700&display=swap" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Dancing+Script:wght@700&display=swap"></noscript>
+
+    <!-- Bootstrap CSS (non-blocking) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"></noscript>
+
+    <!-- Font Awesome (non-blocking) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
+
     <!-- Global Header CSS -->
     <link rel="stylesheet" href="<?php echo $BASE_URL; ?>assets/css/header.css">
 
     <!-- Theme Style -->
     <link rel="stylesheet" href="<?php echo $BASE_URL; ?>assets/css/theme.css">
-    
-    <!-- Preload Hero Background Image (LCP Optimization) -->
-    <link rel="preload" as="image" href="<?php echo htmlspecialchars($settings['menu_bg'] ?? 'assets/images/admin/bgs/menu-bg.jpg'); ?>">
+
+    <?php
+    // Preload the hero background for the current page (LCP optimization)
+    $currentPage = basename($_SERVER['SCRIPT_NAME'], '.php');
+    $heroImage = '';
+    switch ($currentPage) {
+        case 'index':  $heroImage = $settings['home_bg']    ?? 'assets/images/admin/bgs/hero-bg.jpg'; break;
+        case 'menu':   $heroImage = $settings['menu_bg']    ?? 'assets/images/admin/bgs/menu-bg.jpg'; break;
+        case 'contact':$heroImage = $settings['contact_bg'] ?? 'assets/images/admin/bgs/contact-bg.jpg'; break;
+        case 'about':  $heroImage = $settings['about_bg']   ?? 'assets/images/admin/bgs/about-bg.jpg'; break;
+        default:       $heroImage = $settings['home_bg']    ?? 'assets/images/admin/bgs/hero-bg.jpg'; break;
+    }
+    if (!empty($heroImage)) {
+        echo '<link rel="preload" as="image" href="' . htmlspecialchars(webp_url($heroImage)) . '">';
+    }
+    ?>
+    <!-- Prevent dark mode FOUC -->
+    <script>if(localStorage.getItem('theme')==='dark')document.body.classList.add('dark-mode');</script>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg">
@@ -59,7 +83,7 @@ $accentRgb    = '203, 181, 139'; // Gold Glow
 
             <!-- Centered Brand: Logo Only -->
             <a class="navbar-brand centered-brand d-flex flex-column align-items-center" href="<?php echo $BASE_URL; ?>index">
-                <img src="<?php echo $BASE_URL . htmlspecialchars($restaurantLogo); ?>" alt="Logo">
+                <img src="<?php echo $BASE_URL . htmlspecialchars(webp_url($restaurantLogo)); ?>" alt="Logo">
             </a>
 
             <!-- Right Controls: Theme Toggle & Burger -->
@@ -90,9 +114,6 @@ $accentRgb    = '203, 181, 139'; // Gold Glow
             </div>
         </div>
     </nav>
-	    
-	    <!-- External Theme JS -->
-	    <script src="<?php echo $BASE_URL; ?>assets/js/theme.js"></script>
     <main>
 
 

@@ -1,7 +1,7 @@
 </main>
 
     <!-- External CSS for Footer -->
-    <link rel="stylesheet" href="<?php echo $BASE_URL; ?>assets/css/footer.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="<?php echo $BASE_URL; ?>assets/css/footer.css?v=20260608">
 
     <footer class="site-footer">
         <div class="footer-inner">
@@ -38,7 +38,9 @@
 
     </footer>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS (deferred) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" defer></script>
+    <!-- Theme JS (deferred) -->
+    <script src="<?php echo $BASE_URL; ?>assets/js/theme.js" defer></script>
 </body>
 
